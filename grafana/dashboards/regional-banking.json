@@ -1,0 +1,116 @@
+{
+  "uid": "thai-bank-regions",
+  "title": "Thailand Regional Banking Intelligence",
+  "tags": ["BOT", "DOPA", "NESDC", "World Bank API", "real-data"],
+  "timezone": "Asia/Bangkok",
+  "schemaVersion": 41,
+  "version": 1,
+  "refresh": "1h",
+  "time": {"from": "now-3y", "to": "now"},
+  "panels": [
+    {
+      "id": 1, "title": "1 · แนวโน้มสินเชื่อและเงินฝาก (ล้านบาท)", "type": "timeseries",
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 0},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "time_series", "rawQuery": true,
+        "rawSql": "SELECT period AS time, SUM(credits_million_baht) AS credits, SUM(deposits_million_baht) AS deposits FROM mart_province_month WHERE $__timeFilter(period) GROUP BY period ORDER BY period"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 2, "title": "2 · จังหวัดสินเชื่อสูงสุด (ล้านบาท)", "type": "barchart",
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 9},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT name_th AS province, credits_million_baht AS credits FROM mart_province_month WHERE period = (SELECT MAX(period) FROM mart_province_month) ORDER BY credits_million_baht DESC LIMIT 10"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 3, "title": "3 · สาขาต่อประชากร 100,000 คน (proxy)", "type": "barchart",
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 9},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT name_th AS province, ROUND(branches_per_100k::numeric,2) AS branches_per_100k FROM mart_province_month WHERE period = (SELECT MAX(period) FROM mart_province_month) AND branches_per_100k IS NOT NULL ORDER BY branches_per_100k DESC LIMIT 10"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 4, "title": "4 · อัตราสินเชื่อต่อเงินฝากรายจังหวัด (%)", "type": "table",
+      "gridPos": {"h": 10, "w": 12, "x": 0, "y": 18},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT name_th AS province, ROUND(credit_deposit_ratio_pct::numeric,2) AS credit_deposit_pct, deposits_million_baht, credits_million_baht FROM mart_province_month WHERE period = (SELECT MAX(period) FROM mart_province_month) ORDER BY credit_deposit_ratio_pct DESC LIMIT 20"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 5, "title": "5 · เงินฝากต่อผู้มีชื่อในทะเบียน (บาท/คน)", "type": "table",
+      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 18},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT name_th AS province, ROUND(deposits_baht_per_person::numeric,0) AS deposits_baht_per_person, population_reference_year, gpp_reference_year FROM mart_province_month WHERE period = (SELECT MAX(period) FROM mart_province_month) AND deposits_baht_per_person IS NOT NULL ORDER BY deposits_baht_per_person DESC LIMIT 20"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 6, "title": "6 · เงินเฟ้อไทยรายปีจาก World Bank API (%)", "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 28},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "time_series", "rawQuery": true,
+        "rawSql": "SELECT make_date(reference_year, 12, 31) AS time, inflation_pct AS inflation FROM fact_macro_year WHERE reference_year >= 2015 ORDER BY reference_year"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}, "overrides": []}
+    },
+    {
+      "id": 7, "title": "7 · สินเชื่อเติบโต YoY สูงสุด (เทียบเดือนเดียวกันปีก่อน)", "type": "table",
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 36},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT n.name_th AS province, ROUND((100.0*(n.credits_million_baht-p.credits_million_baht)/NULLIF(p.credits_million_baht,0))::numeric,2) AS credit_yoy_pct FROM mart_province_month n JOIN mart_province_month p ON n.province_code=p.province_code AND p.period=(n.period-INTERVAL '1 year')::date WHERE n.period=(SELECT MAX(period) FROM mart_province_month) ORDER BY credit_yoy_pct DESC LIMIT 10"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}, "overrides": []}
+    },
+    {
+      "id": 8, "title": "8 · เงินฝากโตเร็วกว่าสินเชื่อกี่จุดเปอร์เซ็นต์", "type": "table",
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 36},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT n.name_th AS province, ROUND((100.0*(n.deposits_million_baht-p.deposits_million_baht)/NULLIF(p.deposits_million_baht,0)-100.0*(n.credits_million_baht-p.credits_million_baht)/NULLIF(p.credits_million_baht,0))::numeric,2) AS deposit_minus_credit_yoy_pp FROM mart_province_month n JOIN mart_province_month p ON n.province_code=p.province_code AND p.period=(n.period-INTERVAL '1 year')::date WHERE n.period=(SELECT MAX(period) FROM mart_province_month) ORDER BY deposit_minus_credit_yoy_pp DESC LIMIT 10"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 9, "title": "9 · สาขาลดแต่สินเชื่อเพิ่ม (YoY)", "type": "table",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 45},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT n.name_th AS province, p.branches AS branches_prior_year, n.branches AS branches_latest, p.credits_million_baht AS credits_prior_year_million, n.credits_million_baht AS credits_latest_million FROM mart_province_month n JOIN mart_province_month p ON n.province_code=p.province_code AND p.period=(n.period-INTERVAL '1 year')::date WHERE n.period=(SELECT MAX(period) FROM mart_province_month) AND n.branches<p.branches AND n.credits_million_baht>p.credits_million_baht ORDER BY n.credits_million_baht-p.credits_million_baht DESC LIMIT 20"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 10, "title": "10 · อัตราดอกเบี้ยนโยบาย ณ สิ้นเดือน (%) — บริบท ไม่ใช่เหตุผลเชิงสาเหตุ", "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 53},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "time_series", "rawQuery": true,
+        "rawSql": "SELECT period AS time, MAX(policy_rate_pct) AS policy_rate_pct FROM mart_province_month WHERE $__timeFilter(period) GROUP BY period ORDER BY period"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}, "overrides": []}
+    },
+    {
+      "id": 11, "title": "11 · เศรษฐกิจขนาดใกล้กัน: GPP เทียบสินเชื่อ", "type": "table",
+      "gridPos": {"h": 10, "w": 12, "x": 0, "y": 61},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT name_th AS province, ROUND(gpp_million_baht::numeric,0) AS gpp_2024p_million, ROUND(credits_million_baht::numeric,0) AS credit_latest_million, branches FROM mart_province_month WHERE period=(SELECT MAX(period) FROM mart_province_month) AND gpp_million_baht IS NOT NULL AND province_code<>10 ORDER BY gpp_million_baht DESC LIMIT 30"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 12, "title": "12 · คัดพื้นที่ศึกษา: GPP ≥100,000 ลบ. / สาขาต่อแสน ≤15 / สินเชื่อ ≥50,000 ลบ.", "type": "table",
+      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 61},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "SELECT name_th AS province, ROUND(gpp_million_baht::numeric,0) AS gpp_2024p_million, ROUND(credits_million_baht::numeric,0) AS credit_latest_million, ROUND(branches_per_100k::numeric,2) AS branches_per_100k FROM mart_province_month WHERE period=(SELECT MAX(period) FROM mart_province_month) AND province_code<>10 AND gpp_million_baht>=100000 AND branches_per_100k<=15 AND credits_million_baht>=50000 ORDER BY gpp_million_baht DESC"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {
+      "id": 13, "title": "13 · สินเชื่อ YoY เป็นบวกกี่เดือนใน 12 งวดล่าสุด", "type": "table",
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 71},
+      "datasource": {"type": "postgres", "uid": "bank-postgres"},
+      "targets": [{"refId": "A", "format": "table", "rawQuery": true,
+        "rawSql": "WITH yoy AS (SELECT n.province_code, n.name_th, n.period, 100.0*(n.credits_million_baht-p.credits_million_baht)/NULLIF(p.credits_million_baht,0) AS credit_yoy_pct FROM mart_province_month n JOIN mart_province_month p ON n.province_code=p.province_code AND p.period=(n.period-INTERVAL '1 year')::date WHERE n.period >= (SELECT MAX(period)-INTERVAL '11 months' FROM mart_province_month)), ranked AS (SELECT name_th, COUNT(*) FILTER (WHERE credit_yoy_pct>0) AS positive_months, COUNT(*) AS observed_months, ROUND(AVG(credit_yoy_pct)::numeric,2) AS average_yoy_pct FROM yoy GROUP BY province_code,name_th) SELECT name_th AS province, positive_months, observed_months, average_yoy_pct FROM ranked WHERE observed_months=12 ORDER BY positive_months DESC, average_yoy_pct DESC LIMIT 20"}],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    }
+  ]
+}

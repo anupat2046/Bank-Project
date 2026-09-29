@@ -1,0 +1,14 @@
+.venv
+.env
+.env.*
+data
+work
+.playwright-cli
+tmp
+.git
+__pycache__
+.pytest_cache
+docs
+grafana
+airflow
+PROJECT_PLAN.md

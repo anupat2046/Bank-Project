@@ -1,0 +1,51 @@
+# Local credentials and private configuration. Keep the example for setup.
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python environments, caches, and test/build output.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local warehouse inputs/state, browser traces, and temporary renders.
+data/
+work/
+tmp/
+.playwright-cli/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Keep only screenshots used by the public README.
+/output/playwright/*
+!/output/playwright/overview.png
+!/output/playwright/province-comparison.png
+!/output/playwright/opportunity-screening.png
+!/output/playwright/grafana-dashboard.png
+!/output/playwright/grafana-policy-and-gpp.png
+!/output/playwright/chatbot.png
+!/output/playwright/chatbot-chart-and-sql.png
+!/output/playwright/chatbot-gemini-full.png
+
+# Operating-system/editor leftovers.
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*~

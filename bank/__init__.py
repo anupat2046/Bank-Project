@@ -1,0 +1,1 @@
+"""Thailand Regional Banking Intelligence."""
