@@ -9,6 +9,18 @@ import { ChatReply, Row, downloadCsv, month } from "@/lib/data";
 
 type Message = { question: string; reply: ChatReply };
 const examples = ["สินเชื่อต่อประชากรสูงสุด 10 จังหวัด พร้อมสินเชื่อต่อสาขาและ YoY", "เปรียบเทียบสินเชื่อต่อประชากรเชียงใหม่และชลบุรี", "แนวโน้มเงินฝากย้อนหลัง"];
+function replyHeading(reply: ChatReply) {
+  if (reply.mode === "clarification") return "ขอรายละเอียดเพิ่มเติม";
+  if (reply.error) return "ยังไม่สามารถตอบคำถามนี้ได้";
+  if (reply.mode === "capabilities" || reply.mode === "greeting") return "ผู้ช่วยทำอะไรได้บ้าง";
+  if (reply.mode === "explanation") return "คำอธิบายผลล่าสุด";
+  return "คำตอบจากผู้ช่วย";
+}
+function modeLabel(reply: ChatReply) {
+  const planner = reply.mode.includes("semantic rules") ? "Rules planner" : reply.mode;
+  return reply.routing_mode ? `${reply.routing_mode} router · ${planner}` : planner;
+}
+
 function Analysis({ reply, index }: { reply: ChatReply; index: number }) {
   const result = reply.result!;
   const metrics = result.metrics || [{ key: "value", label: result.metric_label, unit: result.unit, formula: "" }];
@@ -56,7 +68,7 @@ export default function AssistantPage() {
     <PageHeading title="ผู้ช่วยวิเคราะห์" description="ถามภาษาไทย แล้วตรวจผล กราฟ SQL และแหล่งที่มาได้" />
     <p className="notice" style={{ marginTop: -12, marginBottom: 24 }}>ข้อมูลสาธารณะระดับตลาด ไม่มีข้อมูลลูกค้า รายธนาคาร หรือ NPL · งวดของคำตอบกำหนดจาก query ไม่ใช่ตัวกรองหน้าอื่น</p>
     <div className="tabs chat-mobile-tabs"><button className={mobileView === "conversation" ? "active" : ""} onClick={() => setMobileView("conversation")}>บทสนทนา</button><button className={mobileView === "result" ? "active" : ""} onClick={() => setMobileView("result")}>ผลวิเคราะห์</button></div>
-    <div className="chat-layout"><section className={`chat-thread ${mobileView !== "conversation" ? "chat-hidden-mobile" : ""}`} aria-label="บทสนทนา"><div className="chat-toolbar"><span>{active ? active.reply.mode.includes("gemini") ? "Gemini · structured plan" : active.reply.mode.includes("semantic rules") ? "Rules planner" : active.reply.mode : "โหมดจะแสดงเมื่อได้รับคำตอบ"}</span><button className="text-button" disabled={pending} onClick={() => { session.current = crypto.randomUUID(); setMessages([]); setSelected(-1); setFailure(null); }}><Plus size={14} /> เริ่มใหม่</button></div>
+    <div className="chat-layout"><section className={`chat-thread ${mobileView !== "conversation" ? "chat-hidden-mobile" : ""}`} aria-label="บทสนทนา"><div className="chat-toolbar"><span>{active ? modeLabel(active.reply) : "โหมดจะแสดงเมื่อได้รับคำตอบ"}</span><button className="text-button" disabled={pending} onClick={() => { session.current = crypto.randomUUID(); setMessages([]); setSelected(-1); setFailure(null); }}><Plus size={14} /> เริ่มใหม่</button></div>
       <div className="chat-messages">{messages.length === 0 && <><h3>อยากรู้เรื่องไหนของตลาด?</h3><p className="muted">เริ่มจากคำถามที่รองรับ แล้วตรวจรายละเอียดผลทางขวา</p><div className="chat-examples">{examples.map(example => <button key={example} disabled={pending} onClick={() => setQuestion(example)}>{example}</button>)}</div></>}
         {messages.map((m, i) => <div key={i}><div className="message user"><small>คุณ</small>{m.question}</div><button className={`message ${selected === i ? "selected" : ""}`} onClick={() => { setSelected(i); setMobileView("result"); }}><small>{m.reply.error ? "ยังตอบไม่ได้" : "ผู้ช่วยวิเคราะห์"} · คลิกเพื่อดูผลรอบนี้</small>{m.reply.answer}</button></div>)}
         {pending && <p className="notice" role="status">กำลังตีความคำถามและตรวจผลจากคลังข้อมูล…</p>}
@@ -64,6 +76,6 @@ export default function AssistantPage() {
       </div>
       <form className="chat-form" ref={form} onSubmit={e => { e.preventDefault(); void send(); }}><label><span>คำถาม</span><textarea aria-label="คำถาม" placeholder="เช่น แนวโน้มสินเชื่อจังหวัดเชียงใหม่" maxLength={1000} value={question} onChange={e => setQuestion(e.target.value)} disabled={pending} onKeyDown={e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); form.current?.requestSubmit(); } }} /></label><div className="chat-form-bottom"><span>{question.length}/1,000 · Ctrl+Enter เพื่อส่ง</span><button className="button primary" type="submit" disabled={pending || !question.trim()}><Send size={15} />{pending ? "กำลังถาม…" : "ส่งคำถาม"}</button></div></form>
     </section>
-    <section className={`chat-result ${mobileView !== "result" ? "chat-hidden-mobile" : ""}`} aria-label="ผลวิเคราะห์">{pending ? <div className="chat-result-empty" role="status"><MessageSquare size={30} /><h2>กำลังเตรียมผลวิเคราะห์</h2><p>จะแสดงเฉพาะผลของคำถามรอบนี้เมื่อได้รับคำตอบ</p></div> : !active ? <div className="chat-result-empty"><MessageSquare size={32} strokeWidth={1.5} /><h2>คำตอบที่ตรวจสอบได้</h2><p>เมื่อถามข้อมูล คุณจะเห็นตาราง กราฟ หน่วย และ SQL ของคำตอบที่เลือกตรงนี้</p></div> : active.reply.error || !result ? <div className="state" role="status"><h2>{active.reply.mode === "clarification" ? "ขอรายละเอียดเพิ่มเติม" : "ยังไม่สามารถตอบคำถามนี้ได้"}</h2><p>{active.reply.answer}</p><div className="chat-examples">{active.reply.choices?.map(choice => <button key={choice} onClick={() => { setQuestion(choice); setMobileView("conversation"); }}>{choice}</button>)}</div><p className="muted">ตัวเลือกจะใส่ในช่องคำถามให้ตรวจและส่ง ไม่แสดงผลเก่าแทนคำตอบใหม่</p></div> : <Analysis key={selected} reply={active.reply} index={selected} />}</section></div><Footer />
+    <section className={`chat-result ${mobileView !== "result" ? "chat-hidden-mobile" : ""}`} aria-label="ผลวิเคราะห์">{pending ? <div className="chat-result-empty" role="status"><MessageSquare size={30} /><h2>กำลังเตรียมผลวิเคราะห์</h2><p>จะแสดงเฉพาะผลของคำถามรอบนี้เมื่อได้รับคำตอบ</p></div> : !active ? <div className="chat-result-empty"><MessageSquare size={32} strokeWidth={1.5} /><h2>คำตอบที่ตรวจสอบได้</h2><p>เมื่อถามข้อมูล คุณจะเห็นตาราง กราฟ หน่วย และ SQL ของคำตอบที่เลือกตรงนี้</p></div> : active.reply.error || !result ? <div className="state" role="status"><h2>{replyHeading(active.reply)}</h2><p style={{ whiteSpace: "pre-line" }}>{active.reply.answer}</p><div className="chat-examples">{active.reply.choices?.map(choice => <button key={choice} onClick={() => { setQuestion(choice); setMobileView("conversation"); }}>{choice}</button>)}</div><p className="muted">ตัวเลือกจะใส่ในช่องคำถามให้ตรวจและส่ง ไม่แสดงผลเก่าแทนคำตอบใหม่</p></div> : <Analysis key={selected} reply={active.reply} index={selected} />}</section></div><Footer />
   </>;
 }

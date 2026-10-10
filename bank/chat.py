@@ -4,6 +4,7 @@ import os
 import atexit
 import json
 import re
+from copy import deepcopy
 from time import perf_counter
 from functools import lru_cache
 from typing import Any, Literal, TypedDict
@@ -14,6 +15,7 @@ from .db import engine
 from .query import Clarification, QueryPlan, METRICS, execute_plan, rules_plan
 from .intent import safety_check, normalize, extract_metrics
 from .observability import capture, record, token_usage, summarize, emit
+from .conversation import route_conversation, fallback_route, RoutingOutputError, CAPABILITIES, EXAMPLES
 
 ACTIVE_PLANNER_VERSION = 'v3'
 
@@ -28,9 +30,15 @@ class ChatState(TypedDict, total=False):
     choices: list[str]
     pending_question: str | None
     pending_context: dict | None
+    pending_choices: list[str]
     history: list[dict]
     planner_strategy: str
     prompt_version: str
+    conversation_route: str
+    direct_answer: str | None
+    last_result: dict | None
+    error_code: str | None
+    routing_mode: str
 
 class PlanningOutputError(RuntimeError):
     pass
@@ -52,10 +60,10 @@ def _llm_decision(question, context, history, prompt_version=ACTIVE_PLANNER_VERS
     provider = _provider()
     if provider == 'gemini':
         from langchain_google_genai import ChatGoogleGenerativeAI
-        model = ChatGoogleGenerativeAI(model=os.getenv('GEMINI_MODEL','gemini-2.5-flash'),api_key=os.environ['GEMINI_API_KEY'],temperature=0,timeout=45,max_retries=int(os.getenv('LLM_MAX_RETRIES','1')))
+        model = ChatGoogleGenerativeAI(model=os.getenv('GEMINI_MODEL','gemini-2.5-flash'),api_key=os.environ['GEMINI_API_KEY'],temperature=0,timeout=20,max_retries=min(1,max(0,int(os.getenv('LLM_MAX_RETRIES','0')))))
     else:
         from langchain_openai import ChatOpenAI
-        model = ChatOpenAI(model=os.getenv('OPENAI_MODEL','gpt-4.1-mini'),temperature=0,timeout=45,max_retries=1)
+        model = ChatOpenAI(model=os.getenv('OPENAI_MODEL','gpt-4.1-mini'),temperature=0,timeout=20,max_retries=0)
     catalog = {k:{'definition':v[0] or 'YoY vs same month prior year','label':v[1],'unit':v[2]} for k,v in METRICS.items()}
     prompt = ('Map a Thai/English analytical question to a decision, not SQL. Never substitute an unsupported metric with credits. '
       'Ambiguous denominator or ranking across multiple metrics requires clarification. No private customers, individual banks, NPL, forecasts or causal claims. '
@@ -126,7 +134,7 @@ def validate_decision(decision):
 
 def _plan(state: ChatState) -> ChatState:
     question = state['question']
-    empty = {'plan':None,'result':None,'error':None,'answer':None,'choices':[],'pending_question':None,'pending_context':None}
+    empty = {'plan':None,'result':None,'error':None,'answer':None,'choices':[],'pending_choices':[],'pending_question':None,'pending_context':None}
     context = state.get('last_plan')
     q = normalize(question)
     # A clarification is a conversation event, not a failed SQL execution.
@@ -136,7 +144,7 @@ def _plan(state: ChatState) -> ChatState:
             question = 'เปลี่ยนเป็นสินเชื่อต่อประชากรมากที่สุด'
         elif q in ['ต่อสาขา','สาขา']:
             question = 'เปลี่ยนเป็นสินเชื่อต่อสาขามากที่สุด'
-        elif state.get('choices') and question in state['choices']:
+        elif question in (state.get('pending_choices') or state.get('choices') or []):
             question = 'เปลี่ยนเป็น'+question
         elif q in ['ทั้งสอง','ทั้งคู่']:
             return {**empty,'error':'ต้องการจัดอันดับด้วยสินเชื่อต่อประชากรหรือสินเชื่อต่อสาขาครับ?','mode':'clarification',
@@ -176,31 +184,101 @@ def _plan(state: ChatState) -> ChatState:
             except (Clarification,ValueError):
                 pass
         return {**empty,'error':str(exc),'mode':'unsupported' if exc.unsupported else 'clarification',
-          'choices':exc.choices,'pending_question':None if exc.unsupported else state['question'],'pending_context':pending_context}
+          'choices':exc.choices,'pending_choices':exc.choices,'pending_question':None if exc.unsupported else state['question'],'pending_context':pending_context}
+    except PlanningOutputError:
+        record('failure',failure_type='PlanningOutputError',phase='planner')
+        return {**empty,'error':'ยังตีความแผนวิเคราะห์ได้ไม่ครบ กรุณาระบุตัวชี้วัด จังหวัด และช่วงเวลาให้ชัดขึ้น','mode':'clarification'}
     except ValueError:
         return {**empty,'error':'แผนคำถามไม่ผ่านการตรวจสอบ กรุณาระบุตัวชี้วัดและช่วงเวลาใหม่','mode':'clarification'}
     except Exception as exc:
         record('failure',failure_type=type(exc).__name__,phase='planner')
-        return {**empty,'error':'ผู้ให้บริการ AI ไม่พร้อมใช้งาน กรุณาลองใหม่ภายหลัง','mode':'error'}
+        return {**empty,'error':'ผู้ให้บริการ AI ไม่พร้อมใช้งาน กรุณาลองใหม่ภายหลัง','mode':'error','error_code':'provider_unavailable'}
 
 def _route(state):
     return 'error' if state.get('error') else 'execute'
+
+def _conversation(state):
+    reset = {'plan':None,'result':None,'error':None,'error_code':None,'direct_answer':None,'choices':state.get('choices',[]), 'conversation_route':'analytics','routing_mode':'offline fallback'}
+    # Explicit benchmark strategies still evaluate the frozen analytic planner, not this router.
+    if state.get('planner_strategy'):
+        return reset
+    try:
+        safety_check(state['question'])
+        context = state.get('pending_context') or state.get('last_plan')
+        provider = _provider()
+        decision = route_conversation(state['question'],context,state.get('history',[]),bool(state.get('last_result')), provider)
+        reset['routing_mode'] = provider or 'offline fallback'
+    except Clarification as exc:
+        if not exc.unsupported:
+            return reset
+        return {**reset,'conversation_route':'unsupported','mode':'unsupported','error':str(exc)}
+    except Exception as exc:
+        record('failure',phase='router',failure_type=type(exc).__name__)
+        decision = fallback_route(state['question'])
+        # Known analytics retain the safe rules path even when the router/provider is unavailable.
+        if decision.route == 'analytics':
+            try:
+                rules_plan(state['question'],state.get('last_plan'))
+            except Clarification as error:
+                if error.unsupported or error.choices or extract_metrics(normalize(state['question'])):
+                    return reset
+                message = ('ยังตีความประเภทคำถามไม่ได้ กรุณาลองระบุคำถามให้ชัดขึ้น' if isinstance(exc,RoutingOutputError)
+                    else 'ไม่สามารถติดต่อผู้ให้บริการ AI ได้ กรุณาลองใหม่ หรือเลือกคำถามตัวอย่าง')
+                return {**reset,'conversation_route':'clarification','mode':'clarification' if isinstance(exc,RoutingOutputError) else 'error','error':message,'error_code':None if isinstance(exc,RoutingOutputError) else 'provider_unavailable','choices':EXAMPLES}
+            except ValueError:
+                return {**reset,'conversation_route':'clarification','mode':'clarification','error':'กรุณาระบุคำถามให้ชัดขึ้น'}
+    route = decision.route
+    out = {**reset,'conversation_route':route,'mode':route}
+    if route == 'analytics':
+        return out
+    out['choices'] = []
+    if route in ['capabilities','greeting']:
+        return {**out,'direct_answer':CAPABILITIES if route == 'capabilities' else 'สวัสดีครับ '+CAPABILITIES,'choices':EXAMPLES}
+    if route == 'unsupported':
+        return {**out,'error':'คำถามนี้อยู่นอกข้อมูลสาธารณะของระบบ ไม่มีข้อมูลลูกค้า รายธนาคาร หรือ NPL และไม่ทำนายอนาคตหรือสรุปเหตุและผล','choices':EXAMPLES}
+    if route == 'clarification':
+        return {**out,'error':'ต้องการวิเคราะห์ข้อมูล อธิบายผลล่าสุด หรือเปลี่ยนกราฟครับ?','choices':EXAMPLES}
+    previous = state.get('last_result')
+    if not previous:
+        return {**out,'mode':'clarification','error':'ยังไม่มีผลวิเคราะห์ให้อธิบายหรือเปลี่ยนกราฟ กรุณาถามข้อมูลก่อนครับ','choices':EXAMPLES}
+    if route == 'explanation':
+        metrics = previous['metrics']
+        text = 'ผลล่าสุดเป็น '+previous['metric_label']+' · งวด '+previous['period']+' · ขอบเขต '+previous['scope']+'\n'
+        text += '\n'.join(m['label']+' ('+m['unit']+'): '+m['formula'] for m in metrics)
+        text += '\nข้อจำกัด: '+previous['caveat']+'\nนี่เป็นการอธิบายผลเดิม ไม่ได้ค้นข้อมูลใหม่หรือยืนยันเหตุและผล'
+        return {**out,'direct_answer':text}
+    result = deepcopy(previous)
+    kind = decision.chart
+    if kind == 'auto':
+        return {**out,'mode':'clarification','error':'ต้องการกราฟแท่ง กราฟเส้น หรือตารางครับ?','choices':['เปลี่ยนเป็นกราฟแท่ง','เปลี่ยนเป็นกราฟเส้น','เปลี่ยนเป็นตาราง']}
+    notice = ''
+    if kind == 'line' and result['plan']['group_by'] != 'period':
+        kind,notice = 'bar','ไม่มีแกนเวลา จึงใช้กราฟแท่งแทนกราฟเส้น'
+    result['chart'] = {'kind':kind,'notice':notice}
+    result['plan']['chart'] = kind
+    return {**out,'result':result,'last_result':result,'direct_answer':'ปรับการแสดงผลจากข้อมูลรอบเดิม ไม่ได้ค้นหรือเปลี่ยนตัวชี้วัด/ช่วงเวลาใหม่ครับ'+(' · '+notice if notice else '')}
+
+def _conversation_edge(state):
+    record('routing',phase='router',route=state['conversation_route'])
+    return 'plan' if state['conversation_route'] == 'analytics' else 'answer'
 
 def _execute(state):
     try:
         result = execute_plan(QueryPlan.model_validate(state['plan']))
         # Pin resolved end month in memory, rather than letting later refreshes move it.
         confirmed = {**state['plan'],'end_period':result['period']}
-        return {'result':result,'last_plan':confirmed}
+        return {'result':result,'last_plan':confirmed,'last_result':result}
     except (Clarification,ValueError) as exc:
         return {'result':None,'error':str(exc),'mode':'clarification','choices':[]}
     except Exception:
         record('failure',failure_type='WarehouseUnavailable',phase='execute')
-        return {'result':None,'error':'ไม่สามารถอ่านผลจากคลังข้อมูลได้ กรุณาลองใหม่','mode':'error','choices':[]}
+        return {'result':None,'error':'ไม่สามารถอ่านผลจากคลังข้อมูลได้ กรุณาลองใหม่','mode':'error','error_code':'warehouse_unavailable','choices':[]}
 
 def _answer(state):
     result = state.get('result')
-    if result is None:
+    if state.get('direct_answer'):
+        answer = state['direct_answer']
+    elif result is None:
         answer = state.get('error') or 'ไม่สามารถตอบได้'
     elif not result['rows']:
         answer = 'ไม่มีข้อมูลที่คำนวณตัวชี้วัดได้ตามงวดและเงื่อนไขนี้ (รวมกรณีไม่มีฐาน YoY); ไม่ใช้ค่าศูนย์หรือผลเก่าแทน'
@@ -228,8 +306,10 @@ def _answer(state):
 @lru_cache(maxsize=1)
 def graph():
     builder=StateGraph(ChatState)
+    builder.add_node('conversation',_conversation)
     builder.add_node('plan',_plan); builder.add_node('execute',_execute); builder.add_node('answer',_answer)
-    builder.add_edge(START,'plan')
+    builder.add_edge(START,'conversation')
+    builder.add_conditional_edges('conversation',_conversation_edge,{'plan':'plan','answer':'answer'})
     builder.add_conditional_edges('plan',_route,{'error':'answer','execute':'execute'})
     builder.add_edge('execute','answer'); builder.add_edge('answer',END)
     dsn=engine().url.render_as_string(hide_password=False).replace('postgresql+psycopg://','postgresql://')
@@ -243,7 +323,7 @@ def ask(question: str,session_id: str='default') -> dict[str,Any]:
     with capture() as events:
         try:
             state=graph().invoke({'question':question},config={'configurable':{'thread_id':session_id}})
-            reply = {k:state.get(k) for k in ('answer','result','error','mode','choices')}
+            reply = {k:state.get(k) for k in ('answer','result','error','mode','choices','error_code','routing_mode')}
             status = state['mode'] if state['mode'] in ['clarification','unsupported','error'] else 'ready'
             emit(summarize(events,(perf_counter()-started)*1000,status))
             return reply

@@ -56,3 +56,4 @@ def test_langgraph_rules_mode():
     assert response["result"]["plan"]["group_by"] == "period"
     assert len(response["result"]["rows"]) >= 2
     assert "semantic rules" in response["mode"]
+    assert response['routing_mode'] == 'offline fallback'

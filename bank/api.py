@@ -95,8 +95,12 @@ def chat(payload: ChatRequest):
     if len(payload.question) > 1000:
         raise HTTPException(400, "Question is too long")
     result = ask(payload.question, payload.session_id)
-    if result.get("mode") == "error":
-        result.update(error="ผู้ให้บริการ AI ไม่พร้อมใช้งาน กรุณาลองใหม่ภายหลัง", answer="ผู้ให้บริการ AI ไม่พร้อมใช้งาน กรุณาลองใหม่ภายหลัง")
+    if result.get('mode') == 'error':
+        # Public messages are selected by a bounded code, never a provider exception string.
+        message = ('ไม่สามารถอ่านผลจากคลังข้อมูลได้ กรุณาลองใหม่'
+            if result.get('error_code') == 'warehouse_unavailable'
+            else 'ไม่สามารถติดต่อผู้ให้บริการ AI ได้ กรุณาลองใหม่ หรือเลือกคำถามตัวอย่าง')
+        result.update(error=message,answer=message)
     return result
 
 
