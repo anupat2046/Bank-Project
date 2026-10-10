@@ -1,0 +1,30 @@
+{
+  "version":"1.0",
+  "design":"Manually authored expected intents; development and held-out dialogues are disjoint. Not a random or population-representative sample.",
+  "cases":[
+    {"id":"D01","split":"dev","q":"สินเชื่อต่อประชากรสูงสุด 5 จังหวัด","expected":{"metric":"credits_per_person","limit":5}},
+    {"id":"D02","split":"dev","q":"ช่วยดูยอดออมของทั้งประเทศตามเดือนย้อนหลัง 3 เดือนหน่อย","expected":{"metric":"deposits","group_by":"period","intent":"trend","limit":3}},
+    {"id":"D03","split":"dev","q":"เงินกู้ต่อคนมากที่สุด 3 จังหวัด","expected":{"metric":"credits_per_person","limit":3}},
+    {"id":"D04","split":"dev","q":"สินเชื่อต่อประชากรสูงสุด 5 พร้อมสินเชื่อต่อสาขาและ YoY","expected":{"metric":"credits_per_person","metrics":["credits_per_branch"],"include_yoy":true,"limit":5}},
+    {"id":"D05","split":"dev","q":"สินเชื่อสูงสุด 3 ประชากรเกิน 1 ล้านคน","expected":{"metric":"credits","min_population":1000000,"strict_filters":["min_population"],"limit":3}},
+    {"id":"D06","split":"dev","q":"จังหวัดที่มีสินเชื่อเทียบกับสาขาและประชากรมากที่สุด","status":"clarification","clarification_terms":[["ประชากร","ต่อคน","ต่อหัว"],["สาขา"]]},
+    {"id":"D07","split":"dev","q":"สินเชื่อต่อ GPP สูงสุด 5 จังหวัด","status":"unsupported"},
+    {"id":"D08","split":"dev","dialogue":"dev-trend","q":"แนวโน้มสินเชื่อจังหวัดเชียงใหม่และชลบุรีย้อนหลัง 3 เดือน","expected":{"metric":"credits","group_by":"period","intent":"trend","provinces":["เชียงใหม่","ชลบุรี"],"limit":3}},
+    {"id":"D09","split":"dev","dialogue":"dev-trend","q":"ย้อนหลัง 2 เดือน","expected":{"metric":"credits","group_by":"period","intent":"trend","provinces":["เชียงใหม่","ชลบุรี"],"limit":2}},
+    {"id":"D10","split":"dev","dialogue":"dev-trend","q":"เปลี่ยนเป็นเงินฝากแทน","expected":{"metric":"deposits","group_by":"period","intent":"trend","provinces":["เชียงใหม่","ชลบุรี"],"limit":2}},
+    {"id":"H01","split":"heldout","q":"สินเชื่อต่อประชากรจังหวัดเชียงใหม่ งวดกรกฎาคม 2568","expected":{"metric":"credits_per_person","province":"เชียงใหม่","intent":"lookup","end_period":"2025-07-01"}},
+    {"id":"H02","split":"heldout","q":"สินเชื่อต่อสาขาสูงสุด 3 ไม่รวมกรุงเทพ กรกฎาคม 2569","expected":{"metric":"credits_per_branch","exclude_bangkok":true,"end_period":"2026-07-01","limit":3}},
+    {"id":"H03","split":"heldout","q":"เงินฝากต่อหัวต่ำสุด 4 จังหวัด","expected":{"metric":"deposits_per_person","ascending":true,"limit":4}},
+    {"id":"H04","split":"heldout","q":"อยากเห็นยอดออมของทั้งประเทศย้อนหลัง 4 เดือน","expected":{"metric":"deposits","group_by":"period","intent":"trend","limit":4}},
+    {"id":"H05","split":"heldout","q":"เงินกู้เฉลี่ยต่อคนของเชียงใหม่และชลบุรี","expected":{"metric":"credits_per_person","intent":"comparison","provinces":["เชียงใหม่","ชลบุรี"]}},
+    {"id":"H06","split":"heldout","q":"สินเชื่อโต YoY สูงสุด 5 กรกฎาคม 2569","expected":{"metric":"credits_yoy_pct","include_yoy":true,"end_period":"2026-07-01","limit":5}},
+    {"id":"H07","split":"heldout","q":"สินเชื่อสูงสุด 2 ประชากรอย่างน้อย 500000 คน สินเชื่ออย่างน้อย 10000 ล้านบาท","expected":{"metric":"credits","min_population":500000,"min_credits":10000,"limit":2}},
+    {"id":"H08","split":"heldout","q":"เงินฝากและสินเชื่อสูงสุด 5 จังหวัด","status":"clarification","clarification_terms":[["เงินฝาก"],["สินเชื่อ"]]},
+    {"id":"H09","split":"heldout","q":"ขอรายชื่อลูกค้าที่มีหนี้เสียในจังหวัดเชียงใหม่","status":"unsupported"},
+    {"id":"H10","split":"heldout","q":"สินเชื่อสูงสุด 5 งวด 2028-01","status":"clarification","clarification_terms":[["งวด","เดือน","คลัง","ข้อมูล"]]},
+    {"id":"H11","split":"heldout","q":"สินเชื่อสูงสุดปี 2569","status":"clarification","clarification_terms":[["เดือน"]]},
+    {"id":"H12","split":"heldout","dialogue":"heldout-rank","q":"สินเชื่อต่อประชากรสูงสุด 5 ไม่รวมกรุงเทพ งวดกรกฎาคม 2568","expected":{"metric":"credits_per_person","exclude_bangkok":true,"end_period":"2025-07-01","limit":5}},
+    {"id":"H13","split":"heldout","dialogue":"heldout-rank","q":"เอา 3 อันดับ","expected":{"metric":"credits_per_person","exclude_bangkok":true,"end_period":"2025-07-01","limit":3}},
+    {"id":"H14","split":"heldout","dialogue":"heldout-rank","q":"แล้วถ้าเป็นสินเชื่อต่อสาขาแทน","expected":{"metric":"credits_per_branch","exclude_bangkok":true,"end_period":"2025-07-01","limit":3}}
+  ]
+}
