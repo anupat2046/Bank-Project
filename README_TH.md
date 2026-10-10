@@ -4,13 +4,16 @@
 
 ## ผลที่ทำได้ ณ 28 กันยายน 2569
 
+อัปเดตสำหรับโจทย์ Project ใหม่เมื่อ **10 ต.ค. 2569**: มี 10 Competency Questions, SQL ทั้ง 10 ข้อพร้อมผลจริง, หน้า Prototype สำหรับดูคำตอบ และชุดทดสอบผ่าน **39 รายการ**. โจทย์ใหม่ไม่กำหนด scheduler ต่อเนื่องหนึ่งเดือน; ข้อกำหนดนั้นเป็น assignment เดิม
+
 - PostgreSQL: 77 จังหวัด × 25 งวดรายเดือน (ก.ค. 2567–ก.ค. 2569) = 1,925 แถวใน `fact_bank_month` และ `mart_province_month`
 - DOPA: ประชากรทะเบียนรายจังหวัด 3 ปี (2566–2568) = 231 แถว
 - สศช.: GPP จังหวัดปี 2024p = 77 แถว
 - World Bank Indicators **JSON API จริง**: เงินเฟ้อไทย 65 ปีที่มีค่า; metadata ล่าสุดของ API = 13 ก.ค. 2569
 - ธปท. มติคณะกรรมการนโยบายการเงิน: 191 events จาก XLSX ทางการ (ไม่ใช่ BOT API); join อัตราล่าสุด ณ สิ้นเดือนโดยไม่มองล่วงหน้า
 - Airflow DAG `bank_regional_daily`: ทดสอบรันครบ 6 งานแล้ว (BOT, DOPA, NESDC, World Bank API, MPC workbook, mart); ตั้งทำงานทุกวัน 07:00 Asia/Bangkok โดย `catchup=False` และเก็บ metadata ใน PostgreSQL ฐาน `airflow` แยกจากคลัง `bank`
-- Grafana: 13 panels ตอบคำถามธุรกิจอย่างน้อย 7 ข้อ รวมความต่อเนื่อง YoY, GPP peer, policy context และ shortlist
+- Competency Questions: [10 ข้อ พร้อม SQL และผลจริง](docs/competency-questions.md) ตรวจเมื่อ 10 ต.ค. 2569; มีหน้า Streamlit “10 คำถามธุรกิจ” ให้เลือกดูผล ตาราง กราฟ และ SQL
+- Grafana: 13 panels รวมความต่อเนื่อง YoY, GPP peer, policy context และ shortlist
 - Streamlit: ภาพรวม เปรียบเทียบจังหวัด/GPP scatter/คัดพื้นที่แบบปรับเกณฑ์ได้ ถามข้อมูล และตรวจแหล่งข้อมูล/ประวัติ ETL
 - FastAPI + LangGraph: คำถามไทย → `QueryPlan` แบบจำกัด → SQL ที่คอมไพล์จาก KPI catalog → PostgreSQL role อ่านอย่างเดียว → ตาราง/กราฟ/SQL/provenance
 - LangGraph checkpoints ลง PostgreSQL จริง; โหมดไม่มีคีย์ยังระบุชัดว่าเป็นกฎภาษาไทยที่ไม่ใช้ AI. **Gemini ทดลองสดผ่านหนึ่งคำถามเมื่อ 30 ก.ย. 2569** แต่ยังไม่ใช่การประเมินความแม่นยำครบชุด
@@ -124,8 +127,9 @@ Workflow: `plan` (LangChain structured output หรือกฎไทยที�
 - [GPP scatter](docs/evidence/gpp-scatter-qa.png), [คัดพื้นที่ 22 จังหวัด](docs/evidence/screening-qa.png)
 - [Grafana ภาพรวม](docs/evidence/grafana-qa.png), [ตัวชี้วัดและ API](docs/evidence/grafana-detail-qa.png), [YoY](docs/evidence/grafana-growth-qa.png), [Policy/GPP](docs/evidence/grafana-policy-qa.png), [ความต่อเนื่อง YoY](docs/evidence/grafana-new-panels-qa.png)
 - [Airflow DAG 6 tasks สำเร็จ](docs/evidence/airflow-graph-qa.png)
-- [สรุปผลตรวจและ Airflow run IDs](docs/evidence/run-status.md) · [รายงานธุรกิจและ 7 insights](docs/business-report.md)
-- [PDF สำหรับส่งงาน](output/pdf/thailand-regional-banking-intelligence-report.pdf) (3 หน้า; ระบุส่วนที่ยังต้องเก็บหลักฐานตามเวลา)
+- [สรุปผลตรวจและ Airflow run IDs](docs/evidence/run-status.md) · [รายงานธุรกิจและ 10 คำถาม](docs/business-report.md)
+- [หลักฐาน 10 Competency Questions](docs/competency-questions.md) · [SQL ทั้ง 10 ข้อ](sql/competency_questions.sql) · [ภาพหน้า Prototype ใหม่](output/playwright/competency-questions.png)
+- [PDF assignment เดิม](output/pdf/thailand-regional-banking-intelligence-report.pdf) (3 หน้า; สร้างก่อนอัปเดต 10 คำถาม ให้ใช้เอกสาร Competency Questions ฉบับใหม่ประกอบ)
 
 Design comparison: (1) sidebar 4 หมวดตรงแนวคิด; (2) white/navy/emerald ตรง; (3) มี 3 KPI จริงตรงตำแหน่ง; (4) มีกราฟ trend และตารางจังหวัดจริง; (5) มีตัวเลือกเดือนและ provenance; (6) กราฟจริงไม่เรียบตาม concept เพราะยึดตัวเลข ธปท. ไม่ตกแต่งข้อมูล; (7) ใช้ Streamlit radio/UI แทน icon custom บางส่วนเพื่อให้ใช้งานได้ทันที
 

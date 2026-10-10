@@ -42,6 +42,7 @@ tmp/
 !/output/playwright/chatbot.png
 !/output/playwright/chatbot-chart-and-sql.png
 !/output/playwright/chatbot-gemini-full.png
+!/output/playwright/competency-questions.png
 
 # Operating-system/editor leftovers.
 .DS_Store

@@ -13,6 +13,7 @@ from sqlalchemy import text
 from bank.chat import ask
 from bank.db import read_engine
 from bank.query import METRICS
+from bank.competency import QUESTIONS, queries, run_question
 
 st.set_page_config(page_title="Bank Intelligence", page_icon="🏦", layout="wide")
 st.markdown("""
@@ -63,7 +64,7 @@ if overview.empty:
 
 with st.sidebar:
     st.markdown("# Bank Intelligence")
-    page = st.radio("เมนู", ["ภาพรวมตลาด", "เปรียบเทียบจังหวัด", "ถามข้อมูล", "แหล่งข้อมูล"],
+    page = st.radio("เมนู", ["ภาพรวมตลาด", "เปรียบเทียบจังหวัด", "ถามข้อมูล", "10 คำถามธุรกิจ", "แหล่งข้อมูล"],
                     label_visibility="collapsed")
     st.caption("Thailand Regional Banking Intelligence")
 
@@ -226,6 +227,33 @@ elif page == "ถามข้อมูล":
                 st.json(payload["parameters"])
                 st.write(" / ".join(payload["sources"]))
                 st.caption(payload["caveat"])
+    footer(latest)
+
+elif page == "10 คำถามธุรกิจ":
+    st.title("10 คำถามธุรกิจ")
+    st.write("สำรวจโจทย์ตลาดธนาคารรายจังหวัด พร้อมผลจากคลังข้อมูลและวิธีคำนวณ")
+    selected_question = st.selectbox("เลือกคำถาม", QUESTIONS, format_func=lambda q: f"{q[0]} · {q[1]}")
+    qid, title, sources, fields, location, caveat = selected_question
+    st.caption(f"งวดล่าสุด {month_label(latest)} · แหล่งข้อมูล {sources}")
+    frame = pd.DataFrame(run_question(qid))
+    st.metric("จำนวนแถวผลลัพธ์", len(frame))
+    st.dataframe(frame, hide_index=True, use_container_width=True)
+    numeric = frame.select_dtypes(include="number").columns.tolist()
+    if qid == "CQ10":
+        numeric = ["bangkok_share_pct", "top5_share_pct"]
+    if numeric and not frame.empty:
+        y = st.selectbox("ตัวชี้วัดในกราฟ", numeric)
+        if "period" in frame:
+            fig = px.line(frame, x="period", y=y, markers=True)
+        else:
+            x = "name_th" if "name_th" in frame else "province_a" if "province_a" in frame else None
+            fig = px.bar(frame, x=x, y=y) if x else px.bar(frame[[y]].melt(), x="variable", y="value")
+        st.plotly_chart(fig, use_container_width=True)
+    st.caption(caveat)
+    with st.expander("SQL และฟิลด์ที่ใช้"):
+        st.code(queries()[qid], language="sql")
+        st.write(fields)
+        st.write(f"มุมมองที่เกี่ยวข้อง: {location}")
     footer(latest)
 
 else:

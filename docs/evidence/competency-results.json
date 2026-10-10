@@ -1,0 +1,769 @@
+{
+  "verified_date": "2026-10-10",
+  "snapshot": {
+    "first_period": "2024-07-01",
+    "latest_period": "2026-07-01",
+    "months": 25,
+    "provinces": 77,
+    "rows": 1925
+  },
+  "results": {
+    "CQ01": [
+      {
+        "name_th": "ปทุมธานี",
+        "positive_months": 12,
+        "observed_months": 12,
+        "average_yoy_pct": 1.47
+      },
+      {
+        "name_th": "อุทัยธานี",
+        "positive_months": 10,
+        "observed_months": 12,
+        "average_yoy_pct": 1.82
+      },
+      {
+        "name_th": "กรุงเทพมหานคร",
+        "positive_months": 8,
+        "observed_months": 12,
+        "average_yoy_pct": 0.32
+      },
+      {
+        "name_th": "สมุทรสงคราม",
+        "positive_months": 8,
+        "observed_months": 12,
+        "average_yoy_pct": -1.12
+      },
+      {
+        "name_th": "พังงา",
+        "positive_months": 8,
+        "observed_months": 12,
+        "average_yoy_pct": -1.14
+      },
+      {
+        "name_th": "สุโขทัย",
+        "positive_months": 7,
+        "observed_months": 12,
+        "average_yoy_pct": -0.4
+      },
+      {
+        "name_th": "สิงห์บุรี",
+        "positive_months": 6,
+        "observed_months": 12,
+        "average_yoy_pct": 0.57
+      },
+      {
+        "name_th": "นครนายก",
+        "positive_months": 4,
+        "observed_months": 12,
+        "average_yoy_pct": -1.07
+      },
+      {
+        "name_th": "อุตรดิตถ์",
+        "positive_months": 4,
+        "observed_months": 12,
+        "average_yoy_pct": -1.31
+      },
+      {
+        "name_th": "ยโสธร",
+        "positive_months": 3,
+        "observed_months": 12,
+        "average_yoy_pct": -0.77
+      }
+    ],
+    "CQ02": [
+      {
+        "name_th": "ร้อยเอ็ด",
+        "deposit_yoy_pct": 3.1,
+        "credit_yoy_pct": -10.04,
+        "growth_gap_pp": 13.14
+      },
+      {
+        "name_th": "ระยอง",
+        "deposit_yoy_pct": 6.95,
+        "credit_yoy_pct": -3.84,
+        "growth_gap_pp": 10.79
+      },
+      {
+        "name_th": "กระบี่",
+        "deposit_yoy_pct": 5.83,
+        "credit_yoy_pct": -4.75,
+        "growth_gap_pp": 10.58
+      },
+      {
+        "name_th": "ประจวบคีรีขันธ์",
+        "deposit_yoy_pct": 4.91,
+        "credit_yoy_pct": -5.16,
+        "growth_gap_pp": 10.07
+      },
+      {
+        "name_th": "ตราด",
+        "deposit_yoy_pct": -0.88,
+        "credit_yoy_pct": -10.06,
+        "growth_gap_pp": 9.18
+      },
+      {
+        "name_th": "หนองบัวลำภู",
+        "deposit_yoy_pct": 0.32,
+        "credit_yoy_pct": -8.73,
+        "growth_gap_pp": 9.05
+      },
+      {
+        "name_th": "เลย",
+        "deposit_yoy_pct": 3.5,
+        "credit_yoy_pct": -5.51,
+        "growth_gap_pp": 9.0
+      },
+      {
+        "name_th": "เพชรบูรณ์",
+        "deposit_yoy_pct": 1.44,
+        "credit_yoy_pct": -7.47,
+        "growth_gap_pp": 8.9
+      },
+      {
+        "name_th": "ฉะเชิงเทรา",
+        "deposit_yoy_pct": 3.25,
+        "credit_yoy_pct": -5.57,
+        "growth_gap_pp": 8.82
+      },
+      {
+        "name_th": "นครราชสีมา",
+        "deposit_yoy_pct": 2.3,
+        "credit_yoy_pct": -6.4,
+        "growth_gap_pp": 8.71
+      }
+    ],
+    "CQ03": [
+      {
+        "name_th": "กรุงเทพมหานคร",
+        "branches": 1246,
+        "population": 5422568,
+        "population_reference_year": 2025,
+        "branches_per_100k": 22.98
+      },
+      {
+        "name_th": "ภูเก็ต",
+        "branches": 85,
+        "population": 432464,
+        "population_reference_year": 2025,
+        "branches_per_100k": 19.65
+      },
+      {
+        "name_th": "ชลบุรี",
+        "branches": 239,
+        "population": 1645985,
+        "population_reference_year": 2025,
+        "branches_per_100k": 14.52
+      },
+      {
+        "name_th": "สมุทรสาคร",
+        "branches": 70,
+        "population": 587367,
+        "population_reference_year": 2025,
+        "branches_per_100k": 11.92
+      },
+      {
+        "name_th": "นนทบุรี",
+        "branches": 147,
+        "population": 1322280,
+        "population_reference_year": 2025,
+        "branches_per_100k": 11.12
+      },
+      {
+        "name_th": "สมุทรปราการ",
+        "branches": 152,
+        "population": 1383924,
+        "population_reference_year": 2025,
+        "branches_per_100k": 10.98
+      },
+      {
+        "name_th": "ระยอง",
+        "branches": 83,
+        "population": 789730,
+        "population_reference_year": 2025,
+        "branches_per_100k": 10.51
+      },
+      {
+        "name_th": "นครปฐม",
+        "branches": 88,
+        "population": 926318,
+        "population_reference_year": 2025,
+        "branches_per_100k": 9.5
+      },
+      {
+        "name_th": "ปทุมธานี",
+        "branches": 116,
+        "population": 1246062,
+        "population_reference_year": 2025,
+        "branches_per_100k": 9.31
+      },
+      {
+        "name_th": "สุราษฎร์ธานี",
+        "branches": 95,
+        "population": 1075977,
+        "population_reference_year": 2025,
+        "branches_per_100k": 8.83
+      }
+    ],
+    "CQ04": [
+      {
+        "province_a": "ปราจีนบุรี",
+        "province_b": "ภูเก็ต",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 243656.276,
+        "gpp_b_million": 272395.446,
+        "gpp_gap_pct": 10.55,
+        "credits_a_million": 32506.0,
+        "credits_b_million": 176806.0,
+        "credit_size_ratio": 5.44
+      },
+      {
+        "province_a": "ปราจีนบุรี",
+        "province_b": "สงขลา",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 243656.276,
+        "gpp_b_million": 268678.678,
+        "gpp_gap_pct": 9.31,
+        "credits_a_million": 32506.0,
+        "credits_b_million": 146695.0,
+        "credit_size_ratio": 4.51
+      },
+      {
+        "province_a": "นนทบุรี",
+        "province_b": "ฉะเชิงเทรา",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 405296.103,
+        "gpp_b_million": 433363.002,
+        "gpp_gap_pct": 6.48,
+        "credits_a_million": 267194.0,
+        "credits_b_million": 59581.0,
+        "credit_size_ratio": 4.48
+      },
+      {
+        "province_a": "ร้อยเอ็ด",
+        "province_b": "พังงา",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 89232.992,
+        "gpp_b_million": 82457.562,
+        "gpp_gap_pct": 7.59,
+        "credits_a_million": 48648.0,
+        "credits_b_million": 11191.0,
+        "credit_size_ratio": 4.35
+      },
+      {
+        "province_a": "ปราจีนบุรี",
+        "province_b": "ขอนแก่น",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 243656.276,
+        "gpp_b_million": 238726.549,
+        "gpp_gap_pct": 2.02,
+        "credits_a_million": 32506.0,
+        "credits_b_million": 137557.0,
+        "credit_size_ratio": 4.23
+      },
+      {
+        "province_a": "สระบุรี",
+        "province_b": "เชียงใหม่",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 252148.931,
+        "gpp_b_million": 293809.403,
+        "gpp_gap_pct": 14.18,
+        "credits_a_million": 52858.0,
+        "credits_b_million": 203282.0,
+        "credit_size_ratio": 3.85
+      },
+      {
+        "province_a": "กระบี่",
+        "province_b": "พังงา",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 95008.022,
+        "gpp_b_million": 82457.562,
+        "gpp_gap_pct": 13.21,
+        "credits_a_million": 39566.0,
+        "credits_b_million": 11191.0,
+        "credit_size_ratio": 3.54
+      },
+      {
+        "province_a": "ยโสธร",
+        "province_b": "อุทัยธานี",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 34496.289,
+        "gpp_b_million": 34341.507,
+        "gpp_gap_pct": 0.45,
+        "credits_a_million": 18517.0,
+        "credits_b_million": 5296.0,
+        "credit_size_ratio": 3.5
+      },
+      {
+        "province_a": "สุรินทร์",
+        "province_b": "พังงา",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 93062.145,
+        "gpp_b_million": 82457.562,
+        "gpp_gap_pct": 11.4,
+        "credits_a_million": 38638.0,
+        "credits_b_million": 11191.0,
+        "credit_size_ratio": 3.45
+      },
+      {
+        "province_a": "ปทุมธานี",
+        "province_b": "ฉะเชิงเทรา",
+        "gpp_reference_year": 2024,
+        "gpp_a_million": 467878.37,
+        "gpp_b_million": 433363.002,
+        "gpp_gap_pct": 7.38,
+        "credits_a_million": 201871.0,
+        "credits_b_million": 59581.0,
+        "credit_size_ratio": 3.39
+      }
+    ],
+    "CQ05": [
+      {
+        "period": "2024-07-01",
+        "policy_rate_pct": 2.5,
+        "credits_million": 17903788.0,
+        "deposits_million": 17195799.0
+      },
+      {
+        "period": "2024-08-01",
+        "policy_rate_pct": 2.5,
+        "credits_million": 17917229.0,
+        "deposits_million": 16973713.0
+      },
+      {
+        "period": "2024-09-01",
+        "policy_rate_pct": 2.5,
+        "credits_million": 17666891.0,
+        "deposits_million": 17039596.0
+      },
+      {
+        "period": "2024-10-01",
+        "policy_rate_pct": 2.25,
+        "credits_million": 18078339.0,
+        "deposits_million": 17399538.0
+      },
+      {
+        "period": "2024-11-01",
+        "policy_rate_pct": 2.25,
+        "credits_million": 18007664.0,
+        "deposits_million": 17323154.0
+      },
+      {
+        "period": "2024-12-01",
+        "policy_rate_pct": 2.25,
+        "credits_million": 18120079.0,
+        "deposits_million": 17382795.0
+      },
+      {
+        "period": "2025-01-01",
+        "policy_rate_pct": 2.25,
+        "credits_million": 18112082.0,
+        "deposits_million": 17441681.0
+      },
+      {
+        "period": "2025-02-01",
+        "policy_rate_pct": 2.0,
+        "credits_million": 18151087.0,
+        "deposits_million": 17482252.0
+      },
+      {
+        "period": "2025-03-01",
+        "policy_rate_pct": 2.0,
+        "credits_million": 17964272.0,
+        "deposits_million": 17479805.0
+      },
+      {
+        "period": "2025-04-01",
+        "policy_rate_pct": 1.75,
+        "credits_million": 18111967.0,
+        "deposits_million": 17500861.0
+      },
+      {
+        "period": "2025-05-01",
+        "policy_rate_pct": 1.75,
+        "credits_million": 18130974.0,
+        "deposits_million": 17468148.0
+      },
+      {
+        "period": "2025-06-01",
+        "policy_rate_pct": 1.75,
+        "credits_million": 18088854.0,
+        "deposits_million": 17392524.0
+      },
+      {
+        "period": "2025-07-01",
+        "policy_rate_pct": 1.75,
+        "credits_million": 18130581.0,
+        "deposits_million": 17457834.0
+      },
+      {
+        "period": "2025-08-01",
+        "policy_rate_pct": 1.5,
+        "credits_million": 18010228.0,
+        "deposits_million": 17447155.0
+      },
+      {
+        "period": "2025-09-01",
+        "policy_rate_pct": 1.5,
+        "credits_million": 17632717.0,
+        "deposits_million": 17382173.0
+      },
+      {
+        "period": "2025-10-01",
+        "policy_rate_pct": 1.5,
+        "credits_million": 17731397.0,
+        "deposits_million": 17543912.0
+      },
+      {
+        "period": "2025-11-01",
+        "policy_rate_pct": 1.5,
+        "credits_million": 17861102.0,
+        "deposits_million": 17649277.0
+      },
+      {
+        "period": "2025-12-01",
+        "policy_rate_pct": 1.25,
+        "credits_million": 17965474.0,
+        "deposits_million": 17813846.0
+      },
+      {
+        "period": "2026-01-01",
+        "policy_rate_pct": 1.25,
+        "credits_million": 17798460.0,
+        "deposits_million": 17851124.0
+      },
+      {
+        "period": "2026-02-01",
+        "policy_rate_pct": 1.0,
+        "credits_million": 17800336.0,
+        "deposits_million": 17852455.0
+      },
+      {
+        "period": "2026-03-01",
+        "policy_rate_pct": 1.0,
+        "credits_million": 17926515.0,
+        "deposits_million": 18026496.0
+      },
+      {
+        "period": "2026-04-01",
+        "policy_rate_pct": 1.0,
+        "credits_million": 18066501.0,
+        "deposits_million": 18255047.0
+      },
+      {
+        "period": "2026-05-01",
+        "policy_rate_pct": 1.0,
+        "credits_million": 18297193.0,
+        "deposits_million": 18075859.0
+      },
+      {
+        "period": "2026-06-01",
+        "policy_rate_pct": 1.0,
+        "credits_million": 18041166.0,
+        "deposits_million": 17992368.0
+      },
+      {
+        "period": "2026-07-01",
+        "policy_rate_pct": 1.0,
+        "credits_million": 18100244.0,
+        "deposits_million": 18136237.0
+      }
+    ],
+    "CQ06": [
+      {
+        "name_th": "กรุงเทพมหานคร",
+        "branch_change": -80,
+        "credit_yoy_pct": 0.75
+      },
+      {
+        "name_th": "ปทุมธานี",
+        "branch_change": -14,
+        "credit_yoy_pct": 0.73
+      },
+      {
+        "name_th": "พังงา",
+        "branch_change": -2,
+        "credit_yoy_pct": 1.47
+      },
+      {
+        "name_th": "สิงห์บุรี",
+        "branch_change": -1,
+        "credit_yoy_pct": 1.39
+      },
+      {
+        "name_th": "นครนายก",
+        "branch_change": -1,
+        "credit_yoy_pct": 0.6
+      },
+      {
+        "name_th": "อ่างทอง",
+        "branch_change": -1,
+        "credit_yoy_pct": 0.05
+      }
+    ],
+    "CQ07": [
+      {
+        "name_th": "ชลบุรี",
+        "gpp_million_baht": 1234302.751,
+        "credits_million_baht": 450683.0,
+        "branches_per_100k": 14.52
+      },
+      {
+        "name_th": "ระยอง",
+        "gpp_million_baht": 1099856.239,
+        "credits_million_baht": 147746.0,
+        "branches_per_100k": 10.51
+      },
+      {
+        "name_th": "สมุทรปราการ",
+        "gpp_million_baht": 769369.65,
+        "credits_million_baht": 296751.0,
+        "branches_per_100k": 10.98
+      },
+      {
+        "name_th": "ปทุมธานี",
+        "gpp_million_baht": 467878.37,
+        "credits_million_baht": 201871.0,
+        "branches_per_100k": 9.31
+      },
+      {
+        "name_th": "สมุทรสาคร",
+        "gpp_million_baht": 433722.434,
+        "credits_million_baht": 104319.0,
+        "branches_per_100k": 11.92
+      },
+      {
+        "name_th": "ฉะเชิงเทรา",
+        "gpp_million_baht": 433363.002,
+        "credits_million_baht": 59581.0,
+        "branches_per_100k": 6.68
+      },
+      {
+        "name_th": "นนทบุรี",
+        "gpp_million_baht": 405296.103,
+        "credits_million_baht": 267194.0,
+        "branches_per_100k": 11.12
+      },
+      {
+        "name_th": "พระนครศรีอยุธยา",
+        "gpp_million_baht": 403410.908,
+        "credits_million_baht": 83263.0,
+        "branches_per_100k": 8.39
+      },
+      {
+        "name_th": "นครปฐม",
+        "gpp_million_baht": 402264.621,
+        "credits_million_baht": 117007.0,
+        "branches_per_100k": 9.5
+      },
+      {
+        "name_th": "นครราชสีมา",
+        "gpp_million_baht": 349213.484,
+        "credits_million_baht": 158006.0,
+        "branches_per_100k": 4.67
+      },
+      {
+        "name_th": "เชียงใหม่",
+        "gpp_million_baht": 293809.403,
+        "credits_million_baht": 203282.0,
+        "branches_per_100k": 7.78
+      },
+      {
+        "name_th": "สุราษฎร์ธานี",
+        "gpp_million_baht": 272251.386,
+        "credits_million_baht": 103568.0,
+        "branches_per_100k": 8.83
+      },
+      {
+        "name_th": "สงขลา",
+        "gpp_million_baht": 268678.678,
+        "credits_million_baht": 146695.0,
+        "branches_per_100k": 7.07
+      },
+      {
+        "name_th": "สระบุรี",
+        "gpp_million_baht": 252148.931,
+        "credits_million_baht": 52858.0,
+        "branches_per_100k": 7.52
+      },
+      {
+        "name_th": "ขอนแก่น",
+        "gpp_million_baht": 238726.549,
+        "credits_million_baht": 137557.0,
+        "branches_per_100k": 5.1
+      },
+      {
+        "name_th": "นครศรีธรรมราช",
+        "gpp_million_baht": 201035.529,
+        "credits_million_baht": 77359.0,
+        "branches_per_100k": 5.03
+      },
+      {
+        "name_th": "ราชบุรี",
+        "gpp_million_baht": 192031.721,
+        "credits_million_baht": 55436.0,
+        "branches_per_100k": 6.15
+      },
+      {
+        "name_th": "อุบลราชธานี",
+        "gpp_million_baht": 148641.743,
+        "credits_million_baht": 89021.0,
+        "branches_per_100k": 3.06
+      },
+      {
+        "name_th": "อุดรธานี",
+        "gpp_million_baht": 132615.233,
+        "credits_million_baht": 84676.0,
+        "branches_per_100k": 3.81
+      },
+      {
+        "name_th": "นครสวรรค์",
+        "gpp_million_baht": 128697.39,
+        "credits_million_baht": 54424.0,
+        "branches_per_100k": 4.96
+      },
+      {
+        "name_th": "เชียงราย",
+        "gpp_million_baht": 121375.943,
+        "credits_million_baht": 62450.0,
+        "branches_per_100k": 4.78
+      },
+      {
+        "name_th": "พิษณุโลก",
+        "gpp_million_baht": 116057.879,
+        "credits_million_baht": 57952.0,
+        "branches_per_100k": 5.63
+      }
+    ],
+    "CQ08": [
+      {
+        "name_th": "ร้อยเอ็ด",
+        "deposits_million_baht": 38197.0,
+        "credits_million_baht": 48648.0,
+        "credit_deposit_ratio_pct": 127.36
+      },
+      {
+        "name_th": "กรุงเทพมหานคร",
+        "deposits_million_baht": 11449577.0,
+        "credits_million_baht": 13825081.0,
+        "credit_deposit_ratio_pct": 120.75
+      },
+      {
+        "name_th": "บึงกาฬ",
+        "deposits_million_baht": 9198.0,
+        "credits_million_baht": 10722.0,
+        "credit_deposit_ratio_pct": 116.57
+      },
+      {
+        "name_th": "ยโสธร",
+        "deposits_million_baht": 17097.0,
+        "credits_million_baht": 18517.0,
+        "credit_deposit_ratio_pct": 108.31
+      },
+      {
+        "name_th": "อุบลราชธานี",
+        "deposits_million_baht": 82412.0,
+        "credits_million_baht": 89021.0,
+        "credit_deposit_ratio_pct": 108.02
+      },
+      {
+        "name_th": "อุตรดิตถ์",
+        "deposits_million_baht": 20051.0,
+        "credits_million_baht": 21516.0,
+        "credit_deposit_ratio_pct": 107.31
+      },
+      {
+        "name_th": "สกลนคร",
+        "deposits_million_baht": 35314.0,
+        "credits_million_baht": 36930.0,
+        "credit_deposit_ratio_pct": 104.58
+      },
+      {
+        "name_th": "อำนาจเจริญ",
+        "deposits_million_baht": 8762.0,
+        "credits_million_baht": 8895.0,
+        "credit_deposit_ratio_pct": 101.52
+      },
+      {
+        "name_th": "ขอนแก่น",
+        "deposits_million_baht": 135836.0,
+        "credits_million_baht": 137557.0,
+        "credit_deposit_ratio_pct": 101.27
+      },
+      {
+        "name_th": "กำแพงเพชร",
+        "deposits_million_baht": 27845.0,
+        "credits_million_baht": 28041.0,
+        "credit_deposit_ratio_pct": 100.7
+      }
+    ],
+    "CQ09": [
+      {
+        "name_th": "กรุงเทพมหานคร",
+        "population_reference_year": 2025,
+        "population": 5422568,
+        "deposits_baht_per_person": 2111467.67
+      },
+      {
+        "name_th": "นนทบุรี",
+        "population_reference_year": 2025,
+        "population": 1322280,
+        "deposits_baht_per_person": 510914.48
+      },
+      {
+        "name_th": "ภูเก็ต",
+        "population_reference_year": 2025,
+        "population": 432464,
+        "deposits_baht_per_person": 485420.75
+      },
+      {
+        "name_th": "สมุทรปราการ",
+        "population_reference_year": 2025,
+        "population": 1383924,
+        "deposits_baht_per_person": 437073.86
+      },
+      {
+        "name_th": "ชลบุรี",
+        "population_reference_year": 2025,
+        "population": 1645985,
+        "deposits_baht_per_person": 415352.51
+      },
+      {
+        "name_th": "สมุทรสาคร",
+        "population_reference_year": 2025,
+        "population": 587367,
+        "deposits_baht_per_person": 348443.14
+      },
+      {
+        "name_th": "ปทุมธานี",
+        "population_reference_year": 2025,
+        "population": 1246062,
+        "deposits_baht_per_person": 301439.25
+      },
+      {
+        "name_th": "ระยอง",
+        "population_reference_year": 2025,
+        "population": 789730,
+        "deposits_baht_per_person": 257922.33
+      },
+      {
+        "name_th": "นครปฐม",
+        "population_reference_year": 2025,
+        "population": 926318,
+        "deposits_baht_per_person": 256149.62
+      },
+      {
+        "name_th": "จันทบุรี",
+        "population_reference_year": 2025,
+        "population": 535563,
+        "deposits_baht_per_person": 174603.17
+      }
+    ],
+    "CQ10": [
+      {
+        "national_credits_million": 18100244.0,
+        "bangkok_share_pct": 76.38,
+        "top5_share_pct": 83.11
+      }
+    ]
+  }
+}

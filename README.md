@@ -4,11 +4,11 @@ An end-to-end analytics project for Thailand's provincial commercial-banking mar
 
 | Warehouse | Pipeline | Analytics | Verification |
 |---|---|---|---|
-| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 13 Grafana panels + interactive Streamlit | 38 passing tests |
+| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 10 competency questions + 13 Grafana panels | 39 passing tests |
 
 The project is ready to run and demonstrate locally. Its verified data snapshot covers July 2024–July 2026; the source's latest banking period in this build is July 2026. See [validation and scope](#validation-and-scope) for the remaining operational and optional-LLM checks.
 
-[ภาษาไทย / Thai documentation](README_TH.md) · [Business report](docs/business-report.md) · [Architecture and ER diagram](docs/architecture.md) · [Resume wording draft](docs/resume-draft.md) · [Submission PDF](output/pdf/thailand-regional-banking-intelligence-report.pdf)
+[ภาษาไทย / Thai documentation](README_TH.md) · [Business report](docs/business-report.md) · [Architecture and ER diagram](docs/architecture.md) · [Resume wording draft](docs/resume-draft.md) · [Earlier assignment PDF, before the 10-question update](output/pdf/thailand-regional-banking-intelligence-report.pdf)
 
 ![Streamlit overview showing live warehouse KPIs and trends](output/playwright/overview.png)
 
@@ -25,12 +25,19 @@ The dashboards address questions such as:
 5. How did banking balances move over periods when the national policy rate changed? (Context, **not causation**.)
 6. Where did branch counts fall while loan balances rose?
 7. Which provinces pass adjustable thresholds for a follow-up market study?
+8. Which provinces have the highest credit-to-deposit ratios?
+9. Which provinces have the highest deposits per registered resident?
+10. What share of recorded national loan balances is concentrated in Bangkok and the top five provinces?
 
-The [business report](docs/business-report.md) gives answers from the loaded data, formulas, caveats, and next-step interpretation.
+The [business report](docs/business-report.md) gives business interpretation. The [10 competency questions and verified answers](docs/competency-questions.md) map every question to data fields, a SQL query, result rows, and an application view. All [10 SQL queries](sql/competency_questions.sql) were executed on the existing warehouse on 10 October 2026. Streamlit's **10 คำถามธุรกิจ** page lets a reviewer select each question, inspect its result, plot a metric, and view the SQL. CQ04 defines comparable GPP as a gap of at most 15% relative to the larger value.
+
+The current project brief requires a problem, sources, at least 10 competency questions, an implemented database model with loaded data, at least 10 answering queries, and a data-driven application prototype. The linked documents and application provide that evidence. This brief does not require one month of uninterrupted Airflow operation; the earlier assignment's operations evidence remains separate.
 
 ## Product screenshots
 
-The dashboard screenshots were captured from the running local application on 28 September 2026; the Gemini chatbot screenshot below was captured on 30 September 2026. They show real warehouse results, not the [early design concept](docs/design/dashboard-concept.png).
+![Competency question prototype with live warehouse result and SQL](output/playwright/competency-questions.png)
+
+The competency-question screenshot above was captured on 10 October 2026. The earlier dashboard screenshots were captured from the running local application on 28 September 2026; the Gemini chatbot screenshot below was captured on 30 September 2026. They show real warehouse results, not the [early design concept](docs/design/dashboard-concept.png).
 
 | Provincial comparison | Adjustable opportunity screen |
 |---|---|
@@ -61,7 +68,7 @@ NESDC GPP workbook ──────┤──> Python validation + raw SHA-256 
 World Bank JSON API ─────┤        └──> PostgreSQL dimensions/facts
 BOT MPC workbook ────────┘                   └──> province-month mart
                                                    ├──> Grafana (13 panels)
-Airflow daily 07:00 ICT ──> protected FastAPI ETL ├──> Streamlit (4 sections)
+Airflow daily 07:00 ICT ──> protected FastAPI ETL ├──> Streamlit (5 sections)
                                                    └──> LangGraph chatbot
                                                         └──> bounded SQL + read-only DB role
 ```
@@ -127,11 +134,12 @@ LangChain converts questions to a Pydantic `QueryPlan`; the model does **not** e
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8000/health
 .\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe tools/export_competency.py
 docker compose ps
 docker exec bank-airflow-1 airflow dags list-runs -d bank_regional_daily --no-backfill
 ```
 
-The latest database-backed run on **30 September 2026** had **38 passing tests**, covering 25 supported rules-mode questions, all 13 Grafana SQL queries, the province crosswalk, temporal no-lookahead joins, the latest-N-month trend window, read-only database privileges, and Gemini provider selection. See the [verification snapshot](docs/evidence/run-status.md) for earlier observed row counts and Airflow run IDs.
+The latest database-backed run on **10 October 2026** had **39 passing tests**, covering 25 supported rules-mode questions, all 13 Grafana SQL queries, the province crosswalk, temporal no-lookahead joins, read-only database privileges, Gemini provider selection, and the 10 competency queries with business invariants. See the [CQ evidence](docs/competency-questions.md) and the earlier [verification snapshot](docs/evidence/run-status.md).
 
 ## Validation and scope
 
