@@ -2,7 +2,7 @@
 import sys
 from types import SimpleNamespace
 
-from bank.chat import _plan, _provider
+from bank.chat import _plan, _provider, PlannerDecision
 from bank.query import QueryPlan
 
 
@@ -31,14 +31,15 @@ def test_gemini_builds_validated_plan_without_network(monkeypatch):
         def __init__(self, **kwargs):
             calls.update(kwargs)
 
-        def with_structured_output(self, schema):
-            assert schema is QueryPlan
-            return SimpleNamespace(invoke=lambda prompt: QueryPlan(metric="deposits", group_by="period"))
+        def with_structured_output(self, schema, include_raw=False):
+            assert schema is PlannerDecision
+            assert include_raw
+            return SimpleNamespace(invoke=lambda prompt: {'raw':SimpleNamespace(usage_metadata={'input_tokens':100,'output_tokens':20,'total_tokens':120}), 'parsed':PlannerDecision(status="ready", plan=QueryPlan(metric="deposits", group_by="period", intent="trend", limit=25)), 'parsing_error':None})
 
     monkeypatch.setenv("GEMINI_API_KEY", "test-key")
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setitem(sys.modules, "langchain_google_genai", SimpleNamespace(ChatGoogleGenerativeAI=FakeGemini))
-    result = _plan({"question": "แนวโน้มเงินฝาก"})
+    result = _plan({"question": "ช่วยดูยอดที่คนเอามาฝากไว้กับธนาคารตามเวลาหน่อย"})
     assert result["plan"]["metric"] == "deposits"
     assert result["mode"].endswith("(gemini)")
     assert calls["model"] == "gemini-2.5-flash"

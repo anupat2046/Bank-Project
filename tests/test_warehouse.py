@@ -55,4 +55,4 @@ def test_langgraph_rules_mode():
     assert response["error"] is None
     assert response["result"]["plan"]["group_by"] == "period"
     assert len(response["result"]["rows"]) >= 2
-    assert "ไม่ใช้ AI" in response["mode"]
+    assert "semantic rules" in response["mode"]
