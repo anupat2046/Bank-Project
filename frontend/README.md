@@ -1,0 +1,46 @@
+# Bank Intelligence web application
+
+Next.js App Router + TypeScript, React, Recharts, Lucide outline icons and locally bundled Noto Sans Thai. Five routes: `/`, `/provinces`, `/assistant`, `/questions`, `/sources`.
+
+This is the sole application frontend. The former Streamlit entry point, Compose service and UI-only Python dependencies were removed on 11 October 2026.
+
+## Run with the existing warehouse
+
+From the project root:
+
+```powershell
+docker compose up -d --build postgres api web
+```
+
+Open http://127.0.0.1:3000. Initial warehouse loading is documented in the root README. The web image runs as the non-root `node` user. It contains no provider or database credentials.
+
+## Local frontend development
+
+With the Python API running at port 8000:
+
+```powershell
+cd frontend
+npm ci
+npm run dev
+```
+
+The server-side proxy defaults to `http://127.0.0.1:8000`. If needed, copy `.env.example` to `.env.local` and change `API_BASE_URL`. Never add provider keys to browser-visible `NEXT_PUBLIC_*` variables. The Docker service sets `API_BASE_URL=http://api:8000`.
+
+```powershell
+npm run typecheck
+npm run build
+```
+
+## Interaction contracts
+
+- Month and province/shortlist/comparison filters are URL-backed. Navigation preserves the month and up to four comparison selections.
+- Monthly stocks are not summed over time. YoY always compares the same month in the previous year; missing base periods are not displayed as zero growth.
+- Comparison index mode normalizes each province to its first displayed period (100); zero/null baselines stay unavailable.
+- Chat determines its own scope and reveals actual query parameters. The month selector is deliberately hidden on chat, not misleadingly applied. Conversation history is in memory for this page only; starting again uses a new checkpoint session ID, but is not represented as deleting old database checkpoints.
+- CQ SQL is constrained to `period <= :as_of`, including peer pairs and 12-month growth cohorts. Empty historical results are explained, not replaced with latest data.
+- Public sources and ETL history omit internal paths/errors. Retrieval time is not called upstream freshness.
+- Tables sort, search and export filtered rows with units and UTF-8 BOM; values are escaped against spreadsheet-formula interpretation.
+
+The UI remains a loopback-only analytical prototype, not an authenticated or production banking system. Authentication, deployment-grade throttling and shared-user chat-history policies are not claimed.
+
+See [design references and specification](../docs/design/nextjs/design-spec.md) and [verification](../docs/evidence/nextjs-qa.md).

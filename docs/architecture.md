@@ -12,8 +12,12 @@ flowchart LR
   API --> ETL
   ETL --> PG[(PostgreSQL bank warehouse)]
   PG --> GRAF[Grafana 13 panels]
-  PG --> UI[Streamlit dashboard]
-  UI --> GRAPH[LangGraph chatbot]
+  PG --> ROAPI[FastAPI read-only analytics]
+  ROAPI --> BFF[Next.js allowlisted server proxy]
+  BFF --> UI[Next.js five-page application]
+  UI --> BFF
+  BFF --> CHATAPI[FastAPI chat endpoint]
+  CHATAPI --> GRAPH[LangGraph chatbot]
   GRAPH --> PLAN[LangChain structured plan / Thai rules fallback]
   PLAN --> SQL[Bounded SQL compiler + SQLGlot]
   SQL --> RO[(bank_reader SELECT only)]
@@ -98,3 +102,11 @@ flowchart LR
 ```
 
 Airflow DAG ไม่สร้างค่ารายวันจากชุดรายเดือน: รันทุกวันเพื่อตรวจการเผยแพร่หรือ revision และโหลด fact ตามงวดต้นฉบับ การตั้งเวลาใช้ timezone Asia/Bangkok; metadata ของ Airflow อยู่ PostgreSQL ฐาน `airflow` แยกจากฐาน `bank`
+
+## Next.js application boundary
+
+`frontend/` contains Next.js App Router pages, TypeScript contracts, locally hosted Thai fonts, shared charts/tables and responsive navigation. Browsers call same-origin `/api/*`; the Next.js server forwards only an allowlist of read endpoints and `/chat` to FastAPI. It does not forward ETL endpoints, provider credentials, database DSNs or arbitrary destinations. `API_BASE_URL` is server-only. Docker binds the web service to `127.0.0.1:3000`.
+
+Analytical reads use `bank_reader`, explicit read-only transactions and a ten-second statement timeout. Month inputs must exist in the warehouse. CQ queries are scoped to data no later than the selected month; PostgreSQL bound parameters remain visible alongside the actual executed SQL. Comparison requests accept at most four province codes. Source views omit raw paths and ETL error detail. Next.js is the sole application frontend; the Streamlit service, entry point and dependencies have been removed.
+
+World Bank's current source-revision date is not an archived publication vintage. A newly updated API dataset can therefore be ineligible for all earlier banking months under the conservative no-lookahead rule. The application shows unavailable inflation honestly rather than inventing an earlier availability date. Reconstructing archived vintages is a separate future data-engineering task.

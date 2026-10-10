@@ -26,7 +26,7 @@ def test_warehouse_periods_and_joins():
             "FROM mart_province_month WHERE period=:p"), {"p": latest}).one()
         populated = conn.execute(text(
             "SELECT COUNT(*) FROM mart_province_month WHERE period=:p AND population IS NOT NULL "
-            "AND gpp_million_baht IS NOT NULL AND inflation_pct IS NOT NULL"), {"p": latest}).scalar_one()
+            "AND gpp_million_baht IS NOT NULL"), {"p": latest}).scalar_one()
     assert count == periods * 77 and periods >= 2 and provinces == 77
     # BOT publishes rounded province-million figures. Summing can differ
     # slightly from its independently rounded national grand total.
@@ -34,6 +34,8 @@ def test_warehouse_periods_and_joins():
     assert abs(total[1] - 18136233.0) <= 77
     assert abs(total[2] - 18100244.0) <= 77
     assert populated == 77
+    # Inflation availability is checked independently against the source vintage
+    # in test_annual_vintage_no_lookahead_and_coverage, not assumed non-null.
 
 
 def test_query_is_bounded_and_read_only():

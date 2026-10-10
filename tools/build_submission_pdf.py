@@ -1,4 +1,8 @@
-"""Build the Thai assignment hand-in PDF from verified project facts.
+"""Rebuild the archived September 2026 Thai assignment snapshot.
+
+This historical report includes the former Streamlit UI and old validation
+counts. Streamlit was removed on 11 October 2026. For the current Next.js
+application and evidence, use README.md and docs/evidence/nextjs-qa.md.
 
 Run with the bundled Codex Python runtime (reportlab installed).
 """

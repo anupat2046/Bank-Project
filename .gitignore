@@ -21,6 +21,12 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+node_modules/
+.next/
+*.tsbuildinfo
+next-env.d.ts
+playwright-report/
+test-results/
 
 # Local warehouse inputs/state, browser traces, and temporary renders.
 data/
@@ -43,6 +49,13 @@ tmp/
 !/output/playwright/chatbot-chart-and-sql.png
 !/output/playwright/chatbot-gemini-full.png
 !/output/playwright/competency-questions.png
+!/output/playwright/nextjs-overview.png
+!/output/playwright/nextjs-provinces.png
+!/output/playwright/nextjs-screening.png
+!/output/playwright/nextjs-questions.png
+!/output/playwright/nextjs-assistant.png
+!/output/playwright/nextjs-sources.png
+!/output/playwright/nextjs-mobile.png
 
 # Operating-system/editor leftovers.
 .DS_Store

@@ -50,21 +50,14 @@ services:
       postgres:
         condition: service_healthy
 
-  dashboard:
-    build: .
-    command: ["streamlit", "run", "app.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.headless", "true"]
+  web:
+    build: ./frontend
     environment:
-      DATABASE_URL: postgresql+psycopg://bank:bank_dev_password@postgres:5432/bank
-      READ_DATABASE_URL: postgresql+psycopg://bank_reader:bank_reader_dev_password@postgres:5432/bank
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+      API_BASE_URL: http://api:8000
     ports:
-      - "127.0.0.1:8501:8501"
+      - "127.0.0.1:3000:3000"
     depends_on:
-      postgres:
-        condition: service_healthy
+      - api
 
   airflow:
     image: apache/airflow:2.10.5-python3.12

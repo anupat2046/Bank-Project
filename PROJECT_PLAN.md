@@ -4,7 +4,7 @@
 
 โครงการ Data Warehouse และ Dashboard สำหรับวิเคราะห์ตลาดธนาคารพาณิชย์รายจังหวัดในประเทศไทย โดยรวมข้อมูลจริงจากธนาคารแห่งประเทศไทย (ธปท.), กรมการปกครอง และสำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สภาพัฒน์) ผ่าน API และไฟล์เผยแพร่ทางการ
 
-ระบบหลักใช้ Python, PostgreSQL, Apache Airflow และ Grafana ส่วนต่อยอดเป็น Chatbot ภาษาไทยสำหรับถามข้อมูล สร้าง SQL และแสดงตาราง/กราฟด้วย FastAPI, LangChain, LangGraph, Streamlit และ Plotly
+ระบบหลักใช้ Python, PostgreSQL, Apache Airflow และ Grafana ส่วนต่อยอดเป็น Chatbot ภาษาไทยสำหรับถามข้อมูล สร้าง SQL และแสดงตาราง/กราฟด้วย FastAPI, LangChain, LangGraph, Next.js, TypeScript และ Recharts. ลบ Streamlit และ Plotly ที่ใช้เฉพาะ frontend เดิมแล้วเมื่อ 11 ต.ค. 2569
 
 - วันที่จัดทำแผน: 28 กันยายน 2569
 - กำหนดส่งที่ปรากฏในภาพ Assignment: 12 พฤศจิกายน 2569 — ควรตรวจสอบกำหนดจริงกับผู้สอน
@@ -115,7 +115,7 @@ API Statistics ให้เลือก observations ด้วย series code �
 | 9 | จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด? | เงินฝากและประชากร DOPA | อันดับและ SQL |
 | 10 | สินเชื่อรวมกระจุกตัวในกรุงเทพฯ และ 5 จังหวัดอันดับแรกเท่าไร? | สินเชื่อจังหวัดในงวดเดียวกัน | สัดส่วนและ SQL |
 
-โจทย์ Project ใหม่ใช้ข้อกำหนดอย่างน้อย 10 Competency Questions และ 10 Queries พร้อม Prototype โดยไม่บังคับ Data Warehouse หรือ scheduler ครบเดือน. งานนี้มีหลักฐานครบใน [10 คำถามพร้อม SQL และผลจริง](docs/competency-questions.md), [SQL](sql/competency_questions.sql) และหน้า Streamlit “10 คำถามธุรกิจ”. ตรวจ query ทั้งหมดเมื่อ 10 ต.ค. 2569 กับ snapshot ก.ค. 2567–ก.ค. 2569; ข้อ 4 กำหนด GPP ใกล้กันว่าต่างไม่เกิน 15% ของค่าที่มากกว่า. เงื่อนไข scheduler หนึ่งเดือนในแผนเดิมเป็นงานแยกตาม assignment เดิม และยังไม่พิสูจน์ว่าครบ
+โจทย์ Project ใหม่ใช้ข้อกำหนดอย่างน้อย 10 Competency Questions และ 10 Queries พร้อม Prototype โดยไม่บังคับ Data Warehouse หรือ scheduler ครบเดือน. งานนี้มีหลักฐานครบใน [10 คำถามพร้อม SQL และผลจริง](docs/competency-questions.md), [SQL](sql/competency_questions.sql) และหน้า Next.js “คำถามธุรกิจ”. ตรวจ query ทั้งหมดเมื่อ 10 ต.ค. 2569 กับ snapshot ก.ค. 2567–ก.ค. 2569; ข้อ 4 กำหนด GPP ใกล้กันว่าต่างไม่เกิน 15% ของค่าที่มากกว่า. เงื่อนไข scheduler หนึ่งเดือนในแผนเดิมเป็นงานแยกตาม assignment เดิม และยังไม่พิสูจน์ว่าครบ
 
 ใช้คำว่า “ความเคลื่อนไหวร่วมกัน” สำหรับดอกเบี้ยกับการเติบโต ไม่สรุปเหตุและผลจากกราฟหรือ correlation เพียงอย่างเดียว
 
@@ -299,8 +299,8 @@ extract_gpp ───────────┘                         ↓
 
 | ส่วน | เครื่องมือ | หน้าที่ |
 |---|---|---|
-| UI | Streamlit | Chat input, history, tables, SQL expander |
-| Charts | Plotly | line, bar, scatter, chart interactions |
+| UI | Next.js + TypeScript + Recharts | Chat input, history, tables, charts, SQL disclosure through FastAPI |
+| Charts | Recharts | line, bar, scatter, chart interactions in the Next.js application |
 | Backend | Python + FastAPI | API และควบคุม application logic |
 | Model integration | LangChain components + provider adapter | prompts, structured output, model calls |
 | Workflow | LangGraph `StateGraph` | nodes, state, conditional routing, bounded retries |
@@ -508,8 +508,7 @@ Chatbot checkpoints ใช้ schema/สิทธิ์แยกจาก analyt
 ## 17. เอกสารอ้างอิงด้านเทคนิค
 
 - [Grafana PostgreSQL configuration](https://grafana.com/docs/grafana-cloud/observe-and-act/connect-externally-hosted/data-sources/postgres/configure/)
-- [Streamlit chat elements](https://docs.streamlit.io/develop/api-reference/chat)
-- [Streamlit Plotly chart](https://docs.streamlit.io/develop/api-reference/charts/st.plotly_chart)
+- [Next.js frontend guide](frontend/README.md)
 - [FastAPI request models](https://fastapi.tiangolo.com/tutorial/body/)
 - [SQLAlchemy transactions](https://docs.sqlalchemy.org/en/20/tutorial/dbapi_transactions.html)
 - [SQLGlot](https://sqlglot.com/)

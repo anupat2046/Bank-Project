@@ -2,7 +2,17 @@
 
 โปรเจกต์ Data Warehouse + ETL + Dashboard + Chatbot สำหรับวิเคราะห์ภาพรวมธนาคารพาณิชย์รายจังหวัดไทยจาก **ข้อมูลสาธารณะจริง** ไม่ใช่ข้อมูลลูกค้าหรือข้อมูลจำลอง อ่าน [แผนฉบับเต็ม](PROJECT_PLAN.md) ควบคู่กับเอกสารนี้: แผนมีงานต่อยอดบางข้อที่ยังไม่ได้ทำ ส่วนเอกสารนี้ระบุสิ่งที่รันและตรวจจริงแล้ว
 
-## ผลที่ทำได้ ณ 28 กันยายน 2569
+## อัปเดตหน้าเว็บ Next.js
+
+วันที่ 11 ต.ค. 2569 ลบโค้ด Streamlit, service `dashboard` และ dependencies เฉพาะ UI เดิมแล้ว ใช้ Next.js เป็น frontend เดียว ส่วนภาพและบันทึก Streamlit ด้านล่างเก็บไว้เป็นหลักฐานย้อนหลัง ไม่ใช่ระบบที่ยังเปิดใช้งานได้
+
+หน้าเว็บหลักย้ายเป็น **Next.js + TypeScript** แล้ว เปิดที่ http://127.0.0.1:3000 มี 5 หน้า: ภาพรวมตลาด วิเคราะห์จังหวัด (รายละเอียด/เปรียบเทียบ/คัดกรอง) ผู้ช่วยวิเคราะห์ คำถามธุรกิจ และแหล่งข้อมูล. ตารางค้นหา/เรียง/ดาวน์โหลด CSV ได้ ตัวกรองเก็บใน URL และรองรับมือถือ. Backend, PostgreSQL, ETL, Grafana และ LangGraph ใช้ระบบเดิม. ดู [รายละเอียด frontend](frontend/README.md) และ [หลักฐานตรวจหน้าเว็บ](docs/evidence/nextjs-qa.md)
+
+ชุดทดสอบ Python ล่าสุดผ่าน **43 รายการ** พร้อมตรวจ TypeScript และ production build. ระหว่างตรวจพบ World Bank vintage ใหม่วันที่ 8 ต.ค. 2569 อยู่หลังงวดธนาคารล่าสุด ก.ค. 2569 จึงไม่มีเงินเฟ้อที่ใช้ได้ใน mart ตามกติกาไม่มองอนาคต แม้นำเข้าข้อมูลต้นทาง 66 ปีสำเร็จแล้ว ระบบแสดง NULL ตามจริง ไม่สร้างวันที่เผยแพร่ย้อนหลัง
+
+![หน้าเว็บ Next.js ใหม่](output/playwright/nextjs-overview.png)
+
+## หลักฐานการพัฒนาเดิม ณ 28 กันยายน 2569
 
 อัปเดตสำหรับโจทย์ Project ใหม่เมื่อ **10 ต.ค. 2569**: มี 10 Competency Questions, SQL ทั้ง 10 ข้อพร้อมผลจริง, หน้า Prototype สำหรับดูคำตอบ และชุดทดสอบผ่าน **39 รายการ**. โจทย์ใหม่ไม่กำหนด scheduler ต่อเนื่องหนึ่งเดือน; ข้อกำหนดนั้นเป็น assignment เดิม
 
@@ -40,7 +50,7 @@ py -3.13 -m venv .venv
 
 | ระบบ | URL | หมายเหตุ |
 |---|---|---|
-| หน้าหลัก / chatbot | http://127.0.0.1:8501 | Streamlit |
+| หน้าหลัก / chatbot | http://127.0.0.1:3000 | Next.js |
 | API docs | http://127.0.0.1:8000/docs | FastAPI |
 | Grafana | http://127.0.0.1:3001/d/thai-bank-regions | user `admin`, รหัส dev `bank_dev_password` |
 | Airflow | http://127.0.0.1:8081 | user `admin`; ดูรหัสที่ Airflow สร้างด้วยคำสั่งด้านล่าง |
@@ -51,7 +61,7 @@ docker exec bank-airflow-1 cat /opt/airflow/standalone_admin_password.txt
 
 รหัสผ่านใน Compose เป็น **development-only** และพอร์ตผูกกับ `127.0.0.1` เท่านั้น ห้าม deploy อินเทอร์เน็ตด้วย config นี้ ให้เปลี่ยน secrets, TLS, network access และ Grafana admin ก่อนใช้ภายนอกเครื่อง
 
-ถ้าอยากเปิดโหมด LLM ให้คัดลอก `.env.example` เป็น `.env` แล้วใส่ `GEMINI_API_KEY` ของตัวเอง จากนั้น `docker compose up -d --build api dashboard` โปรเจกต์จะให้ LangChain ส่งคำถามไปยัง `GEMINI_MODEL` (ค่าเริ่มต้น `gemini-2.5-flash`) เพื่อสร้าง **structured QueryPlan**; โมเดลไม่ได้สร้างหรือรัน SQL อิสระ. อีกทางเลือกคือ `OPENAI_API_KEY` / `OPENAI_MODEL`; หากใส่สองคีย์พร้อมกัน Gemini จะถูกเลือกก่อน. Free tier มีโควตาและเงื่อนไขการใช้ข้อมูลของผู้ให้บริการ โหมดนี้ยังต้องทดสอบสดหลังมีคีย์ ห้ามใส่ข้อมูลลูกค้าจริงในคำถาม
+ถ้าอยากเปิดโหมด LLM ให้คัดลอก `.env.example` เป็น `.env` เฉพาะเมื่อยังไม่มีไฟล์ แล้วใส่ `GEMINI_API_KEY` ของตัวเอง จากนั้น `docker compose up -d --build api web` โปรเจกต์จะให้ LangChain ส่งคำถามไปยัง `GEMINI_MODEL` (ค่าเริ่มต้น `gemini-2.5-flash`) เพื่อสร้าง **structured QueryPlan**; โมเดลไม่ได้สร้างหรือรัน SQL อิสระ. อีกทางเลือกคือ `OPENAI_API_KEY` / `OPENAI_MODEL`; หากใส่สองคีย์พร้อมกัน Gemini จะถูกเลือกก่อน. Free tier มีโควตาและเงื่อนไขการใช้ข้อมูลของผู้ให้บริการ ห้ามใส่ข้อมูลลูกค้าจริงในคำถาม คีย์อยู่ฝั่ง Python ไม่ถูกส่งเข้า Next.js client
 
 ตรวจสุขภาพและทดสอบ:
 
@@ -104,7 +114,7 @@ Compose mount `./data:/app/data` ให้ไฟล์ดิบที่ Airflow
 
 ## Chatbot และความปลอดภัยข้อมูล
 
-Workflow: `plan` (LangChain structured output หรือกฎไทยที่ติดป้าย) → `execute` (Pydantic allowlist + SQL template + SQLGlot ตรวจ SELECT เดียวและตารางเดียว) → `answer` → Streamlit แสดงตาราง/กราฟ/SQL/provenance. LangGraph ใช้ PostgreSQL checkpointer แยกตาม `session_id`. ใช้ PostgreSQL role `bank_reader` ที่มี SELECT แต่ไม่มี INSERT/UPDATE/DELETE; ETL ใช้ role `bank` อีกตัว. จำกัด 77 แถวและไม่เปิดให้โมเดลเขียน SQL ตรง ๆ. ไม่รองรับข้อมูลลูกค้า รายธนาคาร market share หรือ NPL
+Workflow: `plan` (LangChain structured output หรือกฎไทยที่ติดป้าย) → `execute` (Pydantic allowlist + SQL template + SQLGlot ตรวจ SELECT เดียวและตารางเดียว) → `answer` → Next.js แสดงตาราง/กราฟ/SQL/provenance ผ่าน FastAPI. LangGraph ใช้ PostgreSQL checkpointer แยกตาม `session_id`. ใช้ PostgreSQL role `bank_reader` ที่มี SELECT แต่ไม่มี INSERT/UPDATE/DELETE; ETL ใช้ role `bank` อีกตัว. จำกัด 77 แถวและไม่เปิดให้โมเดลเขียน SQL ตรง ๆ. ไม่รองรับข้อมูลลูกค้า รายธนาคาร market share หรือ NPL
 
 ตัวอย่างคำถาม: `สินเชื่อสูงสุด 5 จังหวัด`, `แนวโน้มเงินฝากย้อนหลัง`, `สาขาต่อประชากรสูงสุด 10 จังหวัด`, `เงินฝากต่อคนจังหวัดเชียงใหม่`, `แนวโน้มดอกเบี้ยนโยบาย` คำถามนอก catalog จะได้ข้อความขอให้ระบุตัวชี้วัดที่รองรับ. ชุดทดสอบ rules mode 25 คำถามอยู่ใน `tests/test_extended.py`; ไม่ใช่ผลประเมิน LLM
 

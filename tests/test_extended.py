@@ -77,7 +77,26 @@ def test_annual_vintage_no_lookahead_and_coverage():
                    COUNT(*) FILTER (WHERE inflation_reference_year >= EXTRACT(YEAR FROM period))
             FROM mart_province_month
         """)).one()
-    assert row[:3] == (1925, 385, 77)
+        expected_macro_rows = conn.execute(text("""
+            SELECT COUNT(*) FROM mart_province_month m WHERE EXISTS (
+              SELECT 1 FROM fact_macro_year f
+              WHERE f.reference_year < EXTRACT(YEAR FROM m.period)
+                AND f.source_last_updated <= (date_trunc('month',m.period)+interval '1 month - 1 day')::date
+            )
+        """)).scalar_one()
+        macro_mismatches = conn.execute(text("""
+            SELECT COUNT(*) FROM mart_province_month m
+            LEFT JOIN LATERAL (
+              SELECT reference_year,inflation_pct FROM fact_macro_year f
+              WHERE f.reference_year < EXTRACT(YEAR FROM m.period)
+                AND f.source_last_updated <= (date_trunc('month',m.period)+interval '1 month - 1 day')::date
+              ORDER BY reference_year DESC LIMIT 1
+            ) f ON TRUE
+            WHERE m.inflation_pct IS DISTINCT FROM f.inflation_pct
+               OR m.inflation_reference_year IS DISTINCT FROM f.reference_year
+        """)).scalar_one()
+    assert row[:2] == (1925, 385)
+    assert row[2] == expected_macro_rows and macro_mismatches == 0
     assert row[3:] == (0, 0, 0)
 
 

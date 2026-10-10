@@ -4,6 +4,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY bank ./bank
 COPY sql ./sql
-COPY app.py ./app.py
-COPY .streamlit ./.streamlit
-EXPOSE 8000 8501
+EXPOSE 8000

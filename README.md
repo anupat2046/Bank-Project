@@ -1,16 +1,16 @@
 # Thailand Regional Banking Intelligence
 
-An end-to-end analytics project for Thailand's provincial commercial-banking market: a PostgreSQL warehouse, scheduled ETL, Grafana and Streamlit dashboards, and a constrained natural-language query interface. It integrates **real public data** from multiple sources—no customer records, individual-bank records, or synthetic banking observations.
+An end-to-end analytics project for Thailand's provincial commercial-banking market: a PostgreSQL warehouse, scheduled ETL, a **Next.js analytical application**, Grafana dashboards, and a constrained natural-language query interface. It integrates **real public data** from multiple sources—no customer records, individual-bank records, or synthetic banking observations. Next.js is the sole application frontend; the earlier Streamlit code and service were removed on 11 October 2026.
 
 | Warehouse | Pipeline | Analytics | Verification |
 |---|---|---|---|
-| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 10 competency questions + 13 Grafana panels | 39 passing tests |
+| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 5 Next.js pages + 10 questions + 13 Grafana panels | 43 passing Python tests |
 
 The project is ready to run and demonstrate locally. Its verified data snapshot covers July 2024–July 2026; the source's latest banking period in this build is July 2026. See [validation and scope](#validation-and-scope) for the remaining operational and optional-LLM checks.
 
 [ภาษาไทย / Thai documentation](README_TH.md) · [Business report](docs/business-report.md) · [Architecture and ER diagram](docs/architecture.md) · [Resume wording draft](docs/resume-draft.md) · [Earlier assignment PDF, before the 10-question update](output/pdf/thailand-regional-banking-intelligence-report.pdf)
 
-![Streamlit overview showing live warehouse KPIs and trends](output/playwright/overview.png)
+![Next.js overview showing real warehouse KPIs, YoY changes and policy-rate context](output/playwright/nextjs-overview.png)
 
 ## Why this project exists
 
@@ -29,11 +29,29 @@ The dashboards address questions such as:
 9. Which provinces have the highest deposits per registered resident?
 10. What share of recorded national loan balances is concentrated in Bangkok and the top five provinces?
 
-The [business report](docs/business-report.md) gives business interpretation. The [10 competency questions and verified answers](docs/competency-questions.md) map every question to data fields, a SQL query, result rows, and an application view. All [10 SQL queries](sql/competency_questions.sql) were executed on the existing warehouse on 10 October 2026. Streamlit's **10 คำถามธุรกิจ** page lets a reviewer select each question, inspect its result, plot a metric, and view the SQL. CQ04 defines comparable GPP as a gap of at most 15% relative to the larger value.
+The [business report](docs/business-report.md) gives business interpretation. The [10 competency questions and verified answers](docs/competency-questions.md) map every question to data fields, a SQL query, result rows, and an application view. All [10 SQL queries](sql/competency_questions.sql) were executed on the existing warehouse on 10 October 2026. Next.js's **คำถามธุรกิจ** page lets a reviewer select each question and banking month, inspect its actual result, plot a metric, and view the executed SQL with bound parameters. CQ04 defines comparable GPP as a gap of at most 15% relative to the larger value.
 
 The current project brief requires a problem, sources, at least 10 competency questions, an implemented database model with loaded data, at least 10 answering queries, and a data-driven application prototype. The linked documents and application provide that evidence. This brief does not require one month of uninterrupted Airflow operation; the earlier assignment's operations evidence remains separate.
 
 ## Product screenshots
+
+The Next.js interface separates market overview, province detail/comparison/screening, the analytical assistant, competency questions, and source quality. Filters are URL-backed; tables sort, search and export CSV. Thai fonts are bundled locally, with responsive navigation and mobile conversation/result views. These screenshots were captured from the running application on 10 October 2026, including one live Gemini deposit-trend answer (a smoke test, not an accuracy benchmark). See the [frontend guide](frontend/README.md), [design specification](docs/design/nextjs/design-spec.md), and [migration verification](docs/evidence/nextjs-qa.md).
+
+| Provincial analysis | Adjustable shortlist |
+|---|---|
+| ![Next.js province analysis](output/playwright/nextjs-provinces.png) | ![Next.js shortlist and GPP scatter](output/playwright/nextjs-screening.png) |
+
+| Verified business question | Data provenance and availability |
+|---|---|
+| ![Next.js CQ result, chart and caveat](output/playwright/nextjs-questions.png) | ![Next.js sources and join rules](output/playwright/nextjs-sources.png) |
+
+![Next.js analytical assistant](output/playwright/nextjs-assistant.png)
+
+The [mobile overview capture](output/playwright/nextjs-mobile.png) shows the responsive layout and internally scrollable table.
+
+### Earlier Streamlit interface
+
+Historical screenshots only: the Streamlit application has been removed. These images document earlier milestones and are not instructions to run a second frontend.
 
 ![Competency question prototype with live warehouse result and SQL](output/playwright/competency-questions.png)
 
@@ -68,8 +86,9 @@ NESDC GPP workbook ──────┤──> Python validation + raw SHA-256 
 World Bank JSON API ─────┤        └──> PostgreSQL dimensions/facts
 BOT MPC workbook ────────┘                   └──> province-month mart
                                                    ├──> Grafana (13 panels)
-Airflow daily 07:00 ICT ──> protected FastAPI ETL ├──> Streamlit (5 sections)
-                                                   └──> LangGraph chatbot
+Airflow daily 07:00 ICT ──> protected FastAPI ETL ├──> FastAPI analytical reads
+                                                   │    └──> Next.js server proxy → 5-page web app
+                                                   └──> LangGraph chatbot ← FastAPI /chat
                                                         └──> bounded SQL + read-only DB role
 ```
 
@@ -82,7 +101,7 @@ The Airflow DAG is [`airflow/dags/bank_daily.py`](airflow/dags/bank_daily.py). S
 | [Bank of Thailand FI_CB_011_S5](https://app.bot.or.th/BTWS_STAT/statistics/BOTWEBSTAT.aspx?language=ENG&reportID=1008) | Official public web table via HTTP GET/form POST; **not a REST API** | Province × month; 77 × 25 = 1,925 rows | Loan and deposit balances in THB million; branch counts |
 | [Department of Provincial Administration](https://stat.bora.dopa.go.th/new_stat/webPage/statByYear.php) | Official TXT files | Province × year; 77 × 3 = 231 rows (2023–2025) | Registered population |
 | [NESDC GPP 2024p](https://www.nesdc.go.th/en/download/table-of-gross-regional-and-provincial-product-2024-excel/) | Official XLSX workbook | Province × year; 77 rows | Provincial gross product in THB million |
-| [World Bank Indicators](https://api.worldbank.org/v2/country/THA/indicator/FP.CPI.TOTL.ZG?format=json&per_page=100) | **Real public JSON REST API**, no API key | Thailand × year; 65 non-null observations | National CPI inflation context |
+| [World Bank Indicators](https://api.worldbank.org/v2/country/THA/indicator/FP.CPI.TOTL.ZG?format=json&per_page=100) | **Real public JSON REST API**, no API key | Thailand × year; 66 non-null observations after the October update | National CPI inflation context, subject to source-vintage availability |
 | [Bank of Thailand MPC decisions](https://www.bot.or.th/en/our-roles/monetary-policy/mpc-publication/policy-interest-rate.html) | Official XLSX workbook; **not the BOT Policy Rate API** | Decision date; 191 events | National month-end policy-rate context |
 
 Province names from BOT and NESDC are mapped through an explicit, reviewed **77-province crosswalk** to DOPA province codes. Aggregate rows such as *Grand Total* and *Head office* are excluded rather than double-counted. Unknown names fail validation instead of being fuzzy-matched.
@@ -106,7 +125,7 @@ The last command performs the initial import from the live public sources. It re
 
 | Service | Local address | Access |
 |---|---|---|
-| Streamlit application | http://127.0.0.1:8501 | No login in this local demo |
+| Next.js application | http://127.0.0.1:3000 | No login in this loopback-only local demo |
 | Grafana | http://127.0.0.1:3001/d/thai-bank-regions | Development login: `admin` / `bank_dev_password` |
 | Airflow | http://127.0.0.1:8081 | User `admin`; generated password via command below |
 | FastAPI documentation | http://127.0.0.1:8000/docs | API reference |
@@ -119,12 +138,12 @@ docker exec bank-airflow-1 cat /opt/airflow/standalone_admin_password.txt
 
 ### Optional Gemini-backed chatbot
 
-Without a Gemini or OpenAI API key, the app uses a clearly labelled deterministic Thai rules parser. To enable Gemini, copy [`.env.example`](.env.example) to `.env`, set your own `GEMINI_API_KEY`, and rebuild `api` and `dashboard`:
+Without a Gemini or OpenAI API key, the app uses a clearly labelled deterministic Thai rules parser. To enable Gemini, copy [`.env.example`](.env.example) to `.env` only if it does not already exist, set your own `GEMINI_API_KEY`, and rebuild `api` and `web`:
 
 ```powershell
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 # Edit .env locally; do not commit or paste the key into chat.
-docker compose up -d --build api dashboard
+docker compose up -d --build api web
 ```
 
 LangChain converts questions to a Pydantic `QueryPlan`; the model does **not** execute arbitrary SQL. Python compiles allowlisted metrics and dimensions into SQL, SQLGlot checks for a single SELECT against the mart, the result is row-limited, and PostgreSQL's `bank_reader` role cannot write. LangGraph stores per-session checkpoints in PostgreSQL. The default Gemini model is `gemini-2.5-flash`. The optional OpenAI path remains available via `OPENAI_API_KEY` and `OPENAI_MODEL`; Gemini takes precedence if both keys are present. Free-tier quotas and data-use terms depend on the provider. Do not ask this public-data demo about real customer information.
@@ -139,11 +158,13 @@ docker compose ps
 docker exec bank-airflow-1 airflow dags list-runs -d bank_regional_daily --no-backfill
 ```
 
-The latest database-backed run on **10 October 2026** had **39 passing tests**, covering 25 supported rules-mode questions, all 13 Grafana SQL queries, the province crosswalk, temporal no-lookahead joins, read-only database privileges, Gemini provider selection, and the 10 competency queries with business invariants. See the [CQ evidence](docs/competency-questions.md) and the earlier [verification snapshot](docs/evidence/run-status.md).
+The database-backed migration run had **43 passing Python tests**, covering 25 supported rules-mode questions, all 13 Grafana SQL queries, the province crosswalk, temporal no-lookahead joins, read-only database privileges, Gemini provider selection, the 10 competency queries, historical API scope, comparison contracts, and redacted source/provider errors. The Next.js production build and TypeScript checks also passed. See [migration verification](docs/evidence/nextjs-qa.md), the [CQ evidence](docs/competency-questions.md), and the earlier [verification snapshot](docs/evidence/run-status.md).
 
 ## Validation and scope
 
-The implementation and screenshots above are based on a verified local snapshot from **28 September 2026**. The 25 months of warehouse data meet the data-history objective, but they do **not** prove a month of uninterrupted Airflow operation. If that operations evidence is required for submission, collect actual scheduled-run history and new screenshots after a continuous month of operation; do not infer it from the historical data range.
+The earlier screenshots document the September snapshot; the Next.js screenshots document the migration's current warehouse. The 25 months of warehouse data meet the data-history objective, but they do **not** prove a month of uninterrupted Airflow operation. If that operations evidence is required for submission, collect actual scheduled-run history and new screenshots after a continuous month of operation; do not infer it from the historical data range.
+
+During verification, the World Bank source vintage had advanced to **8 October 2026**, beyond the latest banking month (July 2026). Under the existing conservative no-lookahead rule, inflation is therefore unavailable in the current historical mart, even though 66 annual source observations were imported successfully. The source-quality page shows this limitation. Regression checks now compare availability against actual source dates rather than assuming an obsolete count of 77 populated inflation rows. No dates were backdated and no values were filled in to conceal missing context.
 
 The key-free chatbot and its 25 supported question cases have been tested. On **30 September 2026**, one live Gemini smoke test of a Thai deposit-trend question succeeded: structured LLM mode returned a valid plan and 25 warehouse months without an error. This is not a broad LLM accuracy evaluation; OpenAI remains untested live. Likewise, a BOT Policy Rate **API** integration is not claimed: it requires credentials. Policy-rate data comes from BOT's official public workbook, while the World Bank Indicators feed is the project's live unauthenticated REST API.
 

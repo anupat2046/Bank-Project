@@ -26,11 +26,23 @@ def queries():
     return {chunks[i]: chunks[i + 1].strip().rstrip(";") for i in range(1, len(chunks), 2)}
 
 
-def run_question(question_id):
+def question_query(question_id, period=None):
     sql = queries()[question_id]
+    params = {}
+    if period is not None:
+        # Scope all fixed catalog queries to an actual warehouse month, with no lookahead.
+        sql = sql.replace("mart_province_month", "cq_mart")
+        prefix = "WITH cq_mart AS (SELECT * FROM mart_province_month WHERE period<=:as_of)"
+        sql = prefix + (", " + sql[5:] if sql.startswith("WITH ") else " " + sql)
+        params["as_of"] = period
+    return sql, params
+
+
+def run_question(question_id, period=None):
+    sql, params = question_query(question_id, period)
     with read_engine().connect() as conn:
         with conn.begin():
             conn.execute(text("SET TRANSACTION READ ONLY"))
             conn.execute(text("SET LOCAL statement_timeout = '10s'"))
             return [{key: float(value) if isinstance(value, Decimal) else value
-                     for key, value in row.items()} for row in conn.execute(text(sql)).mappings()]
+                     for key, value in row.items()} for row in conn.execute(text(sql), params).mappings()]
