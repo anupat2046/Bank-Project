@@ -1,6 +1,6 @@
-# Production fallback and telemetry smoke test
+# Local service fallback and telemetry smoke test
 
-Verified on 11 October 2026 (Asia/Bangkok) after rebuilding the API image with the v3 planner. This is one smoke request, separate from the 24-turn comparison, not an accuracy benchmark.
+Verified on 11 October 2026 (Asia/Bangkok) after rebuilding the API image with the v3 planner, before the conversation-router addition. This is one local integration request, separate from the 24-turn comparison, not an accuracy benchmark or production deployment. See [subsequent routing evidence](../../conversation-routing.md).
 
 - Endpoint: Next.js same-origin proxy `POST /api/chat` at `127.0.0.1:3000`.
 - Authored public question: `ช่วยดูยอดที่คนเอามาฝากไว้กับธนาคารทั้งประเทศย้อนหลัง 3 เดือน`.

@@ -2,6 +2,8 @@
 
 Measured locally on 11 October 2026 (Asia/Bangkok), using `gemini-2.5-flash` and the same 1,925-row warehouse snapshot. These are single-pass results on a small authored corpus, not a population accuracy estimate.
 
+These are historical **analytical planner** measurements, before the subsequent conversation router and service timeout/error-handling changes. Router calls and HTTP overhead are outside the reported latency/token figures. See [current verification scope](../../verification.md).
+
 Ten development turns and fourteen held-out turns (including separate three-turn conversations) were evaluated per strategy. The held-out results were not used to tune the final v3 contract. Each strategy carries its own predicted confirmed context, not the golden previous answer.
 
 | Split | Version | Strategy | All checks | Plan | Numbers | Clarification | API/system errors | p50 / p95 ms | LLM calls | Input / output tokens |
@@ -24,7 +26,7 @@ Ten development turns and fourteen held-out turns (including separate three-turn
 - The final LLM-only planner passes 10/10 development turns but only 6/14 held-out turns under the strict all-checks rubric (unchanged from the 6/14 baseline). Held-out numeric correctness improves from 7/10 to 8/10 expected-ready turns. Development improvement did **not** establish broad generalization.
 - Residual v3 failures include explicit Buddhist-year conversion (H02/H06), strict versus inclusive thresholds (H07) and refusal instead of asking for a month (H11). Some period/context flags are redundant start-date mismatches (H01/H12/H13/H14) with correct numbers; the report keeps that distinction visible. These held-out cases were not used for further tuning.
 - Final hybrid and rules-only each pass 14/14 held-out turns, with zero model calls on that particular split. The baseline hybrid passes 9/10 development turns versus 8/10 for rules-only, but both pass 12/14 held-out turns. The evidence supports deterministic coverage and conservative routing, not a claim that adding an LLM always improves answers.
-- The four main comparison reports contain 52 completed Gemini calls, plus 10 calls in the intermediate v2 development report and one separately verified production fallback smoke request. Initial missing-SDK failures consumed zero model requests.
+- The four main comparison reports contain 52 completed Gemini calls, plus 10 calls in the intermediate v2 development report and one separately verified local service fallback smoke request. Initial missing-SDK failures consumed zero model requests.
 
 - v1 is the original prompt and lexical parser. Development failures included invented unavailable dates, incorrect supplemental ratio YoY, English clarification choices and lost conversation scope.
 - v2 added explicit date/YoY/Thai-language/scope instructions and development-driven synonyms (`ยอดออม`, `เงินกู้`). Its [intermediate development report](dev-v2-live.json) is retained, including remaining temporal-intent errors.

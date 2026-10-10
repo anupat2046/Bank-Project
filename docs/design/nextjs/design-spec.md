@@ -1,6 +1,6 @@
 # Next.js UX/UI specification
 
-The user approved the written five-page migration plan with “ทำเลย”. The five generated screen references are visual development concepts, not screenshots of a working product and not independently user-approved images. Generated copy and sample numbers never override actual warehouse results or the existing CQ catalog.
+This specification defines the five-page analytical application. AI-generated screen references are visual concepts, not working-product screenshots or evidence of measured data. Their sample copy and numbers do not override warehouse results or the competency-question catalogue. See [implemented-workflow verification](../../evidence/nextjs-qa.md).
 
 ## System
 
@@ -12,7 +12,7 @@ The user approved the written five-page migration plan with “ทำเลย�
 - Components: Shell, PageHeading, DataState, Footer, DataTable, TrendChart, Bars, GppScatter. Shared loading/error/empty states and keyboard-visible focus.
 - Mobile: menu drawer at <=850px, single-column primary work areas, scrollable tables with sticky names, chat conversation/result tabs, compact question selector.
 
-## Locked structure and visible copy
+## Page structure and Thai interface copy
 
 Navigation: ภาพรวมตลาด / วิเคราะห์จังหวัด / ผู้ช่วยวิเคราะห์ / คำถามธุรกิจ / แหล่งข้อมูล. Brand: Bank Intelligence. Month selector: งวดข้อมูล.
 
@@ -26,7 +26,7 @@ Navigation: ภาพรวมตลาด / วิเคราะห์จั�
 
 - All chart data, result rows, question wording, reference years, growth and timestamps must be real. Generated illustrations of charts and table values are not implementation seeds.
 - The existing ten CQ IDs and meanings are preserved; generated question names are not authoritative.
-- Actual YoY and calculation disclosure are included per the user-approved plan.
+- Actual YoY and calculation disclosure are included in the implementation.
 - AI mode is displayed, not a provider-selection dropdown: selection remains backend configuration. The global month selector is hidden in chat because the existing planner determines its own scope; every answer reveals actual query parameters/results. No fake selected-month claim.
 - Sources show retrieval timestamps but explicitly say upstream freshness is not checked. No invented green freshness status.
 - SQL disclosures for CQ show the executed scoped SQL and bound as-of parameter, rather than implying a latest-only query matched an older month.
@@ -35,4 +35,4 @@ Navigation: ภาพรวมตลาด / วิเคราะห์จั�
 
 ## Image generation brief
 
-Built-in Image Gen, one fresh desktop concept per page. Each brief requested a full 1440x1000-composition readable Thai analytical screen, shared white/navy/teal palette, a 230px pale sidebar, exact five navigation labels, locally implementable controls/text, thin dividers, restrained surfaces, no fake product claims, avatars, hero badges, gradients or decorations. Per-page prompts requested the structures listed above. Only known public snapshot summary values (18.10/18.14 trillion, 4,516 branches, 76.38% Bangkok, 83.11% top five, 77 provinces/25 months) were supplied; any other generated sample numbers are discarded.
+One AI-generated desktop concept per page was used for visual exploration at 1440 × 1000, with shared white/navy/teal colors, a 230px sidebar, Thai navigation labels, and restrained analytical surfaces. Concepts do not supply application data. Inspect the [concept images](overview-concept.png), [province concept](provinces-concept.png), [assistant concept](assistant-concept.png), [question concept](questions-concept.png), and [source concept](sources-concept.png) separately from the working screenshots linked in the root README.

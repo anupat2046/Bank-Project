@@ -2,7 +2,7 @@
 
 This project treats natural-language planning as a measurable component, not a successful HTTP request. The [measured comparison](evidence/llm/results.md) and its raw JSON artifacts separate model errors from infrastructure failures, numerical correctness and appropriate clarification.
 
-The separate [production fallback smoke evidence](evidence/llm/service-smoke.md) confirms the HTTP/checkpoint/provider/SQL boundary and token telemetry. It is not combined with the comparison's accuracy denominator.
+The separate [local service fallback smoke evidence](evidence/llm/service-smoke.md) confirms the HTTP/checkpoint/provider/SQL boundary and token telemetry before the conversation-router addition. It is not combined with the comparison's accuracy denominator. The [subsequent routing checks](conversation-routing.md) are separate integration evidence, not router accuracy scores.
 
 ## Experimental design
 
@@ -12,9 +12,9 @@ All three strategies use the same questions, warehouse snapshot, bounded SQL exe
 
 - **Rules-only:** no provider requests; unsupported wording can require clarification.
 - **LLM-only:** every planning turn uses Gemini structured output. This is not unrestricted model-generated SQL: validated plans still pass through the read-only compiler. The common conversation controller handles history and confirmed scope.
-- **Hybrid:** the application's real planner resolves known wording with rules and uses Gemini only for unresolved paraphrases. Known ambiguous/unsupported semantics are not forced through a model.
+- **Hybrid:** the analytical planner resolves known wording with rules and uses Gemini only for unresolved paraphrases. Known ambiguous/unsupported semantics are not forced through a model. The benchmark does not invoke the application's subsequent conversational router.
 
-Each strategy maintains its **own predicted context**. The next turn does not receive the golden previous plan. A bad first turn can therefore cause measurable context errors later. Benchmark state is in-memory and does not overwrite users' LangGraph checkpoints. The benchmark calls the same planning/execution/answer functions as the service, but does not include HTTP, browser or checkpoint overhead in its timings; the service smoke test checks those boundaries separately.
+Each strategy maintains its **own predicted context**. The next turn does not receive the golden previous plan. A bad first turn can therefore cause measurable context errors later. Benchmark state is in-memory and does not overwrite users' LangGraph checkpoints. The benchmark calls the analytical planning/execution/answer functions, but excludes conversational routing, HTTP, browser, and checkpoint overhead. Later service changes include shorter provider timeouts and distinct planning-error responses; the retained reports describe the historical implementation, not a fresh benchmark of every current change.
 
 ## Metrics and rubric
 
@@ -75,4 +75,4 @@ Optional `.env` fields `LLM_INPUT_USD_PER_MILLION` and `LLM_OUTPUT_USD_PER_MILLI
 
 ## Scope
 
-This is a local prototype: no LangSmith account, external observability vendor, vector database, multi-agent system or production deployment is required or claimed. Evaluation adds no customer-data access and does not alter the Airflow schedule. The Resume draft is intentionally unchanged.
+This is a local prototype: no LangSmith account, external observability vendor, vector database, multi-agent system or production deployment is required or claimed. Evaluation adds no customer-data access and does not alter the Airflow schedule. Current service telemetry includes router calls and bounded route labels, while the historical planner benchmark excludes that routing stage.

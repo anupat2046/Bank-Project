@@ -36,30 +36,30 @@ def main():
     results = {qid: run_question(qid) for qid, *_ in QUESTIONS}
     if any(not rows for rows in results.values()):
         raise RuntimeError("A competency query returned no rows; review before publishing evidence")
-    lines = ["# Competency Questions: 10 คำถามและผล Query จริง", "",
-             f"ตรวจเมื่อ {verified_date} (Asia/Bangkok) โดยอ่าน warehouse ที่มีอยู่ ไม่โหลดข้อมูลต้นทางใหม่", "",
-             f"Snapshot: **{snapshot['provinces']} จังหวัด × {snapshot['months']} เดือน = {snapshot['rows']:,} แถว**; "
-             f"งวด {snapshot['first_period']} ถึง {snapshot['latest_period']}", "",
-             "ทุกข้ออ่าน `mart_province_month` ซึ่งรวม dim_province/dim_month และ fact_bank_month, "
-             "fact_population_year, fact_gpp_year, fact_macro_year, fact_policy_event ตาม grain/availability ใน "
-             "[Data Model](architecture.md). ทุก query รันผ่าน PostgreSQL role `bank_reader` ใน read-only transaction.", "",
-             "[SQL ทั้ง 10 ข้อ](../sql/competency_questions.sql) · "
-             "[ผลลัพธ์ machine-readable](evidence/competency-results.json)", "",
-             "| ID | Competency Question | แหล่งข้อมูล | หน้าที่แสดงผล | แถวที่คืนจริง |",
+    lines = ["# Competency questions: executed SQL and recorded results", "",
+             f"Recorded on {verified_date} (Asia/Bangkok) from the existing warehouse; no source refresh was performed", "",
+             f"Snapshot: **{snapshot['provinces']} provinces × {snapshot['months']} months = {snapshot['rows']:,} rows**; "
+             f"periods {snapshot['first_period']}–{snapshot['latest_period']}", "",
+             "All questions read `mart_province_month`, integrating dim_province/dim_month and fact_bank_month, "
+             "fact_population_year, fact_gpp_year, fact_macro_year, fact_policy_event under the grain/availability rules in "
+             "[data model](architecture.md). Queries use PostgreSQL role `bank_reader` in a read-only transaction. Thai question wording matches the application.", "",
+             "[All ten SQL queries](../sql/competency_questions.sql) · "
+             "[Machine-readable results](evidence/competency-results.json)", "",
+             "| ID | Competency question | Sources | Application view | Returned rows |",
              "|---|---|---|---|---|"]
     for qid, title, sources, fields, location, caveat in QUESTIONS:
-        lines.append(f"| {qid} | {title} | {sources} | 10 คำถามธุรกิจ; {location} | {len(results[qid])} |")
+        lines.append(f"| {qid} | {title} | {sources} | Business questions; {location} | {len(results[qid])} |")
     sql = queries()
     for qid, title, sources, fields, location, caveat in QUESTIONS:
         rows = results[qid]
         keys = list(rows[0])
-        lines += ["", f"## {qid} — {title}", "", f"**ฟิลด์:** {fields}", "",
-                  f"**บริบทและการตีความ:** {caveat}", "", "```sql", sql[qid] + ";", "```", "",
+        lines += ["", f"## {qid} — {title}", "", f"**Fields:** {fields}", "",
+                  f"**Interpretation:** {caveat}", "", "```sql", sql[qid] + ";", "```", "",
                   "| " + " | ".join(keys) + " |", "| " + " | ".join("---" for _ in keys) + " |"]
         lines += ["| " + " | ".join(cell(row[k]) for k in keys) + " |" for row in rows]
-    lines += ["", "การทดสอบนี้ยืนยัน SQL และผลจาก snapshot ที่ระบุ ไม่ได้ยืนยันว่าแหล่งข้อมูลอัปเดตล่าสุด "
-              "หรือ Airflow รันต่อเนื่องครบเดือน. ภาพจากหน้าแอปอยู่ใน README; Gemini เป็นช่องทางเสริม "
-              "และไม่จำเป็นต่อการรัน 10 คำถามเหล่านี้.", ""]
+    lines += ["", "This evidence records SQL/results for the stated snapshot. It does not verify current upstream freshness "
+              "or a month of continuous Airflow scheduling. Application screenshots are linked from the README; Gemini is optional "
+              "and is not required to execute these ten questions.", ""]
     (root / "docs/competency-questions.md").write_text("\n".join(lines), encoding="utf-8")
     (root / "docs/evidence/competency-results.json").write_text(
         json.dumps({"verified_date": verified_date, "snapshot": snapshot, "results": results},

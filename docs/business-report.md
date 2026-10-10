@@ -1,61 +1,53 @@
-# รายงานสรุปโครงการ: Thailand Regional Banking Intelligence
+# Business analysis: provincial banking markets
 
-**วันที่ตรวจ:** 28 กันยายน 2569 (Asia/Bangkok) · **งวดธนาคารล่าสุด:** กรกฎาคม 2569 · **ขอบเขต:** ธนาคารพาณิชย์รวมรายจังหวัด ไม่ใช่ข้อมูลรายลูกค้าหรือรายธนาคาร
+[Documentation index](README.md) · [Executed questions and SQL](competency-questions.md)
 
-## 1. โจทย์ธุรกิจ
+Analysis period: **July 2026**, with same-month YoY comparisons to July 2025. Findings below refer to the recorded warehouse/CQ evidence, not live market conditions. The ten question queries were recorded on 10 October 2026; later documentation and assistant changes do not constitute new source retrieval.
 
-ทีมวางแผนธุรกิจธนาคารต้องการมองความต่างระหว่างจังหวัดก่อนเลือกพื้นที่ไปศึกษาต่อ แต่ข้อมูลสินเชื่อ เงินฝาก สาขา ประชากร GPP และบริบทเศรษฐกิจมาจากคนละหน่วยงาน คนละ grain และคนละเวลาประกาศ โครงการนี้สร้าง data warehouse ที่เก็บ provenance และกฎ as-of ให้ตัวเลขเปรียบเทียบกันได้ พร้อม dashboard และ chatbot แบบ constrained text-to-SQL
+## Decision context
 
-**เป้าหมาย:** ช่วยตั้งคำถามและคัดกรองพื้นที่เพื่อทำ due diligence ต่อ ไม่ใช่ระบบแนะนำอนุมัติสินเชื่อ เปิด/ปิดสาขา หรือประเมินความเสี่ยงลูกค้า
+Regional strategy and channel-planning teams need to compare banking-market size, growth, branch coverage, and economic context before selecting provinces for deeper investigation. Absolute balances are dominated by Bangkok and may reflect head-office booking. A useful comparison therefore needs normalized measures, explicit reference periods, and adjustable screening criteria.
 
-## 2. ข้อมูลและการบูรณาการ
+The platform supports **market screening and question formation**. It does not have customer portfolios, individual-bank market share, credit quality, branch costs, or profitability data.
 
-| ต้นทางจริง | วิธีเข้าถึง | grain / จำนวนที่โหลด | การใช้ในงาน |
-|---|---|---|---|
-| [ธปท. FI_CB_011_S5](https://app.bot.or.th/BTWS_STAT/statistics/BOTWEBSTAT.aspx?language=ENG&reportID=1008) | ตารางเว็บทางการ GET/POST | 77 จังหวัด × 25 เดือน = 1,925 แถว | ยอดคงค้างสินเชื่อ/เงินฝาก (ล้านบาท), สาขา |
-| [กรมการปกครอง](https://stat.bora.dopa.go.th/new_stat/webPage/statByYear.php) | ดาวน์โหลด TXT ทางการ | 77 จังหวัด × 3 ปี = 231 แถว | ประชากรทะเบียนเดือนธันวาคม |
-| [สศช. GPP 2024p](https://www.nesdc.go.th/en/download/table-of-gross-regional-and-provincial-product-2024-excel/) | ดาวน์โหลด XLSX ทางการ | 77 จังหวัด–ปี | ขนาดเศรษฐกิจจังหวัด ล้านบาท |
-| [World Bank Indicators API](https://api.worldbank.org/v2/country/THA/indicator/FP.CPI.TOTL.ZG?format=json&per_page=100) | REST JSON จริง ไม่ต้องใช้คีย์ | 65 ปีที่มีค่า | เงินเฟ้อไทยระดับประเทศ |
-| [ธปท. MPC policy rate](https://www.bot.or.th/en/our-roles/monetary-policy/mpc-publication/policy-interest-rate.html) | ดาวน์โหลด XLSX ทางการ ไม่ใช่ BOT API | 191 มติถึง 26 ส.ค. 2569 | อัตราดอกเบี้ยนโยบาย ณ สิ้นงวด |
+## Integrated evidence
 
-Crosswalk จากชื่อ ธปท./สศช. ไป **รหัสจังหวัด DOPA ทั้ง 77 จังหวัด** ใช้รายการตรวจมือ ไม่ fuzzy join และตัดยอดรวม/สำนักงานใหญ่ที่ไม่ใช่จังหวัดออก. Fact ธนาคารมี grain จังหวัด–เดือน; ประชากร/GPP เป็นจังหวัด–ปี; เงินเฟ้อเป็นประเทศ–ปี; policy rate เป็นวันมติระดับประเทศ. Mart มี grain จังหวัด–เดือน โดย join ประชากรและ GPP ด้วยกฎ availability และเลือกมตินโยบายล่าสุดที่วันที่ไม่เกินสิ้นเดือน. `NULL` หมายถึงยังไม่มีข้อมูลที่ใช้ได้ ไม่ใช่ศูนย์. รายละเอียดอยู่ใน [architecture.md](architecture.md) และ [README](../README.md)
+The analysis combines BOT monthly provincial banking balances and branch counts with DOPA registered population, NESDC annual GPP, and national macro/policy context. The mart covers 77 provinces and 25 months. Geographic identifiers are mapped explicitly; availability rules prevent newer annual vintages from being treated as historically known data.
 
-## 3. คำถามและคำตอบจากข้อมูลจริง
+The current recorded World Bank vintage contains 66 annual observations but is unavailable for the earlier banking months. See [source methods and temporal limitations](data-sources.md). Macro ingestion success and usable historical macro coverage are different checks.
 
-ตัวเลขด้านล่างอ่านจาก mart หลัง Airflow รันสำเร็จ; สูตร YoY เทียบ **เดือนเดียวกันของปีก่อน** (ก.ค. 2569 กับ ก.ค. 2568). ตัวเลขเป็นการพรรณนา ไม่ใช่ causal inference
+## Findings and appropriate follow-up
 
-| # | คำถามธุรกิจ | ผล ณ ก.ค. 2569 | สิ่งที่ควรทำต่อ |
-|---|---|---|---|
-| 1 | จังหวัดไหนสินเชื่อโต YoY สูงและต่อเนื่อง? | มุกดาหารสูงสุดในงวดล่าสุด **+1.61%** แต่ปทุมธานีเป็นบวก **12 จาก 12 เดือน** ล่าสุด (เฉลี่ย YoY +1.47%) | แยก “อันดับเดือนล่าสุด” จาก “ความสม่ำเสมอ”; ตรวจ demand และ mix สินเชื่อก่อนสรุป |
-| 2 | เงินฝากโตเร็วกว่าสินเชื่อหรือไม่? | รวมประเทศ เงินฝาก **+3.89%** เทียบสินเชื่อ **−0.17%** ต่างราว **4.06 จุดเปอร์เซ็นต์** | ตรวจพื้นที่ที่เงินฝากสะสมแต่สินเชื่อไม่โต พร้อมดูการบันทึกสำนักงานใหญ่ |
-| 3 | ความหนาแน่นสาขาต่างกันอย่างไร? | จำนวนสาขารวมลดจาก **4,790** เป็น **4,516** หรือ **−5.72% YoY**; dashboard จัดอันดับสาขาต่อประชากรแสนคน | ใช้เป็น proxy เพื่อคัดพื้นที่เท่านั้น; ต้องดู mobile banking, ที่อยู่จริง และคู่แข่ง |
-| 4 | จังหวัด GPP ใกล้กันมีตลาดสินเชื่อต่างกันไหม? | ชลบุรี GPP 2024p **1,234,303** ล้านบาท และสินเชื่อ **450,683** ล้านบาท; ระยอง GPP **1,099,856** ล้านบาท แต่สินเชื่อ **147,746** ล้านบาท | Scatter ใน Next.js ช่วยหา peer; ห้ามตีความว่า GPP ปี 2024 เป็นเหตุของยอดสินเชื่อปี 2026 |
-| 5 | ดอกเบี้ยนโยบายเปลี่ยนไปอย่างไรเมื่อเทียบกับตลาด? | ณ สิ้น ก.ค. 2568 = **1.75%**, สิ้น ก.ค. 2569 = **1.00%**; ในช่วงเดียวกันสินเชื่อรวม −0.17%, เงินฝาก +3.89% | เป็น temporal context เท่านั้น; ข้อมูลชุดนี้ไม่สามารถระบุผลของนโยบายต่อยอดจังหวัดแบบ causal |
-| 6 | สาขาลดแต่สินเชื่อเพิ่มที่ไหน? | เช่น ปทุมธานีสาขา **−14** แต่สินเชื่อ **+0.73% YoY**; พังงาสาขา **−2** แต่สินเชื่อ **+1.47%** | ตรวจ channel shift และการย้ายจุดบริการ; ไม่สรุปว่า “สาขาไม่จำเป็น” |
-| 7 | พื้นที่ไหนควรนำไปศึกษาเพิ่ม? | เกณฑ์ตัวอย่าง GPP ≥100,000 ล้านบาท, สาขาต่อแสน ≤15, สินเชื่อ ≥50,000 ล้านบาท และไม่รวม กทม. ได้ **22 จังหวัด** | ปรับเกณฑ์ใน Next.js แล้วทำ due diligence: คู่แข่ง รายได้ ต้นทุนพื้นที่ คุณภาพสินเชื่อ และกฎเกณฑ์ |
-| 8 | จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด? | ร้อยเอ็ด **127.36%** จากสินเชื่อ 48,648 ล้านบาท / เงินฝาก 38,197 ล้านบาท | ตรวจการบันทึกข้ามพื้นที่; ไม่ใช้แทน liquidity ratio รายธนาคาร |
-| 9 | จังหวัดใดมีเงินฝากต่อประชากรทะเบียนสูงที่สุด? | กรุงเทพฯ **2,111,467.67 บาท/คน** ใช้ประชากรทะเบียนปี 2025 | ตรวจผลของสำนักงานใหญ่และประชากรจริงก่อนตีความกำลังออมของคนในพื้นที่ |
-| 10 | สินเชื่อกระจุกตัวในกรุงเทพฯ และ top 5 เท่าไร? | กรุงเทพฯ **76.38%**; 5 จังหวัดอันดับแรก **83.11%** ของยอดสินเชื่อจังหวัดรวม 18,100,244 ล้านบาท | แยกที่ตั้งบันทึกจากที่อยู่ผู้กู้ และลองเปรียบเทียบโดยไม่รวมกรุงเทพฯ |
+All financial balances below are **THB million** unless otherwise stated.
 
-ข้อ 8–10 และ SQL ทั้ง 10 ข้อรันจาก warehouse เมื่อ 10 ต.ค. 2569 โดยไม่ได้โหลด source ใหม่ในการตรวจ query รอบนั้น. ดู [คำถาม ฟิลด์ SQL และผลลัพธ์ทุกข้อ](competency-questions.md). หน้า Next.js “คำถามธุรกิจ” แสดงคำตอบครบ 10 ข้อ; ชุดทดสอบรวมหลังย้าย frontend **43 tests passed**. คำถาม GPP peer ใน CQ04 ใช้เกณฑ์ผลต่างไม่เกิน 15% ของค่าที่มากกว่าเพื่อให้ query ตรวจซ้ำได้
+| Question | Recorded finding | Interpretation and next investigation |
+| --- | --- | --- |
+| Loan-growth consistency | Mukdahan leads latest-month loan YoY at approximately **+1.61%**; Pathum Thani has positive YoY in **12/12** recent months, averaging **+1.47%** | Latest-month rank and persistent growth are different measures. Inspect portfolio composition and demand before attributing the pattern |
+| Deposits versus loans | Provincial totals: deposits **+3.89% YoY**, loans **−0.17%**; growth gap approximately **4.06 percentage points** | Examine where deposit growth exceeds lending growth; account for cross-area booking |
+| Branch coverage | Branches fall from **4,790 to 4,516**, or **−5.72% YoY** | Branch density is a screening proxy. Assess digital usage, service locations, and competing channels |
+| Comparable economic scale | Chon Buri GPP: **1,234,303**, loans: **450,683**; Rayong GPP: **1,099,856**, loans: **147,746** | Similar annual GPP does not imply similar banking demand. GPP 2024p and July 2026 balances have different reference periods |
+| Policy-rate context | Month-end policy rate: **1.75%** in July 2025 versus **1.00%** in July 2026 | Compare timing descriptively; the dataset does not identify a causal policy effect on provincial lending |
+| Fewer branches, growing loans | Pathum Thani: **−14 branches**, **+0.73% loan YoY**; Phang Nga: **−2**, **+1.47%** | Investigate channel changes and relocations; do not infer that branches are unnecessary |
+| Adjustable shortlist | Excluding Bangkok, GPP ≥100,000, branches per 100,000 residents ≤15, and loans ≥50,000 returns **22 provinces** | Thresholds are explicit research hypotheses, not a ranking of investment suitability |
+| Highest loan/deposit ratio | Roi Et: **127.36%**, from loans **48,648** and deposits **38,197** | This is a geographic balance ratio, not an individual bank's liquidity measure |
+| Highest deposits per registered resident | Bangkok: **THB 2,111,467.67/person**, using registered population for 2025 | Recorded deposits and registered residents are not customer-level savings or actual resident wealth |
+| Loan concentration | Bangkok: **76.38%**; top five provinces: **83.11%** of provincial recorded loans totaling **18,100,244** | Separate booking location from borrower residence; compare results with Bangkok excluded |
 
-**ข้อควรระวัง:** ตัวเลขจังหวัด ธปท. ปัดเศษเป็นล้านบาท จึงต่างจากยอดรวมประเทศในตารางทางการได้เล็กน้อย. กรุงเทพฯ อาจรวมธุรกรรมบันทึกที่สำนักงานใหญ่. ประชากรคือผู้มีชื่อในทะเบียน ไม่ใช่ผู้ใช้บริการ. GPP 2024p กับยอดธนาคาร 2026 ต่างปี. เงินเฟ้อและอัตราดอกเบี้ยนโยบายเป็นบริบทระดับประเทศ ไม่ใช่ตัวแปรเฉพาะจังหวัด
+CQ01 specifically tests twelve-month growth consistency, not the separate latest-month growth ranking. CQ04 defines GPP peers as a gap no greater than **15% of the larger value**. See [all ten reproducible queries and their result rows](competency-questions.md); predefined question wording remains Thai to match the application.
 
-## 4. สิ่งที่ส่งและวิธีสาธิต
+## Recommended demonstration sequence
 
-1. เปิด [Grafana](http://127.0.0.1:3001/d/thai-bank-regions) ดู 13 panels: time series, ranking, ratio, YoY, GPP, screening และ policy rate. SQL ทุก panel อยู่ใน [dashboard JSON](../grafana/dashboards/regional-banking.json)
-2. เปิด [Next.js](http://127.0.0.1:3000) เลือกเดือน → ดู KPI → เปรียบเทียบจังหวัด → GPP scatter → ปรับเกณฑ์ shortlist
-3. หน้า “ถามข้อมูล” ถาม `แนวโน้มสินเชื่อจังหวัดเชียงใหม่` หรือ `แนวโน้มดอกเบี้ยนโยบาย` แล้วแสดงคำตอบ ตาราง กราฟ SQL และแหล่งที่มา. โหมดไม่มีคีย์เป็น **rules mode ที่ติดป้ายว่าไม่ใช้ AI**; LangChain/Gemini ทดลองสดผ่านหนึ่งคำถามแนวโน้มเงินฝากเมื่อ 30 ก.ย. 2569 แต่ยังไม่ใช่ผลประเมินความแม่นยำครบชุด
-4. เปิด [Airflow](http://127.0.0.1:8081) ดู DAG `bank_regional_daily` และ 6 tasks: BOT, DOPA, NESDC, World Bank API, MPC workbook, mart. รอบ manual ล่าสุดสำเร็จ; ดู [หลักฐานการตรวจ](evidence/run-status.md)
+1. Open the market overview and inspect the selected banking month, balances, YoY, and concentration.
+2. Compare two provinces; inspect population/GPP reference years and normalized measures.
+3. Adjust shortlist thresholds and explain why each returned province meets the criteria.
+4. Open a predefined business question and inspect its result, caveat, SQL, and bound period.
+5. Ask the assistant for loans per registered resident, exclude Bangkok in a follow-up, and switch to a table.
+6. Use the sources page to distinguish retrieval time, source vintage, and usable historical coverage.
 
-## 5. การตรวจคุณภาพและบทเรียน
+Grafana provides a separate provisioned reporting view. Airflow's task/run history demonstrates orchestration only for observed runs; a screenshot of one successful run is not evidence of continuous scheduling.
 
-- Automated regression **38 tests passed** เมื่อ 30 ก.ย. 2569 รวม 25 คำถาม rules intent/execution, 13 SQL panels, strict province mapping, no-lookahead policy/annual vintage, trend window, สิทธิ์ SELECT-only และการเลือก Gemini provider
-- ETL เก็บ raw snapshot พร้อม SHA-256 และ manifest; โหลดแต่ละ fact ภายใน transaction, data quality failure ไม่เขียนทับชุดเดิม
-- Chatbot ให้ LLM สร้างเฉพาะ structured `QueryPlan`; SQL จาก catalog ตรวจด้วย SQLGlot, จำกัด mart/table/row, ใช้ DB role อ่านอย่างเดียว และแสดง SQL/provenance ให้ตรวจได้
-- บทเรียนสำคัญคือ **เวลาที่ข้อมูลเผยแพร่ไม่เท่ากับเวลาที่ข้อมูลอ้างอิง**. หากเอา GPP 2024p ที่เพิ่งเผยแพร่ปี 2026 ไปใส่ทุกเดือนย้อนหลัง จะเกิด lookahead bias. การ map จังหวัดต้องตัดแถวรวม และยอด stock ห้ามบวกข้ามเดือน
+## Interpretation boundaries
 
-## 6. เงื่อนไขที่ยังพิสูจน์ไม่ได้วันนี้
+Monthly banking balances are stocks and must not be summed across time. Provincial figures are rounded to THB million, so their sum can differ slightly from BOT's independently rounded national total. Registered population is not the customer count, branch counts omit alternative channels, and national macro/policy context is not province-specific.
 
-Assignment ต้องการคลังที่มีข้อมูลอย่างน้อยหนึ่งเดือน: **ผ่าน** เพราะมีข้อมูลจริง 25 เดือน. แต่ถ้าอาจารย์ตีความว่าต้องมี **หลักฐาน scheduler รันต่อเนื่องหนึ่งเดือน** วันนี้ยังพิสูจน์ไม่ได้; ต้องเปิด Docker Desktop ให้ Airflow ทำงานต่อจนถึง 28 ตุลาคม 2569 แล้วเก็บ run history/screenshot. Gemini ผ่าน live smoke test หนึ่งคำถามแล้ว แต่ยังไม่มีการประเมิน LLM ครบชุด. ไม่กล่าวอ้างสองส่วนนี้ว่าเสร็จแล้ว
-
+A defensible next stage would combine external market research, competitor information, channel usage, operating costs, and credit-quality evidence. None of those missing inputs is inferred by this prototype.

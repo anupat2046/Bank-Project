@@ -1,165 +1,136 @@
 # Thailand Regional Banking Intelligence
 
-An end-to-end analytics project for Thailand's provincial commercial-banking market: a PostgreSQL warehouse, scheduled ETL, a **Next.js analytical application**, Grafana dashboards, and a constrained natural-language query interface. It integrates **real public data** from multiple sources—no customer records, individual-bank records, or synthetic banking observations. Next.js is the sole application frontend.
+A public-data analytics platform for comparing Thailand's provincial banking markets. It combines a PostgreSQL warehouse, daily ETL orchestration, a Next.js dashboard, Grafana reporting, and a bounded Gemini-powered analytical assistant.
 
-| Warehouse | Pipeline | Analytics | Verification |
-|---|---|---|---|
-| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 5 Next.js pages + 10 questions + 13 Grafana panels | 170 passing Python tests |
+Built for regional strategy and channel-planning research—not customer credit decisions, individual-bank analysis, or automated branch recommendations.
 
-The project is ready to run and demonstrate locally. Its verified data snapshot covers July 2024–July 2026; the source's latest banking period in this build is July 2026. See [validation and scope](#validation-and-scope) for the remaining operational and optional-LLM checks.
+[ภาษาไทย](README_TH.md) · [Quick start](docs/getting-started.md) · [Documentation](docs/README.md) · [Business findings](docs/business-report.md)
 
-[ภาษาไทย / Thai documentation](README_TH.md) · [Business report](docs/business-report.md) · [Architecture and ER diagram](docs/architecture.md)
+![Market overview with loan and deposit balances, branch counts, and monthly trends](output/playwright/nextjs-overview.png)
 
-![Next.js overview showing real warehouse KPIs, YoY changes and policy-rate context](output/playwright/nextjs-overview.png)
+## Business problem
 
-## Why this project exists
+Provincial loan balances alone are a poor basis for comparing markets: Bangkok dominates recorded balances, while provinces differ in population, economic scale, and branch coverage. The relevant publications also use different geographic names, reporting grains, units, and release dates.
 
-A bank's strategy or channel-planning team may want to compare provincial loan and deposit growth, branch coverage, and economic context before selecting places for further investigation. The underlying publications have different geographic identifiers, grains, units, and release dates. This project resolves those differences into an auditable province–month mart and makes the result explorable. It is a **market-screening tool**, not a credit decision engine or a recommendation to open/close branches.
+This project maps five public sources into a province–month mart so a reviewer can compare market size, growth, and scale-adjusted measures with visible calculation rules and provenance. A shortlist is a starting point for further investigation, not evidence of unmet demand or profitability.
 
-The dashboards address questions such as:
+## What the application supports
 
-1. Which provinces have high and persistent year-over-year loan growth?
-2. Where are deposits growing faster than loans?
-3. How does branch density per 100,000 registered residents differ across provinces?
-4. Do provinces with similar GPP have different banking-market sizes?
-5. How did banking balances move over periods when the national policy rate changed? (Context, **not causation**.)
-6. Where did branch counts fall while loan balances rose?
-7. Which provinces pass adjustable thresholds for a follow-up market study?
-8. Which provinces have the highest credit-to-deposit ratios?
-9. Which provinces have the highest deposits per registered resident?
-10. What share of recorded national loan balances is concentrated in Bangkok and the top five provinces?
+- **Market overview:** national loan/deposit balances, branch counts, YoY changes, trends, and concentration.
+- **Province analysis:** detailed histories, comparisons of up to four provinces, GPP context, and adjustable screening criteria.
+- **Analytical assistant:** Thai questions, ratio-aware rankings, filters, comparisons, YoY, and follow-ups; capability guidance, grounded definitions, and chart/table changes.
+- **Business questions:** ten predefined analyses with actual results, SQL, parameters, and interpretation.
+- **Source quality:** coverage, reference periods, retrieval metadata, availability rules, and redacted ETL status.
 
-The [business report](docs/business-report.md) gives business interpretation. The [10 competency questions and verified answers](docs/competency-questions.md) map every question to data fields, a SQL query, result rows, and an application view. All [10 SQL queries](sql/competency_questions.sql) were executed on the existing warehouse on 10 October 2026. Next.js's **คำถามธุรกิจ** page lets a reviewer select each question and banking month, inspect its actual result, plot a metric, and view the executed SQL with bound parameters. CQ04 defines comparable GPP as a gap of at most 15% relative to the larger value.
+The assistant uses Gemini to select a bounded conversational action when a key is configured. Analytical requests use a hybrid planner: known wording is resolved with semantic rules, unresolved paraphrases can use structured LLM output, and only validated plans reach read-only SQL. No-key mode remains usable with narrower offline routing and deterministic analytical coverage.
 
-The current project brief requires a problem, sources, at least 10 competency questions, an implemented database model with loaded data, at least 10 answering queries, and a data-driven application prototype. The linked documents and application provide that evidence. This brief does not require one month of uninterrupted Airflow operation; the earlier assignment's operations evidence remains separate.
+## Data and technology
 
-## Product screenshots
+Verified snapshot: **77 provinces × 25 months = 1,925 analytical rows**, covering **July 2024–July 2026**. These are dated observations, not a guarantee of current upstream freshness.
 
-The Next.js interface separates market overview, province detail/comparison/screening, the analytical assistant, competency questions, and source quality. Filters are URL-backed; tables sort, search and export CSV. Thai fonts are bundled locally, with responsive navigation and mobile conversation/result views. These screenshots were captured from the running application on 10 October 2026, including one live Gemini deposit-trend answer (a smoke test, not an accuracy benchmark). See the [frontend guide](frontend/README.md), [design specification](docs/design/nextjs/design-spec.md), and [migration verification](docs/evidence/nextjs-qa.md).
+| Source | Ingestion | Purpose |
+| --- | --- | --- |
+| Bank of Thailand, FI_CB_011_S5 | Public web table over HTTP GET/form POST | Monthly loans, deposits, and branches |
+| Department of Provincial Administration | Official TXT downloads | Annual registered population |
+| NESDC | Official GPP workbook | Annual provincial economic context |
+| World Bank Indicators | Public JSON REST API | National annual inflation context |
+| Bank of Thailand MPC decisions | Official workbook | National policy-rate history |
 
-| Provincial analysis | Adjustable shortlist |
-|---|---|
-| ![Next.js province analysis](output/playwright/nextjs-provinces.png) | ![Next.js shortlist and GPP scatter](output/playwright/nextjs-screening.png) |
+The BOT adapters use published tables/workbooks, **not authenticated BOT REST APIs**. See [sources, units, mapping, and temporal joins](docs/data-sources.md).
 
-| Verified business question | Data provenance and availability |
-|---|---|
-| ![Next.js CQ result, chart and caveat](output/playwright/nextjs-questions.png) | ![Next.js sources and join rules](output/playwright/nextjs-sources.png) |
-
-![Next.js analytical assistant](output/playwright/nextjs-assistant.png)
-
-The [mobile overview capture](output/playwright/nextjs-mobile.png) shows the responsive layout and internally scrollable table.
-
-### Grafana and pipeline
-
-| Grafana dashboard | National policy-rate context and GPP comparison |
-|---|---|
-| ![Grafana banking trends and rankings](output/playwright/grafana-dashboard.png) | ![Grafana policy-rate history and provincial GPP comparison](output/playwright/grafana-policy-and-gpp.png) |
-
-The analytical assistant returns query results, charts, SQL, and provenance. Its upgraded catalogue supports 15 metrics, including loans per registered resident/per branch, multi-metric results, same-month YoY, filters and up to four-province comparisons. It remembers confirmed session context and asks for clarification instead of guessing ambiguous ratios. Known wording uses labelled semantic rules; Gemini handles unresolved paraphrases when configured. The historical live Gemini capture above is a smoke test, not an accuracy benchmark.
-
-![Upgraded assistant with per-person and per-branch loans, YoY and separate chart units](output/playwright/chatbot-analytics.png)
-
-See [conversational analytics, formulas and evaluation evidence](docs/chatbot-analytics.md) for the new screenshots, example conversations, 80-question corpus and limitations.
-
-The [LLM engineering evaluation](docs/llm-evaluation.md) compares rules-only, Gemini-only planning and hybrid on a separate 24-turn development/held-out corpus. It checks plans, independent numeric results, clarification, conversation scope, latency and actual token usage. [Measured before/after results and raw reports](docs/evidence/llm/results.md) retain failures as well as improvements. Service logs emit redacted operational metrics; unknown costs remain unavailable rather than being called free.
-
-The scheduled pipeline has five source tasks feeding a mart-build task. The [Airflow graph screenshot](docs/evidence/airflow-graph-qa.png) shows a successful six-task run.
+| Layer | Implementation |
+| --- | --- |
+| Application | Next.js App Router, TypeScript, Recharts |
+| API and ingestion | Python, FastAPI, pandas, SQLAlchemy, psycopg |
+| Warehouse | PostgreSQL; dimensions, source-grain facts, province–month mart |
+| Orchestration and reporting | Apache Airflow; Grafana with 13 provisioned panels |
+| Assistant | Gemini via LangChain, LangGraph checkpoints, Pydantic plans, SQLGlot validation |
+| Verification | pytest, independent arithmetic checks, authored LLM evaluation, timing/token telemetry |
 
 ## Architecture
 
 ```text
-BOT banking web table ───┐
-DOPA population files ───┤
-NESDC GPP workbook ──────┤──> Python validation + raw SHA-256 snapshots
-World Bank JSON API ─────┤        └──> PostgreSQL dimensions/facts
-BOT MPC workbook ────────┘                   └──> province-month mart
-                                                   ├──> Grafana (13 panels)
-Airflow daily 07:00 ICT ──> protected FastAPI ETL ├──> FastAPI analytical reads
-                                                   │    └──> Next.js server proxy → 5-page web app
-                                                   └──> LangGraph chatbot ← FastAPI /chat
-                                                        └──> bounded SQL + read-only DB role
+Five public sources → validated Python ETL → PostgreSQL facts and dimensions
+                              ↑                         ↓
+                 Airflow daily 07:00 Bangkok     province–month mart
+                                                        ├─ Grafana
+                                                        └─ read-only FastAPI analytics
+                                                                  ↑
+                                                       Next.js server proxy
+                                                                  ↑
+                                                    dashboard and assistant
+
+Chat → safety gate → conversational router
+                         ├─ guidance / definition / chart change
+                         └─ hybrid plan → validated SQL → grounded result
 ```
 
-The Airflow DAG is [`airflow/dags/bank_daily.py`](airflow/dags/bank_daily.py). Source adapters and loading logic are in [`bank/sources.py`](bank/sources.py) and [`bank/etl.py`](bank/etl.py). The schema is defined in [`bank/db.py`](bank/db.py); Grafana panels are provisioned from [`grafana/dashboards/regional-banking.json`](grafana/dashboards/regional-banking.json). See the [full architecture and ER diagram](docs/architecture.md).
-
-## Data sources and joins
-
-| Dataset | Actual ingestion method | Grain and loaded coverage | Role |
-|---|---|---|---|
-| [Bank of Thailand FI_CB_011_S5](https://app.bot.or.th/BTWS_STAT/statistics/BOTWEBSTAT.aspx?language=ENG&reportID=1008) | Official public web table via HTTP GET/form POST; **not a REST API** | Province × month; 77 × 25 = 1,925 rows | Loan and deposit balances in THB million; branch counts |
-| [Department of Provincial Administration](https://stat.bora.dopa.go.th/new_stat/webPage/statByYear.php) | Official TXT files | Province × year; 77 × 3 = 231 rows (2023–2025) | Registered population |
-| [NESDC GPP 2024p](https://www.nesdc.go.th/en/download/table-of-gross-regional-and-provincial-product-2024-excel/) | Official XLSX workbook | Province × year; 77 rows | Provincial gross product in THB million |
-| [World Bank Indicators](https://api.worldbank.org/v2/country/THA/indicator/FP.CPI.TOTL.ZG?format=json&per_page=100) | **Real public JSON REST API**, no API key | Thailand × year; 66 non-null observations after the October update | National CPI inflation context, subject to source-vintage availability |
-| [Bank of Thailand MPC decisions](https://www.bot.or.th/en/our-roles/monetary-policy/mpc-publication/policy-interest-rate.html) | Official XLSX workbook; **not the BOT Policy Rate API** | Decision date; 191 events | National month-end policy-rate context |
-
-Province names from BOT and NESDC are mapped through an explicit, reviewed **77-province crosswalk** to DOPA province codes. Aggregate rows such as *Grand Total* and *Head office* are excluded rather than double-counted. Unknown names fail validation instead of being fuzzy-matched.
-
-The mart's grain is **province × banking month**. BOT balances are month-end stocks, so they can be summed across provinces within one month but **must not be summed over time**. DOPA population uses the last available December snapshot from the following January onward. NESDC GPP and World Bank inflation are only joined after their documented availability date. The policy rate is the latest decision effective no later than that banking month's end. Missing/unavailable values remain `NULL`, not zero. `source_manifest` records source URL, retrieval time, raw path, and SHA-256; `etl_run` records job outcomes.
-
-Key measures include `loans / deposits × 100`, `branches / registered_population × 100,000`, and YoY growth versus the **same month in the previous year**. Branch density is only a proxy for access; registered population is not the number of bank customers. National inflation and policy rates are context, not province-specific predictors.
+Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. See [architecture and data model](docs/architecture.md).
 
 ## Run locally
 
-This is a Windows-oriented local demo. Install Docker Desktop and Python 3.13, then run these commands in PowerShell from the project root:
+Prerequisite: Docker Desktop with Linux containers.
+
+From the repository root in PowerShell:
 
 ```powershell
-docker compose up -d --build
-py -3.13 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m bank.etl all
+docker compose up -d --build postgres api web
+docker compose exec api python -m bank.etl all
 ```
 
-The last command performs the initial import from the live public sources. It requires internet access and may take several minutes. Source websites can change, so a future import may require an adapter update. Subsequent loads are scheduled by Airflow. The Docker Compose file persists PostgreSQL data in a named volume and raw snapshots under `data/raw/`.
+The import uses live public sources, requires internet access, and may take several minutes. Check its final status before using the dashboard. Open [the application](http://127.0.0.1:3000) or [API documentation](http://127.0.0.1:8000/docs).
 
-| Service | Local address | Access |
-|---|---|---|
-| Next.js application | http://127.0.0.1:3000 | No login in this loopback-only local demo |
-| Grafana | http://127.0.0.1:3001/d/thai-bank-regions | Development login: `admin` / `bank_dev_password` |
-| Airflow | http://127.0.0.1:8081 | User `admin`; generated password via command below |
-| FastAPI documentation | http://127.0.0.1:8000/docs | API reference |
+For optional Gemini configuration, Grafana/Airflow setup, development, verification, and troubleshooting, follow the [setup guide](docs/getting-started.md). No LLM key is required to load data or explore the dashboards.
 
-```powershell
-docker exec bank-airflow-1 cat /opt/airflow/standalone_admin_password.txt
+## Product views
+
+| Provincial comparison and screening | Analytical assistant |
+| --- | --- |
+| ![Adjustable screening criteria, result table, and GPP scatter](output/playwright/nextjs-screening.png) | ![Ratio-aware assistant with multiple metrics, YoY, and inspectable SQL](output/playwright/chatbot-analytics.png) |
+
+Additional captures: [province detail](output/playwright/nextjs-provinces.png), [business question](output/playwright/nextjs-questions.png), [source quality](output/playwright/nextjs-sources.png), [mobile overview](output/playwright/nextjs-mobile.png), and [Grafana](output/playwright/grafana-dashboard.png).
+
+These captures document dated local builds. The latest conversational router was verified through HTTP integration checks; older assistant images do not demonstrate its newer behavior. Design concepts are labelled separately from working-product evidence.
+
+## Verification
+
+Local verification on **11 October 2026 (Asia/Bangkok)**:
+
+- **170 Python tests passed**; TypeScript checks and the Next.js production build passed.
+- An **80-question Thai regression corpus** passed offline status, plan, and independently calculated result checks.
+- A separate **24-turn live Gemini planner comparison** evaluated rules-only, LLM-only, and hybrid planning on development/held-out splits.
+- A **seven-turn service smoke test** exercised capability guidance, analysis, explanation, presentation changes, refusal, and context preservation.
+
+The final hybrid planner passed 14/14 held-out turns, but used **zero LLM calls on that split**. That result measures deterministic coverage on a small authored corpus—not general Gemini accuracy. The LLM-only planner passed 6/14 held-out turns under the strict all-checks rubric. The newer conversation router is **not included** in those planner scores.
+
+See [verification status](docs/verification.md), [evaluation methodology](docs/llm-evaluation.md), and [full results with retained failures](docs/evidence/llm/results.md).
+
+## Scope and limitations
+
+- This is a **local analytical prototype**, not a production banking platform. Compose services bind to loopback and use development credentials. Authentication, tenant ownership, rate limiting, and production retention controls are not implemented.
+- Loan/deposit balances are month-end stocks: aggregate across provinces within a month, never sum across months. Per-person loans are not personal debt; branch density is not a complete measure of financial access.
+- Bangkok may reflect head-office booking. Registered population is not the number of customers. GPP and banking balances have different reference periods; associations do not establish causation.
+- The observed World Bank vintage is **8 October 2026**, later than all banking months in this snapshot. Conservative availability rules therefore leave historical inflation unavailable; archived publication vintages are not reconstructed.
+- A 25-month warehouse history does **not** prove a month of continuous scheduled Airflow operation. That requires separate observed run history.
+- LLM calls can send authored questions and conversation context to the configured provider. Checkpoints store chat history; starting a new conversation does not delete old checkpoints. Never enter customer data or secrets.
+
+## Repository guide
+
+```text
+bank/                 ingestion, API, analytical compiler, assistant, telemetry
+frontend/             Next.js application and same-origin API proxy
+airflow/dags/         daily source-loading and mart-building DAG
+db/                   development database bootstrap and read-only role
+grafana/              provisioned datasource and dashboard definitions
+sql/                  competency-question SQL
+tests/                regression tests and labelled question fixtures
+tools/                evidence export, evaluation, and log aggregation
+docs/                 guides, design notes, dated verification, and raw reports
+output/playwright/    selected working-application screenshots
 ```
 
-**Security:** the hard-coded passwords and ETL token in [`compose.yaml`](compose.yaml) are for a loopback-only development environment. Do not expose this Compose stack to the internet or reuse these credentials. A deployment would need secret management, TLS, access control, logging, and rate limiting.
+Start with the [documentation index](docs/README.md). Future work is separated in the [roadmap](PROJECT_PLAN.md). See [contribution guidance](CONTRIBUTING.md) for verification and publishing evidence.
 
-### Optional Gemini-backed chatbot
+## License
 
-Known supported questions use a clearly labelled deterministic Thai semantic parser. A configured Gemini or OpenAI key enables structured-LLM fallback for unresolved paraphrases. To enable Gemini, copy [`.env.example`](.env.example) to `.env` only if it does not already exist, set your own `GEMINI_API_KEY`, and rebuild `api` and `web`:
-
-```powershell
-if (-not (Test-Path .env)) { Copy-Item .env.example .env }
-# Edit .env locally; do not commit or paste the key into chat.
-docker compose up -d --build api web
-```
-
-LangChain converts questions to a Pydantic `QueryPlan`; the model does **not** execute arbitrary SQL. Python compiles allowlisted metrics and dimensions into SQL, SQLGlot checks for a single SELECT against the mart, the result is row-limited, and PostgreSQL's `bank_reader` role cannot write. LangGraph stores per-session checkpoints in PostgreSQL. The default Gemini model is `gemini-2.5-flash`. The optional OpenAI path remains available via `OPENAI_API_KEY` and `OPENAI_MODEL`; Gemini takes precedence if both keys are present. Free-tier quotas and data-use terms depend on the provider. Do not ask this public-data demo about real customer information.
-
-## Verify and inspect
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8000/health
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe tools/export_competency.py
-docker compose ps
-docker exec bank-airflow-1 airflow dags list-runs -d bank_regional_daily --no-backfill
-```
-
-The database-backed migration run had **43 passing Python tests**, covering 25 supported rules-mode questions, all 13 Grafana SQL queries, the province crosswalk, temporal no-lookahead joins, read-only database privileges, Gemini provider selection, the 10 competency queries, historical API scope, comparison contracts, and redacted source/provider errors. The Next.js production build and TypeScript checks also passed. See [migration verification](docs/evidence/nextjs-qa.md), the [CQ evidence](docs/competency-questions.md), and the earlier [verification snapshot](docs/evidence/run-status.md).
-
-## Validation and scope
-
-The earlier screenshots document the September snapshot; the Next.js screenshots document the migration's current warehouse. The 25 months of warehouse data meet the data-history objective, but they do **not** prove a month of uninterrupted Airflow operation. If that operations evidence is required for submission, collect actual scheduled-run history and new screenshots after a continuous month of operation; do not infer it from the historical data range.
-
-During verification, the World Bank source vintage had advanced to **8 October 2026**, beyond the latest banking month (July 2026). Under the existing conservative no-lookahead rule, inflation is therefore unavailable in the current historical mart, even though 66 annual source observations were imported successfully. The source-quality page shows this limitation. Regression checks now compare availability against actual source dates rather than assuming an obsolete count of 77 populated inflation rows. No dates were backdated and no values were filled in to conceal missing context.
-
-The full Python suite now passes **170 tests**. The 80-question Thai golden corpus passes offline status, plan and independent database-result checks, including ambiguous and unsupported requests. On **11 October 2026**, a separate live Gemini comparison measured three planning strategies on development/held-out questions, and a production HTTP fallback smoke test returned a three-month national deposit trend with token telemetry. These are small authored-corpus measurements, not a general LLM accuracy guarantee; OpenAI remains untested live. See [measured results](docs/evidence/llm/results.md) and [evaluation methodology](docs/llm-evaluation.md). Likewise, a BOT Policy Rate **API** integration is not claimed: it requires credentials. Policy-rate data comes from BOT's official public workbook, while the World Bank Indicators feed is the project's live unauthenticated REST API.
-
-BOT figures are rounded to THB millions; summing the 77 provinces can differ slightly from the independently rounded national *Grand Total*. Bangkok may reflect head-office booking. NESDC GPP 2024p and 2026 banking balances represent different reference periods. The charts show association and context, never causality.
-
-This repository is a reproducible **local analytical prototype**, not a production banking system.
-
-## Conversational routing update
-
-The assistant now uses a bounded Gemini intent router before analytical planning. It can explain its supported capabilities, respond to greetings, explain the last confirmed metric, and change a chart/table without re-querying the warehouse. Data questions retain validated hybrid planning and read-only SQL. Provider and warehouse failures have distinct safe messages. The expanded Python suite passes **170 tests**. See [conversation routing](docs/conversation-routing.md) for fallback behavior, context handling and testing limitations. Earlier planner benchmark scores do not measure this new routing layer.
+Project code is available under the [MIT License](LICENSE). Third-party datasets and dependencies retain their own licenses or published usage terms; the project license does not relicense provider data. See the [source catalogue](docs/data-sources.md).

@@ -1,10 +1,10 @@
-# Next.js migration verification
+# Next.js application verification — 10–11 October 2026
 
-Follow-up on **11 October 2026**: Next.js is the sole application frontend. The five-page UI connects to the existing Python analytical backend through the allowlisted proxy.
+Historical evidence for the five-page Next.js application and its allowlisted Python API proxy. The 43-test count below belongs to this verification stage; the current suite and subsequent assistant work are documented in [verification status](../verification.md). This is not a live runtime-status page.
 
-Follow-up verification: 43 local Python tests passed; `pip check` found no broken requirements; API and web images rebuilt successfully. Next.js returned HTTP 200; warehouse health remained OK with 25 months. All ten competency-question endpoints returned results through the Next.js proxy. Database volumes were not changed. A subsequent documentation cleanup changed only the two frontend names in the resume draft, with explicit user approval.
+Follow-up on **11 October 2026**: 43 local Python tests passed; `pip check` found no broken requirements; API and web images rebuilt successfully. Next.js returned HTTP 200; warehouse health remained OK with 25 months. All ten competency-question endpoints returned results through the Next.js proxy. Database volumes were not changed.
 
-Verified locally on **10 October 2026**, approximately 23:30–23:55 Asia/Bangkok. This records observed checks, not production certification, user research, or uninterrupted scheduler evidence. The approved scope was the five-page UX/UI migration; `docs/resume-draft.md` was intentionally left unchanged.
+Initial browser verification: **10 October 2026**, approximately 23:30–23:55 Asia/Bangkok. This records observed checks, not production certification, user research, or uninterrupted scheduler evidence.
 
 ## Implementation and automated checks
 
@@ -17,7 +17,7 @@ Verified locally on **10 October 2026**, approximately 23:30–23:55 Asia/Bangko
 
 ## Browser workflow checks
 
-The computer-use browser inventory was unavailable, so verification used the Playwright CLI with a task-specific Chromium session against the production Docker application. No Playwright test suite was added. Desktop captures used a **1505 × 1045** viewport; the mobile overview used **390 × 844**. Full-page captures extend below the viewport.
+Verification used a task-specific Playwright Chromium session against the local Docker application built with Next.js's production build mode. This is not a production deployment, and no automated Playwright test suite was added. Desktop captures used a **1505 × 1045** viewport; the mobile overview used **390 × 844**. Full-page captures extend below the viewport.
 
 | Workflow | Observed result |
 |---|---|
@@ -44,7 +44,7 @@ Under the same rule, GPP is unavailable in 1,540 historical rows, while register
 
 ## Design fidelity ledger
 
-The [five generated concepts](../design/nextjs/design-spec.md) were development references, not working-product evidence or independently approved screen images. They were inspected against rendered captures; the written user-approved plan and actual results take precedence over generated sample copy/numbers. This is not a claim of pixel-identical reproduction.
+The [five generated concepts](../design/nextjs/design-spec.md) were development references, not working-product evidence. They were inspected against rendered captures; the application specification and actual results take precedence over generated sample copy/numbers. This is not a claim of pixel-identical reproduction.
 
 | Aspect compared | Final result and adjustment |
 |---|---|
@@ -71,4 +71,4 @@ Intentional differences: concept trend shapes, placeholder provincial rows and g
 
 ## Remaining scope boundaries
 
-This is a local analytical prototype. Shared-user authentication, authorization, deployment-grade throttling, accessibility certification, performance/load benchmarks and a systematic LLM evaluation are not implemented or claimed. Chat history in the frontend is page-local; a new conversation creates a new session identifier rather than claiming to delete persisted checkpoints. No public deployment, Git commit or push was performed.
+At this verification stage, shared-user authentication, authorization, deployment-grade throttling, accessibility certification, load benchmarks, and systematic LLM evaluation were not implemented or claimed. The subsequent [planner evaluation](../llm-evaluation.md) and [conversation routing](../conversation-routing.md) have separate evidence. Frontend chat history remains page-local; a new conversation creates a new session identifier rather than deleting persisted checkpoints.

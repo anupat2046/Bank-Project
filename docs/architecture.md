@@ -1,28 +1,32 @@
-# Architecture & Data Warehouse Design
+# Architecture and data model
+
+[Documentation index](README.md) · [Sources and temporal joins](data-sources.md) · [Assistant contract](chatbot-analytics.md)
+
+## System boundaries
 
 ```mermaid
 flowchart LR
-  BOT[ธปท. ตารางจังหวัดรายเดือน] --> RAW[Raw files + SHA-256]
-  DOPA[DOPA ประชากรทะเบียน] --> RAW
-  NESDC[สศช. GPP XLSX] --> RAW
-  WB[World Bank JSON API เงินเฟ้อ] --> RAW
-  MPC[ธปท. MPC official XLSX มติดอกเบี้ย] --> RAW
-  RAW --> ETL[Python adapters + strict validation]
-  AIR[Airflow 07:00 Bangkok] --> API[FastAPI protected ETL endpoints]
-  API --> ETL
-  ETL --> PG[(PostgreSQL bank warehouse)]
-  PG --> GRAF[Grafana 13 panels]
-  PG --> ROAPI[FastAPI read-only analytics]
-  ROAPI --> BFF[Next.js allowlisted server proxy]
-  BFF --> UI[Next.js five-page application]
-  UI --> BFF
-  BFF --> CHATAPI[FastAPI chat endpoint]
-  CHATAPI --> GRAPH[LangGraph chatbot]
-  GRAPH --> PLAN[LangChain structured plan / Thai rules fallback]
-  PLAN --> SQL[Bounded SQL compiler + SQLGlot]
-  SQL --> RO[(bank_reader SELECT only)]
-  GRAPH --> CP[(PostgreSQL checkpoints)]
+  SOURCES["BOT / DOPA / NESDC / World Bank / MPC"] --> RAW["Raw snapshots + SHA-256"]
+  RAW --> ETL["Python adapters + validation"]
+  AIR["Airflow: daily 07:00 Asia/Bangkok"] --> WRITE["Protected FastAPI ETL endpoints"]
+  WRITE --> ETL
+  ETL --> FACTS[("PostgreSQL dimensions and facts")]
+  FACTS --> MART[("Province-month mart")]
+  MART --> GRAF["Grafana: 13 panels"]
+  MART --> READ["FastAPI analytical reads"]
+  UI["Next.js application"] --> BFF["Allowlisted same-origin proxy"]
+  BFF --> READ
+  BFF --> CHAT["Chat workflow"]
+  CHAT --> SQL["Validated read-only SQL"]
+  SQL --> MART
+  CHAT --> CP[("PostgreSQL checkpoints")]
 ```
+
+The browser accesses same-origin `/api/*`. The Next.js server forwards allowlisted analytical endpoints and chat to FastAPI; it does not proxy privileged ETL routes or arbitrary destinations. `API_BASE_URL` is server-side. Compose publishes ports on loopback.
+
+## Data model
+
+The diagram below describes **logical join relationships**, including as-of annual/event joins. The SQLAlchemy schema defines primary keys but does not declare these relationships as database foreign-key constraints. ETL validates geographic coverage and mart row preservation.
 
 ```mermaid
 erDiagram
@@ -33,6 +37,8 @@ erDiagram
   DIM_PROVINCE ||--o{ MART_PROVINCE_MONTH : province_code
   DIM_MONTH ||--o{ MART_PROVINCE_MONTH : period
   FACT_BANK_MONTH ||--|| MART_PROVINCE_MONTH : province_period
+  FACT_POPULATION_YEAR ||--o{ MART_PROVINCE_MONTH : available_annual_context
+  FACT_GPP_YEAR ||--o{ MART_PROVINCE_MONTH : available_annual_context
   FACT_MACRO_YEAR ||--o{ MART_PROVINCE_MONTH : reference_year_context
   FACT_POLICY_EVENT ||--o{ MART_PROVINCE_MONTH : latest_event_asof_month_end
   DIM_PROVINCE {
@@ -90,32 +96,58 @@ erDiagram
   }
 ```
 
-หลักการ: จังหวัดเป็น crosswalk แบบตรวจมือ 77 code, ไม่ใช้ fuzzy match; แยก grain จังหวัด–เดือนจากจังหวัด–ปีและประเทศ–ปี; ค่า annual เป็น context ล่าสุดที่ทราบตามกติกา availability ไม่ใช่ข้อเท็จจริงรายเดือน. `NULL` หมายถึงไม่มี/ยังใช้ไม่ได้. `source_manifest` และ `etl_run` ผูก provenance และผลรัน แต่ไม่ใช่ fact เชิงธุรกิจ
+| Layer | Responsibility |
+| --- | --- |
+| Raw files | Immutable content-addressed source snapshots under `data/raw/<source>/<sha256>.<ext>` |
+| Dimensions | Conformed province codes and banking months |
+| Source-grain facts | Banking month, population/GPP year, national macro year, policy event date |
+| Analytical mart | One row per province and banking month; ratios and context reference fields |
+| Operational metadata | `source_manifest` records URLs, retrieval, hashes, and raw paths; `etl_run` records source/job outcomes |
+
+Fact loads replace each source's current fact set transactionally; raw snapshots retain source contents. This is not a full slowly changing warehouse or archived historical-publication-vintage model. Unknown province aliases fail validation rather than using fuzzy matching.
+
+## ETL orchestration
 
 ```mermaid
 flowchart LR
-  B[load_bot] --> M[build_mart]
-  D[load_dopa] --> M
-  N[load_nesdc] --> M
-  W[load_worldbank_api] --> M
-  P[load_bot_policy_workbook] --> M
+  B["load_bot"] --> M["build_mart"]
+  D["load_dopa"] --> M
+  N["load_nesdc"] --> M
+  W["load_worldbank_api"] --> M
+  P["load_bot_policy_workbook"] --> M
 ```
 
-Airflow DAG ไม่สร้างค่ารายวันจากชุดรายเดือน: รันทุกวันเพื่อตรวจการเผยแพร่หรือ revision และโหลด fact ตามงวดต้นฉบับ การตั้งเวลาใช้ timezone Asia/Bangkok; metadata ของ Airflow อยู่ PostgreSQL ฐาน `airflow` แยกจากฐาน `bank`
+The five source tasks feed the mart task. The DAG uses `catchup=False`, `max_active_runs=1`, and two task retries with a five-minute delay. Airflow metadata is stored in the separate `airflow` database in the development PostgreSQL service.
 
-## Next.js application boundary
+Daily polling checks for new publications/revisions; observations retain their original reporting grain. A run schedule is configuration, not proof of actual continuous execution.
 
-`frontend/` contains Next.js App Router pages, TypeScript contracts, locally hosted Thai fonts, shared charts/tables and responsive navigation. Browsers call same-origin `/api/*`; the Next.js server forwards only an allowlist of read endpoints and `/chat` to FastAPI. It does not forward ETL endpoints, provider credentials, database DSNs or arbitrary destinations. `API_BASE_URL` is server-only. Docker binds the web service to `127.0.0.1:3000`.
+## Analytical execution
 
-Analytical reads use `bank_reader`, explicit read-only transactions and a ten-second statement timeout. Month inputs must exist in the warehouse. CQ queries are scoped to data no later than the selected month; PostgreSQL bound parameters remain visible alongside the actual executed SQL. Comparison requests accept at most four province codes. Source views omit raw paths and ETL error detail. Next.js is the sole application frontend.
+Reads use `bank_reader`, read-only transactions, bound parameters, and a ten-second statement timeout. Requested months must exist in the warehouse. Competency questions are scoped to the selected month; province comparisons accept up to four codes. Public source responses omit internal raw paths and raw ETL errors.
 
-World Bank's current source-revision date is not an archived publication vintage. A newly updated API dataset can therefore be ineligible for all earlier banking months under the conservative no-lookahead rule. The application shows unavailable inflation honestly rather than inventing an earlier availability date. Reconstructing archived vintages is a separate future data-engineering task.
+The analytical compiler permits catalogued measures and dimensions only. SQLGlot checks a single read-only SELECT over the allowed mart. A query limit bounds returned rows but does not by itself bound scan cost; the timeout provides a separate execution limit.
 
-## Conversational analytics boundary
+## Conversation workflow
 
-The assistant resolves known Thai analytical wording deterministically and optionally sends unresolved paraphrases to a LangChain structured planner. A decision may request clarification or reject unsupported data; only a validated `QueryPlan` reaches the SQL compiler. LangGraph persists confirmed context, pending clarification and bounded history per session. Ranking universes are counted before LIMIT; YoY uses same-month prior-year joins. Multi-metric charts keep units separate and province trends use distinct series. See [formulas, memory, execution limits and the 80-question evaluation](chatbot-analytics.md).
+```text
+START → conversation
+           ├─ capabilities / greeting → catalogue response
+           ├─ explanation → definitions and caveat from last confirmed result
+           ├─ presentation → copy last result, change validated chart kind
+           ├─ clarification / unsupported → safe no-result response
+           └─ analytics → hybrid plan → validated execution
+                                      ↓
+                              grounded answer → END
+```
 
-The active planner contract is v3. Request-local ContextVars collect numeric provider usage and timing; `ask()` emits allowlisted JSON telemetry with no question/session ID/key/raw error. Local Docker logs can be aggregated with `tools.observe_chat`. A separate live comparison calls the same planner/executor/answer functions using isolated in-memory predicted contexts, leaving users' persisted checkpoints intact. See [LLM evaluation and observability](llm-evaluation.md).
-## Conversation routing
+Safety checks precede model routing. Gemini chooses a bounded action when configured; narrow offline routing remains available. The hybrid analytical planner resolves known wording through semantic rules, with structured-LLM fallback for unresolved paraphrases. Only a valid ready plan reaches execution.
 
-The chat graph enters `conversation` before `plan`. Gemini selects a bounded action; safety-gated and offline fallback routes remain available. Analytical actions use the existing validated planner/compiler and read-only SQL. Capabilities, greetings and explanations skip execution. Presentation copies the last confirmed result and changes only the chart. The UI labels router and planner separately. See [routing design and live smoke evidence](conversation-routing.md); earlier planner evaluation scores do not evaluate this layer.
+LangGraph persists confirmed plans, last successful results, pending clarification scope/choices, and bounded conversational history. Checkpoint session IDs are not authenticated ownership controls. Presentation requests explicitly reuse old data; ordinary failed turns do not display old results as newly queried answers.
+
+The active analytical contract is v3. Request-local telemetry records numeric timing/usage, bounded routes, statuses, and failure classes without questions, keys, session IDs, or raw errors. Checkpoints still store conversation content separately. See [conversation routing](conversation-routing.md) and [evaluation/observability](llm-evaluation.md).
+
+## Temporal and production boundaries
+
+Annual GPP/inflation use conservative source-availability dates, not reconstructed archived vintages. A current revised dataset can therefore be unavailable for older banking months. See the [data contract](data-sources.md) for exact rules.
+
+The stack is a development prototype with hard-coded local credentials, no shared-user authentication, and no checkpoint retention administration. Production deployment requires separately designed and verified access, secret, operational, and data-retention controls.

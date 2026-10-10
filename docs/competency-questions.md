@@ -1,31 +1,31 @@
-# Competency Questions: 10 คำถามและผล Query จริง
+# Competency questions: executed SQL and recorded results
 
-ตรวจเมื่อ 2026-10-10 (Asia/Bangkok) โดยอ่าน warehouse ที่มีอยู่ ไม่โหลดข้อมูลต้นทางใหม่
+Recorded on 2026-10-10 (Asia/Bangkok) from the existing warehouse; no source refresh was performed
 
-Snapshot: **77 จังหวัด × 25 เดือน = 1,925 แถว**; งวด 2024-07-01 ถึง 2026-07-01
+Snapshot: **77 provinces × 25 months = 1,925 rows**; periods 2024-07-01–2026-07-01
 
-ทุกข้ออ่าน `mart_province_month` ซึ่งรวม dim_province/dim_month และ fact_bank_month, fact_population_year, fact_gpp_year, fact_macro_year, fact_policy_event ตาม grain/availability ใน [Data Model](architecture.md). ทุก query รันผ่าน PostgreSQL role `bank_reader` ใน read-only transaction.
+All questions read `mart_province_month`, integrating dim_province/dim_month and fact_bank_month, fact_population_year, fact_gpp_year, fact_macro_year, fact_policy_event under the grain/availability rules in [data model](architecture.md). Queries use PostgreSQL role `bank_reader` in a read-only transaction. Thai question wording matches the application.
 
-[SQL ทั้ง 10 ข้อ](../sql/competency_questions.sql) · [ผลลัพธ์ machine-readable](evidence/competency-results.json)
+[All ten SQL queries](../sql/competency_questions.sql) · [Machine-readable results](evidence/competency-results.json)
 
-| ID | Competency Question | แหล่งข้อมูล | หน้าที่แสดงผล | แถวที่คืนจริง |
+| ID | Competency question | Sources | Application view | Returned rows |
 |---|---|---|---|---|
-| CQ01 | จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด? | BOT | 10 คำถามธุรกิจ; Grafana panel 13 | 10 |
-| CQ02 | จังหวัดใดเงินฝากโตเร็วกว่าสินเชื่อ YoY มากที่สุด? | BOT | 10 คำถามธุรกิจ; Grafana panel 8 | 10 |
-| CQ03 | จังหวัดใดมีความหนาแน่นสาขาต่อประชากรแสนคนสูงที่สุด? | BOT + DOPA | 10 คำถามธุรกิจ; Grafana panel 3 / เปรียบเทียบจังหวัด | 10 |
-| CQ04 | จังหวัดที่ GPP ต่างกันไม่เกิน 15% มีขนาดสินเชื่อต่างกันเท่าไร? | BOT + NESDC | 10 คำถามธุรกิจ; GPP เทียบตลาด / หน้า 10 คำถามธุรกิจ | 10 |
-| CQ05 | สินเชื่อและเงินฝากรวมเคลื่อนไหวอย่างไรในช่วงที่ดอกเบี้ยนโยบายเปลี่ยน? | BOT + BOT MPC workbook | 10 คำถามธุรกิจ; ภาพรวมตลาด / Grafana panels 1,10 | 25 |
-| CQ06 | จังหวัดใดจำนวนสาขาลดลงแต่สินเชื่อเพิ่มขึ้นเมื่อเทียบปีก่อน? | BOT | 10 คำถามธุรกิจ; Grafana panel 9 | 6 |
-| CQ07 | จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.? | BOT + DOPA + NESDC | 10 คำถามธุรกิจ; คัดพื้นที่ศึกษา / Grafana panel 12 | 22 |
-| CQ08 | จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด? | BOT | 10 คำถามธุรกิจ; จัดอันดับ / Grafana panel 4 | 10 |
-| CQ09 | จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด? | BOT + DOPA | 10 คำถามธุรกิจ; จัดอันดับ / Grafana panel 5 | 10 |
-| CQ10 | สินเชื่อรวมกระจุกตัวในกรุงเทพฯ และ 5 จังหวัดอันดับแรกเท่าไร? | BOT | 10 คำถามธุรกิจ; หน้า 10 คำถามธุรกิจ | 1 |
+| CQ01 | จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด? | BOT | Business questions; Grafana panel 13 | 10 |
+| CQ02 | จังหวัดใดเงินฝากโตเร็วกว่าสินเชื่อ YoY มากที่สุด? | BOT | Business questions; Grafana panel 8 | 10 |
+| CQ03 | จังหวัดใดมีความหนาแน่นสาขาต่อประชากรแสนคนสูงที่สุด? | BOT + DOPA | Business questions; Grafana panel 3 / เปรียบเทียบจังหวัด | 10 |
+| CQ04 | จังหวัดที่ GPP ต่างกันไม่เกิน 15% มีขนาดสินเชื่อต่างกันเท่าไร? | BOT + NESDC | Business questions; GPP เทียบตลาด / หน้า 10 คำถามธุรกิจ | 10 |
+| CQ05 | สินเชื่อและเงินฝากรวมเคลื่อนไหวอย่างไรในช่วงที่ดอกเบี้ยนโยบายเปลี่ยน? | BOT + BOT MPC workbook | Business questions; ภาพรวมตลาด / Grafana panels 1,10 | 25 |
+| CQ06 | จังหวัดใดจำนวนสาขาลดลงแต่สินเชื่อเพิ่มขึ้นเมื่อเทียบปีก่อน? | BOT | Business questions; Grafana panel 9 | 6 |
+| CQ07 | จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.? | BOT + DOPA + NESDC | Business questions; คัดพื้นที่ศึกษา / Grafana panel 12 | 22 |
+| CQ08 | จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด? | BOT | Business questions; จัดอันดับ / Grafana panel 4 | 10 |
+| CQ09 | จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด? | BOT + DOPA | Business questions; จัดอันดับ / Grafana panel 5 | 10 |
+| CQ10 | สินเชื่อรวมกระจุกตัวในกรุงเทพฯ และ 5 จังหวัดอันดับแรกเท่าไร? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 1 |
 
 ## CQ01 — จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด?
 
-**ฟิลด์:** province_code, period, credits_million_baht
+**Fields:** province_code, period, credits_million_baht
 
-**บริบทและการตีความ:** เปรียบเทียบเดือนเดียวกันปีก่อน และต้องมีคู่ข้อมูลครบ 12 งวด
+**Interpretation:** เปรียบเทียบเดือนเดียวกันปีก่อน และต้องมีคู่ข้อมูลครบ 12 งวด
 
 ```sql
 WITH yoy AS (
@@ -56,9 +56,9 @@ ORDER BY positive_months DESC, average_yoy_pct DESC, name_th LIMIT 10;
 
 ## CQ02 — จังหวัดใดเงินฝากโตเร็วกว่าสินเชื่อ YoY มากที่สุด?
 
-**ฟิลด์:** province_code, period, deposits_million_baht, credits_million_baht
+**Fields:** province_code, period, deposits_million_baht, credits_million_baht
 
-**บริบทและการตีความ:** ผลต่างอัตราเติบโตเป็นจุดเปอร์เซ็นต์ ไม่ใช่เปอร์เซ็นต์ของเปอร์เซ็นต์
+**Interpretation:** ผลต่างอัตราเติบโตเป็นจุดเปอร์เซ็นต์ ไม่ใช่เปอร์เซ็นต์ของเปอร์เซ็นต์
 
 ```sql
 SELECT n.name_th,
@@ -87,9 +87,9 @@ ORDER BY growth_gap_pp DESC, n.province_code LIMIT 10;
 
 ## CQ03 — จังหวัดใดมีความหนาแน่นสาขาต่อประชากรแสนคนสูงที่สุด?
 
-**ฟิลด์:** branches, population, population_reference_year
+**Fields:** branches, population, population_reference_year
 
-**บริบทและการตีความ:** ประชากรตามทะเบียนเป็นตัวหาร; ไม่ใช่จำนวนลูกค้าหรือการวัดการเข้าถึงบริการโดยตรง
+**Interpretation:** ประชากรตามทะเบียนเป็นตัวหาร; ไม่ใช่จำนวนลูกค้าหรือการวัดการเข้าถึงบริการโดยตรง
 
 ```sql
 SELECT name_th, branches, population, population_reference_year,
@@ -114,9 +114,9 @@ ORDER BY branches_per_100k DESC, province_code LIMIT 10;
 
 ## CQ04 — จังหวัดที่ GPP ต่างกันไม่เกิน 15% มีขนาดสินเชื่อต่างกันเท่าไร?
 
-**ฟิลด์:** gpp_million_baht, gpp_reference_year, credits_million_baht
+**Fields:** gpp_million_baht, gpp_reference_year, credits_million_baht
 
-**บริบทและการตีความ:** ไม่รวมกรุงเทพฯ; ผลต่าง GPP หารด้วยค่าที่มากกว่า; GPP รายปีต่างงวดจากสินเชื่อรายเดือน
+**Interpretation:** ไม่รวมกรุงเทพฯ; ผลต่าง GPP หารด้วยค่าที่มากกว่า; GPP รายปีต่างงวดจากสินเชื่อรายเดือน
 
 ```sql
 WITH snapshot AS (
@@ -148,9 +148,9 @@ ORDER BY credit_size_ratio DESC, a.province_code, b.province_code LIMIT 10;
 
 ## CQ05 — สินเชื่อและเงินฝากรวมเคลื่อนไหวอย่างไรในช่วงที่ดอกเบี้ยนโยบายเปลี่ยน?
 
-**ฟิลด์:** period, policy_rate_pct, credits_million_baht, deposits_million_baht
+**Fields:** period, policy_rate_pct, credits_million_baht, deposits_million_baht
 
-**บริบทและการตีความ:** policy rate ใช้มติล่าสุดไม่เกินสิ้นเดือน; การเคลื่อนไหวร่วมกันไม่พิสูจน์เหตุและผล
+**Interpretation:** policy rate ใช้มติล่าสุดไม่เกินสิ้นเดือน; การเคลื่อนไหวร่วมกันไม่พิสูจน์เหตุและผล
 
 ```sql
 SELECT period, MAX(policy_rate_pct) AS policy_rate_pct,
@@ -188,9 +188,9 @@ FROM mart_province_month GROUP BY period ORDER BY period;
 
 ## CQ06 — จังหวัดใดจำนวนสาขาลดลงแต่สินเชื่อเพิ่มขึ้นเมื่อเทียบปีก่อน?
 
-**ฟิลด์:** province_code, period, branches, credits_million_baht
+**Fields:** province_code, period, branches, credits_million_baht
 
-**บริบทและการตีความ:** เป็นจุดเริ่มตรวจช่องทางบริการเพิ่มเติม; ไม่สรุปว่าสาขาทำให้สินเชื่อเปลี่ยน
+**Interpretation:** เป็นจุดเริ่มตรวจช่องทางบริการเพิ่มเติม; ไม่สรุปว่าสาขาทำให้สินเชื่อเปลี่ยน
 
 ```sql
 SELECT n.name_th, n.branches-p.branches AS branch_change,
@@ -213,9 +213,9 @@ ORDER BY n.credits_million_baht-p.credits_million_baht DESC, n.province_code LIM
 
 ## CQ07 — จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.?
 
-**ฟิลด์:** gpp_million_baht, branches_per_100k, credits_million_baht
+**Fields:** gpp_million_baht, branches_per_100k, credits_million_baht
 
-**บริบทและการตีความ:** ไม่รวมกรุงเทพฯ; เกณฑ์ตัวอย่างเพื่อ shortlist และทำ due diligence เพิ่ม
+**Interpretation:** ไม่รวมกรุงเทพฯ; เกณฑ์ตัวอย่างเพื่อ shortlist และทำ due diligence เพิ่ม
 
 ```sql
 SELECT name_th, gpp_million_baht, credits_million_baht,
@@ -253,9 +253,9 @@ ORDER BY gpp_million_baht DESC, province_code;
 
 ## CQ08 — จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด?
 
-**ฟิลด์:** credits_million_baht, deposits_million_baht, credit_deposit_ratio_pct
+**Fields:** credits_million_baht, deposits_million_baht, credit_deposit_ratio_pct
 
-**บริบทและการตีความ:** อัตราระดับพื้นที่ไม่ใช่ liquidity ratio ของธนาคารแต่ละแห่ง
+**Interpretation:** อัตราระดับพื้นที่ไม่ใช่ liquidity ratio ของธนาคารแต่ละแห่ง
 
 ```sql
 SELECT name_th, deposits_million_baht, credits_million_baht,
@@ -280,9 +280,9 @@ ORDER BY credit_deposit_ratio_pct DESC, province_code LIMIT 10;
 
 ## CQ09 — จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด?
 
-**ฟิลด์:** deposits_million_baht, population, population_reference_year
+**Fields:** deposits_million_baht, population, population_reference_year
 
-**บริบทและการตีความ:** ยอดบันทึกสำนักงานใหญ่และประชากรตามทะเบียนมีผล; ไม่ใช่เงินออมเฉลี่ยของลูกค้าจริง
+**Interpretation:** ยอดบันทึกสำนักงานใหญ่และประชากรตามทะเบียนมีผล; ไม่ใช่เงินออมเฉลี่ยของลูกค้าจริง
 
 ```sql
 SELECT name_th, population_reference_year, population,
@@ -307,9 +307,9 @@ ORDER BY deposits_baht_per_person DESC, province_code LIMIT 10;
 
 ## CQ10 — สินเชื่อรวมกระจุกตัวในกรุงเทพฯ และ 5 จังหวัดอันดับแรกเท่าไร?
 
-**ฟิลด์:** province_code, period, credits_million_baht
+**Fields:** province_code, period, credits_million_baht
 
-**บริบทและการตีความ:** ใช้ยอดจังหวัดในเดือนเดียวกัน; การบันทึกสำนักงานใหญ่ไม่ใช่ตำแหน่งผู้กู้หรือส่วนแบ่งรายธนาคาร
+**Interpretation:** ใช้ยอดจังหวัดในเดือนเดียวกัน; การบันทึกสำนักงานใหญ่ไม่ใช่ตำแหน่งผู้กู้หรือส่วนแบ่งรายธนาคาร
 
 ```sql
 WITH ranked AS (
@@ -327,4 +327,4 @@ FROM ranked;
 | --- | --- | --- |
 | 18,100,244.00 | 76.38 | 83.11 |
 
-การทดสอบนี้ยืนยัน SQL และผลจาก snapshot ที่ระบุ ไม่ได้ยืนยันว่าแหล่งข้อมูลอัปเดตล่าสุด หรือ Airflow รันต่อเนื่องครบเดือน. ภาพจากหน้าแอปอยู่ใน README; Gemini เป็นช่องทางเสริม และไม่จำเป็นต่อการรัน 10 คำถามเหล่านี้.
+This evidence records SQL/results for the stated snapshot. It does not verify current upstream freshness or a month of continuous Airflow scheduling. Application screenshots are linked from the README; Gemini is optional and is not required to execute these ten questions.

@@ -2,11 +2,13 @@
 .env
 .env.*
 !.env.example
-.streamlit/secrets.toml
 *.pem
 *.key
 *.p12
 *.pfx
+
+# Private career notes; keep local, outside the public repository.
+/docs/resume-draft.md
 
 # Python environments, caches, and test/build output.
 .venv/

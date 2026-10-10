@@ -46,14 +46,15 @@ Or start a new conversation with `แนวโน้มสินเชื่อ�
 
 ```text
 Question + confirmed session context
-  → safety / Thai semantic parser
+  → safety gate / bounded conversational router
+  → analytical action: Thai semantic parser
   → structured LLM fallback when the parser cannot resolve the wording
   → ready QueryPlan OR clarification / unsupported
   → allowlisted SQL compiler → SQLGlot validation → read-only transaction
   → deterministic answer + result rows + units + SQL + provenance
 ```
 
-Known supported wording uses a visibly labelled semantic-rules mode, even when a Gemini key exists. Unresolved paraphrases can use LangChain structured output with Gemini (preferred) or the optional OpenAI provider. The model emits a validated decision and `QueryPlan`, **not arbitrary SQL**. Provider failures are redacted; a failed or ambiguous turn does not replace the last confirmed context or show old results as its new answer.
+The conversational router selects guidance, clarification, explanation, presentation, refusal, or analytics. Non-analytical actions skip SQL. See [routing behavior and service checks](conversation-routing.md). Router provider and analytical planner mode are labelled separately: a rules-generated plan can still follow a Gemini routing call. Unresolved analytical paraphrases can use LangChain structured output with Gemini (preferred) or the optional OpenAI provider. The model emits a validated decision and `QueryPlan`, **not arbitrary SQL**. Provider failures are redacted; a failed or ambiguous turn does not replace the last confirmed context or show old results as its new answer.
 
 LangGraph checkpoints are persisted in PostgreSQL by session ID. Follow-ups inherit the confirmed metric, filters and resolved banking period; standalone questions can start a new analytical scope. Pending clarification preserves its own explicit scope. The graph retains the last 20 history messages, and the provider prompt receives at most the last eight. These bounds limit conversational context, not database retention. Starting a new conversation generates a new session ID; it does not delete old checkpoints. This local prototype has no authenticated ownership or retention administration.
 
@@ -77,11 +78,11 @@ The versioned [80 Thai golden questions](../tests/fixtures/chat_cases.json) cont
 
 Local verification on 11 October 2026:
 
-- Original analytics upgrade suite: **131 passed**; the later LLM engineering work expands the full suite to **143 passed**.
+- Current full suite: **170 passed**, including conversation routing. The earlier analytics-only and planner-evaluation snapshots recorded 131 and 143 tests respectively.
 - Offline golden evaluator: **80/80 status, plan and result checks passed**. This tests the deterministic path on this fixed corpus, **not 100% natural-language or LLM accuracy**.
 - TypeScript check and Docker Next.js production build passed; rebuilt `api` and `web` were running against healthy PostgreSQL.
 - One **live Gemini fallback** request (`ช่วยดูยอดออมตามเดือนหน่อย`) succeeded in structured LLM mode, returning a national deposit trend over 25 months. This is a smoke test only; OpenAI was not tested live.
-- Browser checks: multi-metric response and metric selector/table, denominator clarification and choice submission, Bangkok-exclusion follow-up (77 → 76 eligible provinces), five-row/YoY follow-up, new conversation, two-province trend and unsupported NPL refusal. At 390 × 844, document width was 390 pixels with no horizontal page overflow; browser console reported zero errors/warnings. Screenshots were captured using the Playwright skill from the running application.
+- Browser checks: multi-metric response and metric selector/table, denominator clarification and choice submission, Bangkok-exclusion follow-up (77 → 76 eligible provinces), five-row/YoY follow-up, new conversation, two-province trend and unsupported NPL refusal. At 390 × 844, document width was 390 pixels with no horizontal page overflow; browser console reported zero errors/warnings. Screenshots were captured from the running application with Playwright before the subsequent conversation-router change.
 
 At this verification, Compose showed only `postgres`, `api` and `web` running. Airflow/Grafana were not started as part of the chatbot upgrade; no scheduler continuity is claimed from this check.
 
