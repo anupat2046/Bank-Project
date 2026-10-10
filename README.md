@@ -4,7 +4,7 @@ An end-to-end analytics project for Thailand's provincial commercial-banking mar
 
 | Warehouse | Pipeline | Analytics | Verification |
 |---|---|---|---|
-| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 5 Next.js pages + 10 questions + 13 Grafana panels | 43 passing Python tests |
+| 77 provinces × 25 months | 5 real-data sources, daily Airflow DAG | 5 Next.js pages + 10 questions + 13 Grafana panels | 170 passing Python tests |
 
 The project is ready to run and demonstrate locally. Its verified data snapshot covers July 2024–July 2026; the source's latest banking period in this build is July 2026. See [validation and scope](#validation-and-scope) for the remaining operational and optional-LLM checks.
 
@@ -55,7 +55,13 @@ The [mobile overview capture](output/playwright/nextjs-mobile.png) shows the res
 |---|---|
 | ![Grafana banking trends and rankings](output/playwright/grafana-dashboard.png) | ![Grafana policy-rate history and provincial GPP comparison](output/playwright/grafana-policy-and-gpp.png) |
 
-The analytical assistant shown above returns query results, charts, SQL, and provenance. Without an API key, it uses a clearly labelled Thai rules mode. The live Gemini capture is an end-to-end smoke test, not an LLM accuracy benchmark.
+The analytical assistant returns query results, charts, SQL, and provenance. Its upgraded catalogue supports 15 metrics, including loans per registered resident/per branch, multi-metric results, same-month YoY, filters and up to four-province comparisons. It remembers confirmed session context and asks for clarification instead of guessing ambiguous ratios. Known wording uses labelled semantic rules; Gemini handles unresolved paraphrases when configured. The historical live Gemini capture above is a smoke test, not an accuracy benchmark.
+
+![Upgraded assistant with per-person and per-branch loans, YoY and separate chart units](output/playwright/chatbot-analytics.png)
+
+See [conversational analytics, formulas and evaluation evidence](docs/chatbot-analytics.md) for the new screenshots, example conversations, 80-question corpus and limitations.
+
+The [LLM engineering evaluation](docs/llm-evaluation.md) compares rules-only, Gemini-only planning and hybrid on a separate 24-turn development/held-out corpus. It checks plans, independent numeric results, clarification, conversation scope, latency and actual token usage. [Measured before/after results and raw reports](docs/evidence/llm/results.md) retain failures as well as improvements. Service logs emit redacted operational metrics; unknown costs remain unavailable rather than being called free.
 
 The scheduled pipeline has five source tasks feeding a mart-build task. The [Airflow graph screenshot](docs/evidence/airflow-graph-qa.png) shows a successful six-task run.
 
@@ -120,7 +126,7 @@ docker exec bank-airflow-1 cat /opt/airflow/standalone_admin_password.txt
 
 ### Optional Gemini-backed chatbot
 
-Without a Gemini or OpenAI API key, the app uses a clearly labelled deterministic Thai rules parser. To enable Gemini, copy [`.env.example`](.env.example) to `.env` only if it does not already exist, set your own `GEMINI_API_KEY`, and rebuild `api` and `web`:
+Known supported questions use a clearly labelled deterministic Thai semantic parser. A configured Gemini or OpenAI key enables structured-LLM fallback for unresolved paraphrases. To enable Gemini, copy [`.env.example`](.env.example) to `.env` only if it does not already exist, set your own `GEMINI_API_KEY`, and rebuild `api` and `web`:
 
 ```powershell
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
@@ -148,8 +154,12 @@ The earlier screenshots document the September snapshot; the Next.js screenshots
 
 During verification, the World Bank source vintage had advanced to **8 October 2026**, beyond the latest banking month (July 2026). Under the existing conservative no-lookahead rule, inflation is therefore unavailable in the current historical mart, even though 66 annual source observations were imported successfully. The source-quality page shows this limitation. Regression checks now compare availability against actual source dates rather than assuming an obsolete count of 77 populated inflation rows. No dates were backdated and no values were filled in to conceal missing context.
 
-The key-free chatbot and its 25 supported question cases have been tested. On **30 September 2026**, one live Gemini smoke test of a Thai deposit-trend question succeeded: structured LLM mode returned a valid plan and 25 warehouse months without an error. This is not a broad LLM accuracy evaluation; OpenAI remains untested live. Likewise, a BOT Policy Rate **API** integration is not claimed: it requires credentials. Policy-rate data comes from BOT's official public workbook, while the World Bank Indicators feed is the project's live unauthenticated REST API.
+The full Python suite now passes **170 tests**. The 80-question Thai golden corpus passes offline status, plan and independent database-result checks, including ambiguous and unsupported requests. On **11 October 2026**, a separate live Gemini comparison measured three planning strategies on development/held-out questions, and a production HTTP fallback smoke test returned a three-month national deposit trend with token telemetry. These are small authored-corpus measurements, not a general LLM accuracy guarantee; OpenAI remains untested live. See [measured results](docs/evidence/llm/results.md) and [evaluation methodology](docs/llm-evaluation.md). Likewise, a BOT Policy Rate **API** integration is not claimed: it requires credentials. Policy-rate data comes from BOT's official public workbook, while the World Bank Indicators feed is the project's live unauthenticated REST API.
 
 BOT figures are rounded to THB millions; summing the 77 provinces can differ slightly from the independently rounded national *Grand Total*. Bangkok may reflect head-office booking. NESDC GPP 2024p and 2026 banking balances represent different reference periods. The charts show association and context, never causality.
 
 This repository is a reproducible **local analytical prototype**, not a production banking system.
+
+## Conversational routing update
+
+The assistant now uses a bounded Gemini intent router before analytical planning. It can explain its supported capabilities, respond to greetings, explain the last confirmed metric, and change a chart/table without re-querying the warehouse. Data questions retain validated hybrid planning and read-only SQL. Provider and warehouse failures have distinct safe messages. The expanded Python suite passes **170 tests**. See [conversation routing](docs/conversation-routing.md) for fallback behavior, context handling and testing limitations. Earlier planner benchmark scores do not measure this new routing layer.

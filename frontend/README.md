@@ -36,7 +36,8 @@ npm run build
 - Month and province/shortlist/comparison filters are URL-backed. Navigation preserves the month and up to four comparison selections.
 - Monthly stocks are not summed over time. YoY always compares the same month in the previous year; missing base periods are not displayed as zero growth.
 - Comparison index mode normalizes each province to its first displayed period (100); zero/null baselines stay unavailable.
-- Chat determines its own scope and reveals actual query parameters. The month selector is deliberately hidden on chat, not misleadingly applied. Conversation history is in memory for this page only; starting again uses a new checkpoint session ID, but is not represented as deleting old database checkpoints.
+- Chat determines its own scope and reveals actual query parameters. The month selector is deliberately hidden on chat, not misleadingly applied. The visible transcript is page-local; confirmed analytical context is persisted server-side by LangGraph session ID. Starting again uses a new session ID and is not represented as deleting old database checkpoints.
+- Chat supports ratio-aware clarification, multi-metric tables/CSV, filters, province comparison, YoY and contextual follow-ups. The chart selector separates different units, while multi-province trends use distinct series. See [analytics contracts and evaluation](../docs/chatbot-analytics.md).
 - CQ SQL is constrained to `period <= :as_of`, including peer pairs and 12-month growth cohorts. Empty historical results are explained, not replaced with latest data.
 - Public sources and ETL history omit internal paths/errors. Retrieval time is not called upstream freshness.
 - Tables sort, search and export filtered rows with units and UTF-8 BOM; values are escaped against spreadsheet-formula interpretation.
