@@ -31,7 +31,7 @@ Navigation: ภาพรวมตลาด / วิเคราะห์จั�
 - Sources show retrieval timestamps but explicitly say upstream freshness is not checked. No invented green freshness status.
 - SQL disclosures for CQ show the executed scoped SQL and bound as-of parameter, rather than implying a latest-only query matched an older month.
 - Public HTTP proxy only permits analytical reads and chat. It never forwards ETL writes or credentials.
-- Legacy Streamlit was retained during migration verification, then removed at the user's request on 11 October 2026. Next.js is now the sole application frontend.
+- Next.js is the sole application frontend.
 
 ## Image generation brief
 

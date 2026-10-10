@@ -30,8 +30,6 @@ Airflow metadata ใช้ PostgreSQL ฐาน `airflow`; หลังย้า
 - FastAPI `/health`: `months_loaded=25`, `latest_period=2026-07-01`
 - Grafana: **13 panels** provisioned และอ่านกลับผ่าน Grafana API; SQL ของทุก panel ทดสอบคืนแถวจริง
 - PostgreSQL `bank_reader`: SELECT บน mart ได้, INSERT ไม่ได้
-- ตรวจ Streamlit ใน browser: เมนูภาพรวม แผนภูมิ ตาราง, chatbot คำถาม `แนวโน้มเงินฝากย้อนหลัง` ได้ 25 เดือนพร้อมกราฟ, SQL และป้าย rules mode
-- ตรวจ Streamlit ใน browser เพิ่ม: GPP scatter และ screening ปรับเกณฑ์ default ได้ 22 จังหวัด; screenshots `gpp-scatter-qa.png`, `screening-qa.png`
 - ตรวจ Grafana ใน browser: panels 1–13 render; ภาพใหม่ `grafana-policy-qa.png`, `grafana-new-panels-qa.png`
 - ตรวจ Airflow Graph ใน browser: 6 tasks success ใน run ล่าสุด; ภาพ `airflow-graph-qa.png`
 

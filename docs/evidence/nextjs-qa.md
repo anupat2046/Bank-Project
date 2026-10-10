@@ -1,8 +1,8 @@
 # Next.js migration verification
 
-Follow-up on **11 October 2026**: at the user's request, the legacy Streamlit code, configuration, Compose service and UI-only dependencies were removed. The historical observations below describe the migration verification before that removal; there is no longer a `legacy` profile or port-8501 application. Screenshots are retained as historical evidence.
+Follow-up on **11 October 2026**: Next.js is the sole application frontend. The five-page UI connects to the existing Python analytical backend through the allowlisted proxy.
 
-Removal verification: 43 local Python tests passed; `pip check` found no broken requirements; API and web images rebuilt successfully. The rebuilt API contains neither Streamlit nor Plotly nor `/app/app.py`. Next.js returned HTTP 200; warehouse health remained OK with 25 months. All ten competency-question endpoints returned results through the Next.js proxy. The old dashboard container was removed and port 8501 was no longer reachable. Database volumes and the resume draft were not changed.
+Follow-up verification: 43 local Python tests passed; `pip check` found no broken requirements; API and web images rebuilt successfully. Next.js returned HTTP 200; warehouse health remained OK with 25 months. All ten competency-question endpoints returned results through the Next.js proxy. Database volumes were not changed. A subsequent documentation cleanup changed only the two frontend names in the resume draft, with explicit user approval.
 
 Verified locally on **10 October 2026**, approximately 23:30–23:55 Asia/Bangkok. This records observed checks, not production certification, user research, or uninterrupted scheduler evidence. The approved scope was the five-page UX/UI migration; `docs/resume-draft.md` was intentionally left unchanged.
 
@@ -12,7 +12,7 @@ Verified locally on **10 October 2026**, approximately 23:30–23:55 Asia/Bangko
 - `.\.venv\Scripts\python.exe -m pytest -q`: **43 passed**. Tests include read API contracts, historical competency-query scoping, comparison limits, public-source redaction and mocked provider-error redaction. Automated tests do not call a paid provider.
 - `npm run typecheck`: passed. Production `next build` in the Docker image: passed. `docker compose up -d --build web`: built and started successfully.
 - Final `/health`: `status=ok`, `months_loaded=25`, `latest_period=2026-07-01`. Warehouse: 77 provinces, July 2024–July 2026, 1,925 province-month rows.
-- Final Compose inspection: web and API running; PostgreSQL healthy. Existing legacy Streamlit and Airflow were also running. No assertion is made about a continuous month of scheduled DAG runs.
+- Final Compose inspection: web and API running; PostgreSQL healthy. Airflow was also running. No assertion is made about a continuous month of scheduled DAG runs.
 - `GET /api/etl/bot` through the web proxy returned 404: analytical navigation cannot proxy ETL endpoints. Environment files, node modules and build caches remain Git-ignored. No credentials were added to browser code or evidence.
 
 ## Browser workflow checks
@@ -57,7 +57,7 @@ The [five generated concepts](../design/nextjs/design-spec.md) were development 
 | Assistant workspace | Conversation/result split, real mode, chart/table and SQL disclosure retained; mobile switches between panes rather than squeezing them together |
 | Small-screen navigation | Offscreen closed menu hidden from keyboard navigation; focus trap and Escape return added; no page-level horizontal overflow observed |
 
-Intentional differences: concept trend shapes, placeholder provincial rows and generated question wording were discarded; executed catalog SQL is shown with bound as-of scope; chat does not expose a misleading global month selector or fake provider dropdown; sources do not display invented green freshness badges. Actual source retrieval timestamps and NULL coverage replace generated status claims. The legacy Streamlit UI remains optional under the `legacy` Compose profile.
+Intentional differences: concept trend shapes, placeholder provincial rows and generated question wording were discarded; executed catalog SQL is shown with bound as-of scope; chat does not expose a misleading global month selector or fake provider dropdown; sources do not display invented green freshness badges. Actual source retrieval timestamps and NULL coverage replace generated status claims.
 
 ## Captured evidence
 

@@ -4,7 +4,7 @@
 
 โครงการ Data Warehouse และ Dashboard สำหรับวิเคราะห์ตลาดธนาคารพาณิชย์รายจังหวัดในประเทศไทย โดยรวมข้อมูลจริงจากธนาคารแห่งประเทศไทย (ธปท.), กรมการปกครอง และสำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สภาพัฒน์) ผ่าน API และไฟล์เผยแพร่ทางการ
 
-ระบบหลักใช้ Python, PostgreSQL, Apache Airflow และ Grafana ส่วนต่อยอดเป็น Chatbot ภาษาไทยสำหรับถามข้อมูล สร้าง SQL และแสดงตาราง/กราฟด้วย FastAPI, LangChain, LangGraph, Next.js, TypeScript และ Recharts. ลบ Streamlit และ Plotly ที่ใช้เฉพาะ frontend เดิมแล้วเมื่อ 11 ต.ค. 2569
+ระบบหลักใช้ Python, PostgreSQL, Apache Airflow และ Grafana ส่วนต่อยอดเป็น Chatbot ภาษาไทยสำหรับถามข้อมูล สร้าง SQL และแสดงตาราง/กราฟด้วย FastAPI, LangChain, LangGraph, Next.js, TypeScript และ Recharts
 
 - วันที่จัดทำแผน: 28 กันยายน 2569
 - กำหนดส่งที่ปรากฏในภาพ Assignment: 12 พฤศจิกายน 2569 — ควรตรวจสอบกำหนดจริงกับผู้สอน

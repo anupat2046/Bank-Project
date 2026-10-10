@@ -3,7 +3,7 @@
 Use this under **Projects** (or **Academic Projects** if submitted as coursework), not Work Experience. Replace the date and add a public repository link only after publishing the project. Keep only technologies and design choices you can explain in an interview.
 
 **Thailand Regional Banking Intelligence | Data Engineering & Analytics Project**  
-*Python · PostgreSQL · Apache Airflow · Grafana · Streamlit · FastAPI · LangChain · LangGraph · Gemini API*
+*Python · PostgreSQL · Apache Airflow · Grafana · Next.js · FastAPI · LangChain · LangGraph · Gemini API*
 
 Business question behind the project: **Which provinces merit a closer banking-market study when loan/deposit growth, branch coverage, and economic context are considered together?** The public datasets needed to compare them have different identifiers, time periods, and release dates. This is a project framing, not a claim that a bank commissioned or used the analysis.
 
@@ -13,7 +13,7 @@ Business question behind the project: **Which provinces merit a closer banking-m
 
 Shorter version for a one-page resume:
 
-- Built a provincial banking market-screening view to compare growth, branch coverage, and economic context, integrating five public sources into a 1,925-row warehouse and delivering 13 Grafana panels plus a Streamlit dashboard.
+- Built a provincial banking market-screening view to compare growth, branch coverage, and economic context, integrating five public sources into a 1,925-row warehouse and delivering 13 Grafana panels plus a Next.js dashboard.
 - Added a constrained Gemini/LangGraph natural-language query flow that returns validated SQL, tables, charts, and provenance; verified 39 automated tests and one live LLM query.
 
 Accuracy notes: The project uses public aggregate data, not customer or individual-bank records. The Airflow DAG is configured for daily runs, but a continuous month of scheduled operation has not been verified. One successful live Gemini query does not establish chatbot accuracy across all question types. Do not claim bank deployment, business impact, or production use.

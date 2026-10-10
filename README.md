@@ -1,6 +1,6 @@
 # Thailand Regional Banking Intelligence
 
-An end-to-end analytics project for Thailand's provincial commercial-banking market: a PostgreSQL warehouse, scheduled ETL, a **Next.js analytical application**, Grafana dashboards, and a constrained natural-language query interface. It integrates **real public data** from multiple sources—no customer records, individual-bank records, or synthetic banking observations. Next.js is the sole application frontend; the earlier Streamlit code and service were removed on 11 October 2026.
+An end-to-end analytics project for Thailand's provincial commercial-banking market: a PostgreSQL warehouse, scheduled ETL, a **Next.js analytical application**, Grafana dashboards, and a constrained natural-language query interface. It integrates **real public data** from multiple sources—no customer records, individual-bank records, or synthetic banking observations. Next.js is the sole application frontend.
 
 | Warehouse | Pipeline | Analytics | Verification |
 |---|---|---|---|
@@ -8,7 +8,7 @@ An end-to-end analytics project for Thailand's provincial commercial-banking mar
 
 The project is ready to run and demonstrate locally. Its verified data snapshot covers July 2024–July 2026; the source's latest banking period in this build is July 2026. See [validation and scope](#validation-and-scope) for the remaining operational and optional-LLM checks.
 
-[ภาษาไทย / Thai documentation](README_TH.md) · [Business report](docs/business-report.md) · [Architecture and ER diagram](docs/architecture.md) · [Resume wording draft](docs/resume-draft.md) · [Earlier assignment PDF, before the 10-question update](output/pdf/thailand-regional-banking-intelligence-report.pdf)
+[ภาษาไทย / Thai documentation](README_TH.md) · [Business report](docs/business-report.md) · [Architecture and ER diagram](docs/architecture.md)
 
 ![Next.js overview showing real warehouse KPIs, YoY changes and policy-rate context](output/playwright/nextjs-overview.png)
 
@@ -49,31 +49,13 @@ The Next.js interface separates market overview, province detail/comparison/scre
 
 The [mobile overview capture](output/playwright/nextjs-mobile.png) shows the responsive layout and internally scrollable table.
 
-### Earlier Streamlit interface
-
-Historical screenshots only: the Streamlit application has been removed. These images document earlier milestones and are not instructions to run a second frontend.
-
-![Competency question prototype with live warehouse result and SQL](output/playwright/competency-questions.png)
-
-The competency-question screenshot above was captured on 10 October 2026. The earlier dashboard screenshots were captured from the running local application on 28 September 2026; the Gemini chatbot screenshot below was captured on 30 September 2026. They show real warehouse results, not the [early design concept](docs/design/dashboard-concept.png).
-
-| Provincial comparison | Adjustable opportunity screen |
-|---|---|
-| ![GPP versus loan balances across provinces](output/playwright/province-comparison.png) | ![Adjustable shortlist criteria and matching provinces](output/playwright/opportunity-screening.png) |
+### Grafana and pipeline
 
 | Grafana dashboard | National policy-rate context and GPP comparison |
 |---|---|
 | ![Grafana banking trends and rankings](output/playwright/grafana-dashboard.png) | ![Grafana policy-rate history and provincial GPP comparison](output/playwright/grafana-policy-and-gpp.png) |
 
-The chatbot returns the query result, chart, generated SQL, and provenance. This live Gemini example maps a Thai deposit-trend question to a constrained `QueryPlan` and displays 25 monthly warehouse results. It is a successful end-to-end demonstration, not an LLM accuracy benchmark.
-
-![Live Gemini chatbot answering a Thai deposit trend question with table, chart, SQL, and provenance](output/playwright/chatbot-gemini-full.png)
-
-Without an API key, the same interface falls back to a clearly labelled **Thai rules mode**, shown in the earlier screenshots below.
-
-![Chatbot answer in rules mode](output/playwright/chatbot.png)
-
-![Chatbot result table, chart, and SQL disclosure](output/playwright/chatbot-chart-and-sql.png)
+The analytical assistant shown above returns query results, charts, SQL, and provenance. Without an API key, it uses a clearly labelled Thai rules mode. The live Gemini capture is an end-to-end smoke test, not an LLM accuracy benchmark.
 
 The scheduled pipeline has five source tasks feeding a mart-build task. The [Airflow graph screenshot](docs/evidence/airflow-graph-qa.png) shows a successful six-task run.
 

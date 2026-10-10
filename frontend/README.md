@@ -2,7 +2,7 @@
 
 Next.js App Router + TypeScript, React, Recharts, Lucide outline icons and locally bundled Noto Sans Thai. Five routes: `/`, `/provinces`, `/assistant`, `/questions`, `/sources`.
 
-This is the sole application frontend. The former Streamlit entry point, Compose service and UI-only Python dependencies were removed on 11 October 2026.
+This is the sole application frontend.
 
 ## Run with the existing warehouse
 

@@ -4,7 +4,7 @@
 
 ## อัปเดตหน้าเว็บ Next.js
 
-วันที่ 11 ต.ค. 2569 ลบโค้ด Streamlit, service `dashboard` และ dependencies เฉพาะ UI เดิมแล้ว ใช้ Next.js เป็น frontend เดียว ส่วนภาพและบันทึก Streamlit ด้านล่างเก็บไว้เป็นหลักฐานย้อนหลัง ไม่ใช่ระบบที่ยังเปิดใช้งานได้
+ใช้ Next.js เป็น frontend เดียว เอกสารและภาพหน้าจอของแอปปัจจุบันอยู่ในส่วนนี้และหลักฐานด้านล่าง
 
 หน้าเว็บหลักย้ายเป็น **Next.js + TypeScript** แล้ว เปิดที่ http://127.0.0.1:3000 มี 5 หน้า: ภาพรวมตลาด วิเคราะห์จังหวัด (รายละเอียด/เปรียบเทียบ/คัดกรอง) ผู้ช่วยวิเคราะห์ คำถามธุรกิจ และแหล่งข้อมูล. ตารางค้นหา/เรียง/ดาวน์โหลด CSV ได้ ตัวกรองเก็บใน URL และรองรับมือถือ. Backend, PostgreSQL, ETL, Grafana และ LangGraph ใช้ระบบเดิม. ดู [รายละเอียด frontend](frontend/README.md) และ [หลักฐานตรวจหน้าเว็บ](docs/evidence/nextjs-qa.md)
 
@@ -22,9 +22,9 @@
 - World Bank Indicators **JSON API จริง**: เงินเฟ้อไทย 65 ปีที่มีค่า; metadata ล่าสุดของ API = 13 ก.ค. 2569
 - ธปท. มติคณะกรรมการนโยบายการเงิน: 191 events จาก XLSX ทางการ (ไม่ใช่ BOT API); join อัตราล่าสุด ณ สิ้นเดือนโดยไม่มองล่วงหน้า
 - Airflow DAG `bank_regional_daily`: ทดสอบรันครบ 6 งานแล้ว (BOT, DOPA, NESDC, World Bank API, MPC workbook, mart); ตั้งทำงานทุกวัน 07:00 Asia/Bangkok โดย `catchup=False` และเก็บ metadata ใน PostgreSQL ฐาน `airflow` แยกจากคลัง `bank`
-- Competency Questions: [10 ข้อ พร้อม SQL และผลจริง](docs/competency-questions.md) ตรวจเมื่อ 10 ต.ค. 2569; มีหน้า Streamlit “10 คำถามธุรกิจ” ให้เลือกดูผล ตาราง กราฟ และ SQL
+- Competency Questions: [10 ข้อ พร้อม SQL และผลจริง](docs/competency-questions.md) ตรวจเมื่อ 10 ต.ค. 2569; มีหน้า Next.js “คำถามธุรกิจ” ให้เลือกดูผล ตาราง กราฟ และ SQL
 - Grafana: 13 panels รวมความต่อเนื่อง YoY, GPP peer, policy context และ shortlist
-- Streamlit: ภาพรวม เปรียบเทียบจังหวัด/GPP scatter/คัดพื้นที่แบบปรับเกณฑ์ได้ ถามข้อมูล และตรวจแหล่งข้อมูล/ประวัติ ETL
+- Next.js: ภาพรวม เปรียบเทียบจังหวัด/GPP scatter/คัดพื้นที่แบบปรับเกณฑ์ได้ ถามข้อมูล และตรวจแหล่งข้อมูล/ประวัติ ETL; หลักฐานการย้าย frontend ตรวจเมื่อ 10 ต.ค. 2569
 - FastAPI + LangGraph: คำถามไทย → `QueryPlan` แบบจำกัด → SQL ที่คอมไพล์จาก KPI catalog → PostgreSQL role อ่านอย่างเดียว → ตาราง/กราฟ/SQL/provenance
 - LangGraph checkpoints ลง PostgreSQL จริง; โหมดไม่มีคีย์ยังระบุชัดว่าเป็นกฎภาษาไทยที่ไม่ใช้ AI. **Gemini ทดลองสดผ่านหนึ่งคำถามเมื่อ 30 ก.ย. 2569** แต่ยังไม่ใช่การประเมินความแม่นยำครบชุด
 
@@ -129,18 +129,16 @@ Workflow: `plan` (LangChain structured output หรือกฎไทยที�
 
 ## หลักฐานและหน้าตา
 
-- [แนวคิดหน้าจอ](docs/design/dashboard-concept.png) ใช้กำหนด layout เท่านั้น **ตัวเลขเส้นกราฟในภาพแนวคิดเป็นภาพร่าง ไม่ใช่ข้อมูลจริง**
-- [ภาพหน้าจอจริงที่ตรวจใน browser](docs/evidence/dashboard-qa.png)
-- [ภาพหลังแก้ธีมให้ตัวหนังสืออ่านชัด](docs/evidence/dashboard-theme-fixed-qa.png)
-- [ภาพ chatbot จริง](docs/evidence/chatbot-qa.png)
-- ภาพ [Gemini ตอบจริงพร้อมตาราง กราฟ SQL และที่มา](output/playwright/chatbot-gemini-full.png) (30 ก.ย. 2569; ทดสอบหนึ่งคำถาม ไม่ใช่ผลวัดความแม่นยำ)
-- [GPP scatter](docs/evidence/gpp-scatter-qa.png), [คัดพื้นที่ 22 จังหวัด](docs/evidence/screening-qa.png)
+- [ข้อกำหนดและแนวคิดหน้าจอ](docs/design/nextjs/design-spec.md) ภาพแนวคิดไม่ใช่หลักฐานข้อมูลจริง
+- [ภาพรวมตลาด](output/playwright/nextjs-overview.png) · [หน้าจอมือถือ](output/playwright/nextjs-mobile.png)
+- [รายละเอียดจังหวัด](output/playwright/nextjs-provinces.png) · [คัดพื้นที่และ GPP scatter](output/playwright/nextjs-screening.png)
+- [Gemini ตอบจริงพร้อมกราฟ SQL และที่มา](output/playwright/nextjs-assistant.png) (10 ต.ค. 2569; ทดสอบหนึ่งคำถาม ไม่ใช่ผลวัดความแม่นยำ)
+- [แหล่งข้อมูลและกติกา Join](output/playwright/nextjs-sources.png)
 - [Grafana ภาพรวม](docs/evidence/grafana-qa.png), [ตัวชี้วัดและ API](docs/evidence/grafana-detail-qa.png), [YoY](docs/evidence/grafana-growth-qa.png), [Policy/GPP](docs/evidence/grafana-policy-qa.png), [ความต่อเนื่อง YoY](docs/evidence/grafana-new-panels-qa.png)
 - [Airflow DAG 6 tasks สำเร็จ](docs/evidence/airflow-graph-qa.png)
 - [สรุปผลตรวจและ Airflow run IDs](docs/evidence/run-status.md) · [รายงานธุรกิจและ 10 คำถาม](docs/business-report.md)
-- [หลักฐาน 10 Competency Questions](docs/competency-questions.md) · [SQL ทั้ง 10 ข้อ](sql/competency_questions.sql) · [ภาพหน้า Prototype ใหม่](output/playwright/competency-questions.png)
-- [PDF assignment เดิม](output/pdf/thailand-regional-banking-intelligence-report.pdf) (3 หน้า; สร้างก่อนอัปเดต 10 คำถาม ให้ใช้เอกสาร Competency Questions ฉบับใหม่ประกอบ)
+- [หลักฐาน 10 Competency Questions](docs/competency-questions.md) · [SQL ทั้ง 10 ข้อ](sql/competency_questions.sql) · [ภาพคำตอบ CQ10](output/playwright/nextjs-questions.png)
 
-Design comparison: (1) sidebar 4 หมวดตรงแนวคิด; (2) white/navy/emerald ตรง; (3) มี 3 KPI จริงตรงตำแหน่ง; (4) มีกราฟ trend และตารางจังหวัดจริง; (5) มีตัวเลือกเดือนและ provenance; (6) กราฟจริงไม่เรียบตาม concept เพราะยึดตัวเลข ธปท. ไม่ตกแต่งข้อมูล; (7) ใช้ Streamlit radio/UI แทน icon custom บางส่วนเพื่อให้ใช้งานได้ทันที
+Design comparison ของ Next.js: sidebar 5 หมวด, white/navy/teal, 3 KPI พร้อม YoY, กราฟและตารางจาก warehouse จริง, ตัวเลือกงวด, provenance และ responsive layout. ดูรายละเอียดการตรวจและความแตกต่างจากภาพแนวคิดใน [ผลตรวจ frontend](docs/evidence/nextjs-qa.md)
 
-![ภาพทดสอบ Gemini จริง แสดงคำตอบ ตาราง กราฟ SQL และแหล่งข้อมูล](output/playwright/chatbot-gemini-full.png)
+![ภาพทดสอบ Gemini จริง แสดงคำตอบ กราฟ SQL และแหล่งข้อมูล](output/playwright/nextjs-assistant.png)
