@@ -11,7 +11,7 @@ const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const sharp = require("sharp");
 const fa = require("react-icons/fa6");
-const { applyTheme } = require("./lib/apply_theme");
+const { applyTheme } = require("./lib/theme");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const OUT = path.join(ROOT, "output", "presentation", "Thailand-Regional-Banking-Intelligence.pptx");
@@ -781,21 +781,7 @@ async function build() {
 
   await pres.writeFile({ fileName: OUT });
   await applyTheme(OUT, THEME);
-  await useThaiFont(OUT, THEME.bodyFontFace);
   console.log("wrote", OUT);
-}
-
-// PowerPoint renders Thai with the theme's complex-script (cs) font, which pptxgenjs leaves
-// empty, so Thai would otherwise fall back to Angsana/Cordia New. Point every slot at one font.
-async function useThaiFont(file, face) {
-  const JSZip = require(require.resolve("jszip", { paths: [require.resolve("pptxgenjs")] }));
-  const zip = await JSZip.loadAsync(fs.readFileSync(file));
-  const name = "ppt/theme/theme1.xml";
-  let xml = await zip.file(name).async("string");
-  xml = xml.replace(/<a:cs typeface="[^"]*"\/>/g, `<a:cs typeface="${face}"/>`)
-    .replace(/<a:font script="Thai" typeface="[^"]*"\/>/g, `<a:font script="Thai" typeface="${face}"/>`);
-  zip.file(name, xml);
-  fs.writeFileSync(file, await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
 }
 
 build().catch((e) => { console.error(e); process.exit(1); });

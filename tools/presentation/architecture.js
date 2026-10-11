@@ -2,14 +2,13 @@
 //   node architecture.js  ->  docs/design/system-architecture.svg and .png (3840x2160)
 // Product logos come from Simple Icons via react-icons; rendering uses Playwright's Chromium.
 
-const fs = require("fs");
 const path = require("path");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 const si = require("react-icons/si");
 const fa = require("react-icons/fa6");
 
-const ROOT = path.resolve(__dirname, "..", "..");
+const { ROOT, renderSvg } = require("./lib/render");
 const OUT_SVG = path.join(ROOT, "docs", "design", "system-architecture.svg");
 const OUT_PNG = path.join(ROOT, "docs", "design", "system-architecture.png");
 
@@ -204,27 +203,4 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" 
 ${parts.join("\n")}
 </svg>`;
 
-// Use CHROME_PATH, else any Chromium Playwright has downloaded (the bundled revision may differ).
-function findChromium() {
-  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
-  const base = path.join(process.env.LOCALAPPDATA || "", "ms-playwright");
-  if (!fs.existsSync(base)) return undefined;
-  for (const d of fs.readdirSync(base).filter((n) => /^chromium-\d+$/.test(n)).sort().reverse()) {
-    const exe = path.join(base, d, "chrome-win64", "chrome.exe");
-    if (fs.existsSync(exe)) return exe;
-  }
-  return undefined;
-}
-
-async function main() {
-  fs.mkdirSync(path.dirname(OUT_SVG), { recursive: true });
-  fs.writeFileSync(OUT_SVG, svg);
-  const { chromium } = require(path.join(ROOT, "frontend", "node_modules", "playwright-core"));
-  const browser = await chromium.launch({ executablePath: findChromium() });
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 2 });
-  await page.setContent(`<html><body style="margin:0">${svg}</body></html>`);
-  await page.screenshot({ path: OUT_PNG, clip: { x: 0, y: 0, width: 1920, height: 1080 } });
-  await browser.close();
-  console.log("wrote", OUT_SVG, "and", OUT_PNG);
-}
-main().catch((e) => { console.error(e); process.exit(1); });
+renderSvg(svg, 1920, 1080, OUT_SVG, OUT_PNG).catch((e) => { console.error(e); process.exit(1); });
