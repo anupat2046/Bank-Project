@@ -112,11 +112,14 @@ def test_read_role_cannot_write_and_catalog_rejects_unsafe():
 
 def test_all_grafana_panel_queries_execute():
     dashboard = json.loads((Path(__file__).parents[1] / "grafana/dashboards/regional-banking.json").read_text(encoding="utf-8"))
-    assert len(dashboard["panels"]) == 13
+    assert dashboard['title'] == 'Bank Operations / Pipeline Health'
+    assert len(dashboard["panels"]) == 7
     with read_engine().connect() as conn:
         for panel in dashboard["panels"]:
-            sql = panel["targets"][0]["rawSql"].replace("$__timeFilter(period)", "TRUE")
-            assert conn.execute(text(sql)).fetchall(), panel["title"]
+            for target in panel.get('targets', []):
+                sql = target['rawSql'].replace('$__timeFilter(started_at)', 'TRUE')
+                # Empty failures/history are legitimate, not missing fabricated data.
+                conn.execute(text(sql)).fetchall()
 
 
 def test_trend_limit_returns_most_recent_months():

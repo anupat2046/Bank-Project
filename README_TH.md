@@ -60,7 +60,9 @@ docker compose exec api python -m bank.etl all
 | --- | --- |
 | ![เกณฑ์คัดพื้นที่ ผลลัพธ์ และ GPP scatter](output/playwright/nextjs-screening.png) | ![ตัวชี้วัดต่อประชากร/ต่อสาขา YoY และ SQL ที่ตรวจสอบได้](output/playwright/chatbot-analytics.png) |
 
-ดูเพิ่มเติม: [รายละเอียดจังหวัด](output/playwright/nextjs-provinces.png), [คำถามธุรกิจ](output/playwright/nextjs-questions.png), [แหล่งข้อมูล](output/playwright/nextjs-sources.png), [มือถือ](output/playwright/nextjs-mobile.png), [Grafana](output/playwright/grafana-dashboard.png)
+ดูเพิ่มเติม: [รายละเอียดจังหวัด](output/playwright/nextjs-provinces.png), [คำถามธุรกิจ](output/playwright/nextjs-questions.png), [แหล่งข้อมูล](output/playwright/nextjs-sources.png), [มือถือ](output/playwright/nextjs-mobile.png)
+
+Grafana เปลี่ยนเป็น [Operational Monitoring](docs/operations.md) สำหรับ Pipeline Health, คุณภาพและความสดของข้อมูล และ AI/API Performance ส่วน Next.js ใช้วิเคราะห์ธุรกิจ ภาพ Grafana เดิมเป็นหลักฐานของหน้ารายงานรุ่นก่อน
 
 ภาพเป็นหลักฐานของ build ตามวันที่ระบุ ไม่ใช่สถานะสด ภาพผู้ช่วยเดิมไม่ได้ยืนยันความสามารถ router รุ่นใหม่ ซึ่งตรวจแยกด้วย HTTP integration test ส่วนภาพแนวคิด UI ไม่ใช่ภาพผลิตภัณฑ์ที่ทำงานจริง
 

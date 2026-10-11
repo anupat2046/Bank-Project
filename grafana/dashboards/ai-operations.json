@@ -1,0 +1,368 @@
+{
+  "uid": "bank-ai-operations",
+  "title": "Bank Operations / AI & API Performance",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": [
+    "bank-intelligence",
+    "operations"
+  ],
+  "timezone": "Asia/Bangkok",
+  "refresh": "1m",
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [
+    {
+      "title": "Pipeline Health",
+      "url": "/d/thai-bank-regions",
+      "type": "link"
+    },
+    {
+      "title": "Data Quality",
+      "url": "/d/bank-data-quality",
+      "type": "link"
+    },
+    {
+      "title": "AI & API Operations",
+      "url": "/d/bank-ai-operations",
+      "type": "link"
+    }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Reading this dashboard",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Observed HTTP requests only, from the instrumentation deployment onward. API and chat rows measure different layers; do not add their counts together. API latency ends when the response is produced and excludes metric persistence. No prompts, session IDs, keys, query strings or raw errors are stored. **HTTP success is not answer accuracy.** Offline/live evaluation scores remain in the dated evaluation reports. Unknown token usage and unconfigured costs remain NULL. Automated HTTP checks also count as traffic."
+      }
+    },
+    {
+      "title": "API requests by route and status",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT route,status,COUNT(*) AS requests\nFROM operation_metric WHERE kind='api' AND $__timeFilter(recorded_at) GROUP BY route,status ORDER BY requests DESC",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 2,
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "API latency by route (ms)",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT route,COUNT(*) AS requests,\n percentile_cont(0.5) WITHIN GROUP(ORDER BY latency_ms) AS p50_ms,\n percentile_cont(0.95) WITHIN GROUP(ORDER BY latency_ms) AS p95_ms\nFROM operation_metric WHERE kind='api' AND $__timeFilter(recorded_at) GROUP BY route ORDER BY p95_ms DESC",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 3,
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Assistant outcomes",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT status,COUNT(*) AS turns FROM operation_metric\nWHERE kind='chat' AND $__timeFilter(recorded_at) GROUP BY status ORDER BY turns DESC",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 4,
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Assistant latency and provider failures",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT COUNT(*) AS observed_turns,\n percentile_cont(0.5) WITHIN GROUP(ORDER BY latency_ms) AS p50_ms,\n percentile_cont(0.95) WITHIN GROUP(ORDER BY latency_ms) AS p95_ms,\n SUM(llm_calls) AS model_calls,SUM(provider_errors) AS failed_model_calls\nFROM operation_metric WHERE kind='chat' AND $__timeFilter(recorded_at)",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 5,
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Token usage and configured cost coverage",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "Partial sums are not full totals when coverage is incomplete. Costs use configured uncached token rates, not billing invoices.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT COUNT(*) AS observed_turns,\n COUNT(*) FILTER(WHERE total_tokens IS NULL) AS unknown_usage_turns,\n SUM(total_tokens) AS known_tokens_only,\n COUNT(estimated_cost_usd) AS cost_known_turns,\n SUM(estimated_cost_usd) AS known_estimated_cost_usd\nFROM operation_metric WHERE kind='chat' AND $__timeFilter(recorded_at)",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 6,
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "HTTP failures and clarification rate",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "A clarification is a valid outcome, not necessarily an error. Empty denominators return NULL.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT\n 100.0*COUNT(*) FILTER(WHERE kind='api' AND status::text ~ '^5')/NULLIF(COUNT(*) FILTER(WHERE kind='api'),0) AS api_5xx_pct,\n 100.0*COUNT(*) FILTER(WHERE kind='chat' AND status='clarification')/NULLIF(COUNT(*) FILTER(WHERE kind='chat'),0) AS chat_clarification_pct,\n 100.0*COUNT(*) FILTER(WHERE kind='chat' AND status='error')/NULLIF(COUNT(*) FILTER(WHERE kind='chat'),0) AS chat_error_pct\nFROM operation_metric WHERE $__timeFilter(recorded_at)",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 7,
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 24,
+        "h": 7
+      }
+    }
+  ]
+}

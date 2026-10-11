@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+from contextlib import asynccontextmanager
+from time import perf_counter
 from datetime import date
 
 from fastapi import FastAPI, Header, HTTPException, Query
@@ -11,11 +13,40 @@ from sqlalchemy import text
 
 from .chat import ask
 from .db import read_engine
+from . import operations
+from starlette.concurrency import run_in_threadpool
 from .etl import build_mart, run_source
 from .analytics import metadata, overview_data, snapshot, province_history, source_data, resolve_period, read
 from .competency import QUESTIONS, queries, run_question, question_query
 
-app = FastAPI(title="Thailand Regional Banking Intelligence", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app):
+    if operations.enabled():
+        from .db import init_db
+        await run_in_threadpool(init_db)
+    yield
+
+
+app = FastAPI(title="Thailand Regional Banking Intelligence", version="0.1.0", lifespan=lifespan)
+
+
+@app.middleware('http')
+async def measure_request(request, call_next):
+    started = perf_counter()
+    token = operations.live_request.set(True)
+    status = 500
+    try:
+        response = await call_next(request)
+        status = response.status_code
+        return response
+    finally:
+        operations.live_request.reset(token)
+        route = request.scope.get('route')
+        # Route templates avoid storing province IDs, unknown paths or query strings.
+        route_name = getattr(route, 'path', 'unmatched')
+        await run_in_threadpool(operations.persist, dict(
+            kind='api', route=route_name, status=str(status),
+            latency_ms=(perf_counter()-started)*1000))
 
 
 class ChatRequest(BaseModel):

@@ -35,7 +35,7 @@ Invoke-RestMethod http://127.0.0.1:8000/health
 | --- | --- | --- |
 | Next.js | http://127.0.0.1:3000 | Five-page analytical application |
 | FastAPI reference | http://127.0.0.1:8000/docs | Read endpoints and chat API |
-| Grafana, when started | http://127.0.0.1:3001/d/thai-bank-regions | Provisioned 13-panel dashboard |
+| Grafana, when started | http://127.0.0.1:3001/d/thai-bank-regions | Pipeline Health; links to Data Quality and AI/API Operations |
 | Airflow, when started | http://127.0.0.1:8081 | Standalone development scheduler/UI |
 
 All published service ports bind to `127.0.0.1`. This is not an internet-facing deployment configuration.
@@ -57,6 +57,11 @@ Do not paste keys into issues, screenshots, or prompts. Do not use browser-visib
 Try `ทำอะไรได้บ้าง`, then `สินเชื่อต่อประชากรสูงสุด 10 จังหวัด`, followed by `เปลี่ยนเป็นตาราง`. Explanation/presentation requests require an earlier successful analytical result.
 
 ## 5. Start Grafana and Airflow (optional)
+
+Grafana now monitors operations rather than duplicating Next.js business charts.
+For upgrades, rebuild the API first (`docker compose up -d --build api`) to create
+the operational metrics table and nullable ETL duration column. See the
+[operations guide](operations.md) for metric definitions and limitations.
 
 Complete the initial import first to avoid overlapping initial loads:
 

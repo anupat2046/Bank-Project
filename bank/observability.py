@@ -63,6 +63,7 @@ def summarize(events, latency_ms, status, strategy='hybrid'):
     return {'request_id':str(uuid4()),'timestamp_utc':datetime.now(timezone.utc).isoformat(),
             'strategy':strategy,'status':status,'latency_ms':round(latency_ms,2),
             'llm_calls':len(calls),'llm_latency_ms':round(sum(e.get('latency_ms',0) for e in calls),2),
+            'provider_errors':sum(bool(e.get('failure_type')) for e in calls),
             **usage,'estimated_cost_usd':cost,'cost_basis':'configured uncached token rates' if cost is not None else 'not configured / usage unavailable',
             'clarification':status=='clarification','error':status=='error',
             'routes':[e['route'] for e in events if e.get('route') in ['capabilities','greeting','analytics','clarification','explanation','presentation','unsupported']],
@@ -70,3 +71,5 @@ def summarize(events, latency_ms, status, strategy='hybrid'):
 
 def emit(summary):
     logger.info(json.dumps({'event':'bank_chat',**summary},ensure_ascii=False))
+    from .operations import persist_chat
+    persist_chat(summary)

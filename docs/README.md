@@ -12,6 +12,7 @@ Use this index to distinguish current guides from dated evidence. Documentation 
 | [Sources and temporal joins](data-sources.md) | Actual ingestion methods, grains, units, mapping, and missing data |
 | [Architecture](architecture.md) | Data model, service boundaries, ETL, and chat workflow |
 | [Verification status](verification.md) | Latest recorded checks and the limits of each evidence type |
+| [Operational monitoring](operations.md) | Grafana pipeline, data-quality and AI/API dashboards; privacy and metric definitions |
 
 ## Analytical assistant
 

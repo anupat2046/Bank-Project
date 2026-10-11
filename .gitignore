@@ -46,6 +46,9 @@ tmp/
 !/output/playwright/province-comparison.png
 !/output/playwright/opportunity-screening.png
 !/output/playwright/grafana-dashboard.png
+!/output/playwright/grafana-pipeline-operations.png
+!/output/playwright/grafana-data-quality.png
+!/output/playwright/grafana-ai-operations.png
 !/output/playwright/grafana-policy-and-gpp.png
 !/output/playwright/chatbot.png
 !/output/playwright/chatbot-chart-and-sql.png

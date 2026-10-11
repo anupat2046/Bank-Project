@@ -4,6 +4,12 @@
 
 ## System boundaries
 
+Grafana now reads ETL records, current warehouse-quality checks, and allowlisted
+`operation_metric` rows using `bank_reader`. Next.js retains business analysis.
+The API writes best-effort metrics using the owner role. See [operational monitoring](operations.md).
+The diagrams below predate this monitoring change; Grafana labels referring to
+13 analytical panels describe the previous reporting view.
+
 ### High-level view
 
 ![High-level architecture: tiers, data pipeline (A–D) and user request path (1–6)](design/system-architecture.png)

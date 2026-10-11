@@ -1,6 +1,6 @@
 # Thailand Regional Banking Intelligence
 
-A public-data analytics platform for comparing Thailand's provincial banking markets. It combines a PostgreSQL warehouse, daily ETL orchestration, a Next.js dashboard, Grafana reporting, and a bounded Gemini-powered analytical assistant.
+A public-data analytics platform for comparing Thailand's provincial banking markets. It combines a PostgreSQL warehouse, daily ETL orchestration, a Next.js dashboard, Grafana operational monitoring, and a bounded Gemini-powered analytical assistant.
 
 Built for regional strategy and channel-planning research—not customer credit decisions, individual-bank analysis, or automated branch recommendations.
 
@@ -43,7 +43,7 @@ The BOT adapters use published tables/workbooks, **not authenticated BOT REST AP
 | Application | Next.js App Router, TypeScript, Recharts |
 | API and ingestion | Python, FastAPI, pandas, SQLAlchemy, psycopg |
 | Warehouse | PostgreSQL; dimensions, source-grain facts, province–month mart |
-| Orchestration and reporting | Apache Airflow; Grafana with 13 provisioned panels |
+| Orchestration and monitoring | Apache Airflow; Grafana dashboards for pipeline health, data quality, and AI/API operations |
 | Assistant | Gemini via LangChain, LangGraph checkpoints, Pydantic plans, SQLGlot validation |
 | Verification | pytest, independent arithmetic checks, authored LLM evaluation, timing/token telemetry |
 
@@ -74,7 +74,7 @@ For optional Gemini configuration, Grafana/Airflow setup, development, verificat
 | --- | --- |
 | ![Adjustable screening criteria, result table, and GPP scatter](output/playwright/nextjs-screening.png) | ![Ratio-aware assistant with multiple metrics, YoY, and inspectable SQL](output/playwright/chatbot-analytics.png) |
 
-Additional captures: [province detail](output/playwright/nextjs-provinces.png), [business question](output/playwright/nextjs-questions.png), [source quality](output/playwright/nextjs-sources.png), [mobile overview](output/playwright/nextjs-mobile.png), and [Grafana](output/playwright/grafana-dashboard.png).
+Additional captures: [province detail](output/playwright/nextjs-provinces.png), [business question](output/playwright/nextjs-questions.png), [source quality](output/playwright/nextjs-sources.png), and [mobile overview](output/playwright/nextjs-mobile.png). Grafana now provides [operational monitoring](docs/operations.md); previous Grafana captures show the retired business-reporting view.
 
 These captures document dated local builds. The latest conversational router was verified through HTTP integration checks; older assistant images do not demonstrate its newer behavior. Design concepts are labelled separately from working-product evidence.
 

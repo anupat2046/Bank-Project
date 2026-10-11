@@ -86,7 +86,21 @@ etl_run = Table("etl_run", metadata,
     Column("status", String(20), nullable=False),
     Column("rows_loaded", Integer, nullable=False, default=0),
     Column("detail", Text),
+    Column("duration_ms", Float),
     Column("started_at", DateTime(timezone=True), server_default=func.now()),
+)
+
+operation_metric = Table("operation_metric", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("recorded_at", DateTime(timezone=True), server_default=func.now(), index=True),
+    Column("kind", String(16), nullable=False),
+    Column("route", String(100)),
+    Column("status", String(40), nullable=False),
+    Column("latency_ms", Float, nullable=False),
+    Column("llm_calls", Integer),
+    Column("provider_errors", Integer),
+    Column("total_tokens", Integer),
+    Column("estimated_cost_usd", Float),
 )
 
 
@@ -106,6 +120,7 @@ def init_db():
     metadata.create_all(engine())
     # Forward-only additive migration for workspaces initialized before the API source.
     with engine().begin() as conn:
+        conn.execute(text("ALTER TABLE etl_run ADD COLUMN IF NOT EXISTS duration_ms DOUBLE PRECISION"))
         conn.execute(text("ALTER TABLE fact_gpp_year ADD COLUMN IF NOT EXISTS source_last_modified DATE"))
         conn.execute(text("ALTER TABLE mart_province_month ADD COLUMN IF NOT EXISTS inflation_pct DOUBLE PRECISION"))
         conn.execute(text("ALTER TABLE mart_province_month ADD COLUMN IF NOT EXISTS inflation_reference_year INTEGER"))

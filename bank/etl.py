@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from calendar import monthrange
 from datetime import date
+from time import perf_counter
 
 from sqlalchemy import delete, insert, select
 
@@ -21,6 +22,7 @@ def _record_manifest(conn, name: str, meta: dict):
 
 def run_source(name: str) -> dict:
     init_db()
+    started = perf_counter()
     try:
         if name == "bot":
             records, meta = sources.fetch_bot()
@@ -80,12 +82,13 @@ def run_source(name: str) -> dict:
         result = {"source": name, "status": "failed", "rows_loaded": 0,
                   "detail": f"{type(exc).__name__}: {exc}"}
     with engine().begin() as conn:
-        conn.execute(insert(etl_run).values(**result))
+        conn.execute(insert(etl_run).values(**result, duration_ms=(perf_counter()-started)*1000))
     return result
 
 
 def build_mart() -> dict:
     init_db()
+    started = perf_counter()
     try:
         with engine().connect() as conn:
             bank_rows = conn.execute(select(bank)).mappings().all()
@@ -147,7 +150,7 @@ def build_mart() -> dict:
         result = {"source": "mart", "status": "failed", "rows_loaded": 0,
                   "detail": f"{type(exc).__name__}: {exc}"}
     with engine().begin() as conn:
-        conn.execute(insert(etl_run).values(**result))
+        conn.execute(insert(etl_run).values(**result, duration_ms=(perf_counter()-started)*1000))
     return result
 
 

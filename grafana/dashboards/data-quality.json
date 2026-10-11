@@ -1,0 +1,368 @@
+{
+  "uid": "bank-data-quality",
+  "title": "Bank Operations / Data Quality & Freshness",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": [
+    "bank-intelligence",
+    "operations"
+  ],
+  "timezone": "Asia/Bangkok",
+  "refresh": "1m",
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [
+    {
+      "title": "Pipeline Health",
+      "url": "/d/thai-bank-regions",
+      "type": "link"
+    },
+    {
+      "title": "Data Quality",
+      "url": "/d/bank-data-quality",
+      "type": "link"
+    },
+    {
+      "title": "AI & API Operations",
+      "url": "/d/bank-ai-operations",
+      "type": "link"
+    }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Reading this dashboard",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "These panels query the **current warehouse snapshot** and ignore the time picker. Retrieval time and reference period are different. Annual sources naturally lag monthly banking data. NULL GPP/inflation can be expected under availability rules, not necessarily a broken pipeline. Historical mapping-error counts are not recorded; failed jobs must be investigated in ETL logs."
+      }
+    },
+    {
+      "title": "Warehouse coverage",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT COUNT(*) AS analytical_rows,COUNT(DISTINCT province_code) AS provinces,\n COUNT(DISTINCT period) AS months,MIN(period)::text AS first_month,MAX(period)::text AS latest_month FROM mart_province_month",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 2,
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Latest available source reference (all time)",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT 'BOT' AS source,MAX(period)::text AS reference FROM fact_bank_month\nUNION ALL SELECT 'DOPA',MAX(reference_year)::text FROM fact_population_year\nUNION ALL SELECT 'NESDC',MAX(reference_year)::text FROM fact_gpp_year\nUNION ALL SELECT 'World Bank',MAX(reference_year)::text FROM fact_macro_year\nUNION ALL SELECT 'Policy effective date',MAX(event_date)::text FROM fact_policy_event",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 3,
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Latest source retrieval",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "Publication/revision metadata is shown separately below; this table is retrieval time only.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT source,MAX(fetched_at) AS last_retrieved_at,\n COUNT(*) AS retained_manifests FROM source_manifest GROUP BY source ORDER BY source",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 4,
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Annual source publication / revision metadata",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT 'NESDC' AS source,MAX(source_last_modified)::text AS source_revision_date FROM fact_gpp_year\nUNION ALL SELECT 'World Bank',MAX(source_last_updated)::text FROM fact_macro_year",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 5,
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Coverage and missing values by banking month",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT period::text,COUNT(*) AS rows,\n COUNT(DISTINCT province_code) AS provinces,77-COUNT(DISTINCT province_code) AS provinces_short_of_77,\n COUNT(*) FILTER(WHERE population IS NULL) AS population_missing,\n COUNT(*) FILTER(WHERE gpp_million_baht IS NULL) AS gpp_unavailable,\n COUNT(*) FILTER(WHERE inflation_pct IS NULL) AS inflation_unavailable,\n COUNT(*) FILTER(WHERE policy_rate_pct IS NULL) AS policy_unavailable\nFROM mart_province_month GROUP BY period ORDER BY period DESC",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 6,
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "title": "Current integrity checks",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "bank-postgres"
+      },
+      "description": "Current-state checks, not a historical data-quality incident counter.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "bank-postgres"
+          },
+          "rawSql": "SELECT\n (SELECT COUNT(*) FROM (SELECT province_code,period FROM mart_province_month GROUP BY 1,2 HAVING COUNT(*)>1) d) AS duplicate_keys,\n (SELECT COUNT(*) FROM mart_province_month m LEFT JOIN dim_province p USING(province_code) WHERE p.province_code IS NULL) AS unmapped_province_rows,\n (SELECT COUNT(*) FROM mart_province_month WHERE credits_million_baht<0 OR deposits_million_baht<0 OR branches<0 OR population<=0) AS invalid_values,\n (SELECT COUNT(*) FROM fact_bank_month b LEFT JOIN mart_province_month m USING(province_code,period) WHERE m.period IS NULL) AS bank_rows_missing_from_mart",
+          "format": "table",
+          "editorMode": "code",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "No observations"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reference"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true
+      },
+      "id": 7,
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 24,
+        "h": 7
+      }
+    }
+  ]
+}
