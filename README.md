@@ -49,23 +49,9 @@ The BOT adapters use published tables/workbooks, **not authenticated BOT REST AP
 
 ## Architecture
 
-```text
-Five public sources → validated Python ETL → PostgreSQL facts and dimensions
-                              ↑                         ↓
-                 Airflow daily 07:00 Bangkok     province–month mart
-                                                        ├─ Grafana
-                                                        └─ read-only FastAPI analytics
-                                                                  ↑
-                                                       Next.js server proxy
-                                                                  ↑
-                                                    dashboard and assistant
+![High-level architecture: public sources, Airflow-triggered ingestion, PostgreSQL warehouse, FastAPI analytics and chat workflow, Next.js and Grafana](docs/design/system-architecture.png)
 
-Chat → safety gate → conversational router
-                         ├─ guidance / definition / chart change
-                         └─ hybrid plan → validated SQL → grounded result
-```
-
-Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. See [architecture and data model](docs/architecture.md).
+Lettered steps (A–D) are the daily data pipeline; numbered steps (1–6) follow a user request. Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. See [architecture and data model](docs/architecture.md) for the low-level view with routes, modules, tables, and database roles.
 
 ## Run locally
 

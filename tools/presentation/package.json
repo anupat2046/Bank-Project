@@ -1,0 +1,17 @@
+{
+  "name": "bank-intelligence-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Builds the project presentation deck from recorded evidence in docs/evidence.",
+  "scripts": {
+    "build": "node build_deck.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "pptxgenjs": "3.12.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-icons": "5.3.0",
+    "sharp": "0.33.5"
+  }
+}
