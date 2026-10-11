@@ -117,6 +117,20 @@ output/playwright/    selected working-application screenshots
 
 Start with the [documentation index](docs/README.md). Future work is separated in the [roadmap](PROJECT_PLAN.md). See [contribution guidance](CONTRIBUTING.md) for verification and publishing evidence.
 
+## Author
+
+**Anupat Suttilert** — Fourth-year Data Science student at Thammasat University and aspiring Data Engineer.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/anupat-suttilert-888a73348)
+[![GitHub](https://img.shields.io/badge/GitHub-anupat2046-black?logo=github)](https://github.com/anupat2046)
+[![Website](https://img.shields.io/badge/Website-anupatsuttilert.com-teal)](https://anupatsuttilert.com/)
+
+Interested in reliable data pipelines, analytical data modeling, and AI-assisted analytics with verifiable results.
+
+- **Project focus:** Integrating Thai public data into a province–month warehouse for banking-market analysis, with interactive dashboards and a validated analytical assistant.
+- **Core stack in this project:** Python, SQL, PostgreSQL, Apache Airflow, FastAPI, Next.js, and Docker.
+- **AI and reporting:** Gemini, LangChain, LangGraph, and Grafana.
+
 ## License
 
 Project code is available under the [MIT License](LICENSE). Third-party datasets and dependencies retain their own licenses or published usage terms; the project license does not relicense provider data. See the [source catalogue](docs/data-sources.md).
