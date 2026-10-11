@@ -127,7 +127,7 @@ Start with the [documentation index](docs/README.md). Future work is separated i
 
 Interested in reliable data pipelines, analytical data modeling, and AI-assisted analytics with verifiable results.
 
-- **Project focus:** Integrating Thai public data into a province–month warehouse for banking-market analysis, with interactive dashboards and a validated analytical assistant.
+- **Project focus:** Integrating Thai public data into a province-month warehouse for banking-market analysis, with interactive dashboards and a validated analytical assistant.
 - **Core stack in this project:** Python, SQL, PostgreSQL, Apache Airflow, FastAPI, Next.js, and Docker.
 - **AI and reporting:** Gemini, LangChain, LangGraph, and Grafana.
 
