@@ -30,15 +30,20 @@ Review the exported slides for Thai text, chart labels, clipping, and source per
 
 ## Architecture diagrams
 
-`architecture.js` and `architecture_lowlevel.js` generate the SVG and PNG diagrams
-under `docs/design/`. They also require the frontend's installed `playwright-core`
-dependency and a Chromium browser. Set `CHROME_PATH` to a browser executable if
-automatic discovery does not find one.
+`architecture.js`, `architecture_lowlevel.js` and `data_flow.js` generate the SVG and
+PNG diagrams under `docs/design/` (high-level and low-level architecture, and data
+flow/lineage). They share `lib/render.js`, which requires the frontend's installed
+`playwright-core` dependency and a Chromium browser. Set `CHROME_PATH` to a browser
+executable if automatic discovery does not find one.
 
 ```sh
 node architecture.js
 node architecture_lowlevel.js
+node data_flow.js
 ```
+
+Rules, counts and names in the diagrams are written into the scripts; update them when
+`bank/`, `compose.yaml` or the recorded warehouse counts change.
 
 The package-cleanup utility removes orphaned content-type declarations only.
 It preserves every other ZIP entry byte-for-byte and does not edit slide content.
