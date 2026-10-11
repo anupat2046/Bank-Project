@@ -119,7 +119,7 @@ Start with the [documentation index](docs/README.md). Future work is separated i
 
 ## Author
 
-**Anupat Suttilert** — Fourth-year Data Science student at Thammasat University and aspiring Data Engineer.
+**Anupat Suttilert** - Fourth-year Data Science student at Thammasat University and aspiring Data Engineer.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/anupat-suttilert-888a73348)
 [![GitHub](https://img.shields.io/badge/GitHub-anupat2046-black?logo=github)](https://github.com/anupat2046)
