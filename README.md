@@ -49,7 +49,7 @@ The BOT adapters use published tables/workbooks, **not authenticated BOT REST AP
 
 ## Architecture
 
-![High-level architecture: public sources, Airflow-triggered ingestion, PostgreSQL warehouse, FastAPI analytics and chat workflow, Next.js and Grafana](docs/design/system-architecture.png)
+![High-level architecture: public sources, Airflow-triggered ingestion, PostgreSQL warehouse, FastAPI analytics and chat workflow, Next.js and Grafana](docs/design/system-architecture.drawio.svg)
 
 Lettered steps (A–D) are the daily data pipeline; numbered steps (1–6) follow a user request. Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. See [architecture and data model](docs/architecture.md) for the low-level view with routes, modules, tables, and database roles.
 
