@@ -79,8 +79,9 @@ local prototype instrumentation, not a durable event queue. Missing writes mean
 the dashboard can undercount activity. There is no automatic retention cleanup
 yet: monitor table growth and choose a retention policy before persistent use.
 
-Earlier Grafana screenshots and presentation slides show the historical business
-reporting dashboard. They are not evidence of these operational dashboards.
+Earlier Grafana screenshots in [docs/evidence](evidence/README.md) show the
+historical business reporting dashboard. They are not evidence of these
+operational dashboards.
 
 ## Verification snapshot: 11 October 2026
 

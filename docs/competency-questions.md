@@ -10,15 +10,15 @@ All questions read `mart_province_month`, integrating dim_province/dim_month and
 
 | ID | Competency question | Sources | Application view | Returned rows |
 |---|---|---|---|---|
-| CQ01 | จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด? | BOT | Business questions; Grafana panel 13 | 10 |
-| CQ02 | จังหวัดใดเงินฝากโตเร็วกว่าสินเชื่อ YoY มากที่สุด? | BOT | Business questions; Grafana panel 8 | 10 |
-| CQ03 | จังหวัดใดมีความหนาแน่นสาขาต่อประชากรแสนคนสูงที่สุด? | BOT + DOPA | Business questions; Grafana panel 3 / เปรียบเทียบจังหวัด | 10 |
+| CQ01 | จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 10 |
+| CQ02 | จังหวัดใดเงินฝากโตเร็วกว่าสินเชื่อ YoY มากที่สุด? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 10 |
+| CQ03 | จังหวัดใดมีความหนาแน่นสาขาต่อประชากรแสนคนสูงที่สุด? | BOT + DOPA | Business questions; เปรียบเทียบจังหวัด | 10 |
 | CQ04 | จังหวัดที่ GPP ต่างกันไม่เกิน 15% มีขนาดสินเชื่อต่างกันเท่าไร? | BOT + NESDC | Business questions; GPP เทียบตลาด / หน้า 10 คำถามธุรกิจ | 10 |
-| CQ05 | สินเชื่อและเงินฝากรวมเคลื่อนไหวอย่างไรในช่วงที่ดอกเบี้ยนโยบายเปลี่ยน? | BOT + BOT MPC workbook | Business questions; ภาพรวมตลาด / Grafana panels 1,10 | 25 |
-| CQ06 | จังหวัดใดจำนวนสาขาลดลงแต่สินเชื่อเพิ่มขึ้นเมื่อเทียบปีก่อน? | BOT | Business questions; Grafana panel 9 | 6 |
-| CQ07 | จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.? | BOT + DOPA + NESDC | Business questions; คัดพื้นที่ศึกษา / Grafana panel 12 | 22 |
-| CQ08 | จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด? | BOT | Business questions; จัดอันดับ / Grafana panel 4 | 10 |
-| CQ09 | จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด? | BOT + DOPA | Business questions; จัดอันดับ / Grafana panel 5 | 10 |
+| CQ05 | สินเชื่อและเงินฝากรวมเคลื่อนไหวอย่างไรในช่วงที่ดอกเบี้ยนโยบายเปลี่ยน? | BOT + BOT MPC workbook | Business questions; ภาพรวมตลาด | 25 |
+| CQ06 | จังหวัดใดจำนวนสาขาลดลงแต่สินเชื่อเพิ่มขึ้นเมื่อเทียบปีก่อน? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 6 |
+| CQ07 | จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.? | BOT + DOPA + NESDC | Business questions; คัดพื้นที่ศึกษา | 22 |
+| CQ08 | จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด? | BOT | Business questions; จัดอันดับ | 10 |
+| CQ09 | จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด? | BOT + DOPA | Business questions; จัดอันดับ | 10 |
 | CQ10 | สินเชื่อรวมกระจุกตัวในกรุงเทพฯ และ 5 จังหวัดอันดับแรกเท่าไร? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 1 |
 
 ## CQ01 — จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด?

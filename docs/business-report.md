@@ -44,7 +44,7 @@ CQ01 specifically tests twelve-month growth consistency, not the separate latest
 5. Ask the assistant for loans per registered resident, exclude Bangkok in a follow-up, and switch to a table.
 6. Use the sources page to distinguish retrieval time, source vintage, and usable historical coverage.
 
-Grafana provides a separate provisioned reporting view. Airflow's task/run history demonstrates orchestration only for observed runs; a screenshot of one successful run is not evidence of continuous scheduling.
+Grafana is not a business-reporting surface: it monitors pipeline health, data quality, and AI/API performance (see [operational monitoring](operations.md)). Airflow's task/run history demonstrates orchestration only for observed runs; a screenshot of one successful run is not evidence of continuous scheduling.
 
 ## Interpretation boundaries
 

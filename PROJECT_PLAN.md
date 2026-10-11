@@ -8,7 +8,7 @@ As verified on 11 October 2026 (Asia/Bangkok):
 
 - Five real public-data adapters with explicit province mapping, raw hashes, and transactional loading.
 - A 77-province, 25-month warehouse with source-grain facts and a province–month mart.
-- A daily Airflow DAG, 13 provisioned Grafana panels, and a five-page Next.js analytical application.
+- A daily Airflow DAG, three provisioned Grafana operations dashboards (pipeline health, data quality, AI/API performance), and a five-page Next.js analytical application.
 - Ten predefined business analyses with SQL and recorded results.
 - A bounded conversation router, hybrid analytical planner, read-only execution, and confirmed session context.
 - An 80-question deterministic regression corpus, a separate 24-turn live planner comparison, and allowlisted operational telemetry.

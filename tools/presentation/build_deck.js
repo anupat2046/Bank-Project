@@ -344,7 +344,7 @@ async function build() {
       ["gear", "ETL + Airflow", "Python ตรวจ schema\nรันทุกวัน 07:00 น."],
       ["db", "PostgreSQL", "Dimensions · Facts\nmart_province_month"],
       ["api", "FastAPI", "Analytics API\nRead-only transaction"],
-      ["chart", "Next.js · Grafana", "Dashboard · Assistant\n13 Grafana panels"],
+      ["chart", "Next.js · Grafana", "Dashboard · Assistant\nGrafana ops monitoring"],
     ];
     const sw = 2.05, gap = (CW - 5 * sw) / 4;
     steps.forEach(([k, h, b], i) => {
@@ -368,7 +368,7 @@ async function build() {
       text(s, h, { x: x + 0.7, y, w: cw - 0.7, h: 0.32, fontSize: 14, bold: true, color: C.text2 });
       text(s, b, { x: x + 0.7, y: y + 0.35, w: cw - 0.75, h: 0.75, fontSize: 13 });
     });
-    s.addNotes("ไล่จากซ้ายไปขวา: ETL ใน Python ตรวจ schema และหน่วยก่อนเขียนลง PostgreSQL, Airflow ตั้งเวลา 07:00 ทุกวัน, FastAPI เป็นชั้นเดียวที่แตะฐานข้อมูลแบบอ่านอย่างเดียว ส่วน Next.js เรียกผ่าน server proxy และ Grafana ใช้สำหรับรายงาน");
+    s.addNotes("ไล่จากซ้ายไปขวา: ETL ใน Python ตรวจ schema และหน่วยก่อนเขียนลง PostgreSQL, Airflow ตั้งเวลา 07:00 ทุกวัน, FastAPI เป็นชั้นเดียวที่แตะฐานข้อมูลแบบอ่านอย่างเดียว ส่วน Next.js เรียกผ่าน server proxy และ Grafana ใช้ติดตามสถานะ pipeline คุณภาพข้อมูล และ AI/API");
   }
 
   // ============================================================ 8 Finding 1: concentration
