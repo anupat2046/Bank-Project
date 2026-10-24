@@ -43,6 +43,6 @@ npm run build
 - Public sources and ETL history omit internal paths/errors. Retrieval time is not called upstream freshness.
 - Tables sort, search and export filtered rows with units and UTF-8 BOM; values are escaped against spreadsheet-formula interpretation.
 
-The UI remains a loopback-only analytical prototype, not an authenticated or production banking system. Authentication, deployment-grade throttling and shared-user chat-history policies are not claimed.
+The supplied deployment exposes the application on loopback. Authentication, request throttling, authenticated session ownership, and shared-user chat-history policies require environment-specific implementation before shared access is enabled.
 
 See [design references and specification](../docs/design/nextjs/design-spec.md) and [verification](../docs/evidence/nextjs-qa.md).

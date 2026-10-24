@@ -35,7 +35,7 @@ All financial balances below are **THB million** unless otherwise stated.
 
 CQ01 specifically tests twelve-month growth consistency, not the separate latest-month growth ranking. CQ04 defines GPP peers as a gap no greater than **15% of the larger value**. See [all ten reproducible queries and their result rows](competency-questions.md); predefined question wording remains Thai to match the application.
 
-## Recommended demonstration sequence
+## Analytical workflow
 
 1. Open the market overview and inspect the selected banking month, balances, YoY, and concentration.
 2. Compare two provinces; inspect population/GPP reference years and normalized measures.
@@ -50,4 +50,4 @@ Grafana is not a business-reporting surface: it monitors pipeline health, data q
 
 Monthly banking balances are stocks and must not be summed across time. Provincial figures are rounded to THB million, so their sum can differ slightly from BOT's independently rounded national total. Registered population is not the customer count, branch counts omit alternative channels, and national macro/policy context is not province-specific.
 
-A defensible next stage would combine external market research, competitor information, channel usage, operating costs, and credit-quality evidence. None of those missing inputs is inferred by this prototype.
+A fuller assessment requires external market research, competitor information, channel usage, operating costs, and credit-quality evidence. The platform does not infer those inputs from the available public data.

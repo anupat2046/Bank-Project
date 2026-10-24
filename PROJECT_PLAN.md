@@ -34,8 +34,8 @@ The existing held-out planner outcomes have already been inspected and must not 
 
 Live model requests require explicit opt-in and a call budget. Offline regressions should not depend on provider availability. Router accuracy, query-plan correctness, numerical correctness, and user-facing explanation quality are distinct measurements.
 
-## Out of scope for the current prototype
+## Outside the analytical scope
 
 Customer-level data, individual-bank market share, credit approvals, forecasts, causal attribution, branch ROI, unrestricted SQL/code execution, and autonomous multi-agent analysis are not supported. An authenticated BOT API adapter is not currently implemented; the public table/workbook adapters are the existing ingestion paths.
 
-The roadmap does not set dates for unimplemented work. A public release or production-readiness claim requires new evidence, not a change in documentation wording.
+The roadmap tracks planned work without assigning dates to unimplemented features. Release decisions depend on verified deployment checks and operational evidence.

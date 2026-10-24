@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is a local public-data analytical prototype. Keep changes auditable and avoid broadening its banking or production-readiness claims without evidence.
+This repository contains a public-data analytics platform for Thailand's provincial banking markets. Keep changes auditable and support capability, deployment, and data-quality claims with verifiable evidence.
 
 ## Before making a change
 

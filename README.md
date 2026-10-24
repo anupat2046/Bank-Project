@@ -2,7 +2,7 @@
 
 A public-data analytics platform for comparing Thailand's provincial banking markets. It combines a PostgreSQL warehouse, daily ETL orchestration, a Next.js dashboard, Grafana operational monitoring, and a bounded Gemini-powered analytical assistant.
 
-Built for regional strategy and channel-planning research—not customer credit decisions, individual-bank analysis, or automated branch recommendations.
+Supports regional strategy and channel planning through traceable public-data analysis.
 
 [ภาษาไทย](README_TH.md) · [Quick start](docs/getting-started.md) · [Documentation](docs/README.md) · [Business findings](docs/business-report.md)
 
@@ -12,7 +12,7 @@ Built for regional strategy and channel-planning research—not customer credit 
 
 Provincial loan balances alone are a poor basis for comparing markets: Bangkok dominates recorded balances, while provinces differ in population, economic scale, and branch coverage. The relevant publications also use different geographic names, reporting grains, units, and release dates.
 
-This project maps five public sources into a province–month mart so a reviewer can compare market size, growth, and scale-adjusted measures with visible calculation rules and provenance. A shortlist is a starting point for further investigation, not evidence of unmet demand or profitability.
+The platform integrates five public sources into a province–month mart so analysts can compare market size, growth, and scale-adjusted measures with visible calculation rules and provenance. Screening results identify areas for further investigation; assessing unmet demand or profitability requires additional evidence.
 
 ## What the application supports
 
@@ -93,7 +93,7 @@ See [verification status](docs/verification.md), [evaluation methodology](docs/l
 
 ## Scope and limitations
 
-- This is a **local analytical prototype**, not a production banking platform. Compose services bind to loopback and use development credentials. Authentication, tenant ownership, rate limiting, and production retention controls are not implemented.
+- **Deployment configuration:** the supplied Compose setup binds services to loopback and uses development credentials. Shared access requires authentication, session ownership, rate limiting, secret management, and retention controls; these are not implemented in the supplied configuration.
 - Loan/deposit balances are month-end stocks: aggregate across provinces within a month, never sum across months. Per-person loans are not personal debt; branch density is not a complete measure of financial access.
 - Bangkok may reflect head-office booking. Registered population is not the number of customers. GPP and banking balances have different reference periods; associations do not establish causation.
 - The observed World Bank vintage is **8 October 2026**, later than all banking months in this snapshot. Conservative availability rules therefore leave historical inflation unavailable; archived publication vintages are not reconstructed.

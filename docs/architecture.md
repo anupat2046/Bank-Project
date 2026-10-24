@@ -144,8 +144,8 @@ LangGraph persists confirmed plans, last successful results, pending clarificati
 
 The active analytical contract is v3. Request-local telemetry records numeric timing/usage, bounded routes, statuses, and failure classes without questions, keys, session IDs, or raw errors. Checkpoints still store conversation content separately. See [conversation routing](conversation-routing.md) and [evaluation/observability](llm-evaluation.md).
 
-## Temporal and production boundaries
+## Temporal rules and deployment configuration
 
 Annual GPP/inflation use conservative source-availability dates, not reconstructed archived vintages. A current revised dataset can therefore be unavailable for older banking months. See the [data contract](data-sources.md) for exact rules.
 
-The stack is a development prototype with hard-coded local credentials, no shared-user authentication, and no checkpoint retention administration. Production deployment requires separately designed and verified access, secret, operational, and data-retention controls.
+The supplied Compose configuration binds services to loopback and includes development credentials. Shared-user authentication and checkpoint retention administration are not implemented. An environment serving multiple users requires configured and verified access control, secret management, operational monitoring, and data-retention controls.

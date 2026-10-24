@@ -8,7 +8,7 @@ Confirmed query context, last successful result, pending analytical clarificatio
 
 The router has a 20-second timeout per call, no network retry, and at most one structured-output repair. If it is unavailable, narrowly recognized help/greetings/presentation and rules-understood analytics remain usable. Other failures receive safe messages. Invalid analytical output asks for clarification rather than claiming the provider is down. API error messages are selected by bounded public error codes; exception strings are never returned.
 
-LLM calls still produce allowlisted timing/token telemetry. No API keys, raw exception strings, questions or session IDs enter that telemetry. Conversation checkpoints do store chat history; this local demo is not a multi-tenant production service and requires authentication, retention policy and access isolation before deployment.
+LLM calls produce allowlisted timing/token telemetry. No API keys, raw exception strings, questions or session IDs enter that telemetry. Conversation checkpoints store chat history separately. Shared access requires authenticated session ownership, a retention policy, and access isolation; these controls are not included in the supplied configuration.
 
 The historical 24-turn planner benchmark is unchanged and does **not** measure the new router. Conversation tests cover offline routing, malformed-output repair, provider failure, safety gating, grounded explanation, presentation reuse, pending-context preservation and session isolation. The expanded Python suite passes 170 tests. Live smoke tests are integration evidence, not a statistically reliable routing accuracy benchmark.
 

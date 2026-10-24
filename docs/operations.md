@@ -74,8 +74,8 @@ prompt, raw exception, credential, or checkpoint content is copied to this table
 Unknown HTTP paths are grouped as `unmatched`.
 
 Writes are synchronous, best-effort database transactions in a worker thread;
-failures log a generic warning and do not replace the analytical result. This is
-local prototype instrumentation, not a durable event queue. Missing writes mean
+failures log a generic warning and do not replace the analytical result. Metrics
+are written directly to PostgreSQL without a durable event queue. Missing writes mean
 the dashboard can undercount activity. There is no automatic retention cleanup
 yet: monitor table growth and choose a retention policy before persistent use.
 

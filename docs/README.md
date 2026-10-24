@@ -1,6 +1,6 @@
 # Documentation
 
-Use this index to distinguish current guides from dated evidence. Documentation describes a local public-data analytical prototype; it does not certify production readiness or upstream freshness.
+Use this index to find application guides, architecture, operational procedures, and dated verification records for the public-data analytics platform. Runtime status and upstream freshness are checked separately from the documentation.
 
 ## Start here
 

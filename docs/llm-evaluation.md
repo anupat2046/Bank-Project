@@ -67,7 +67,7 @@ docker compose logs --no-log-prefix --no-color api |
   .\.venv\Scripts\python.exe -m tools.observe_chat
 ```
 
-The aggregation tool ignores unrelated logs and never echoes their raw content. Docker logs are local operational storage, not a durable metrics backend; container recreation and rotation can lose history. A production system would require controlled export, retention, alerting and authenticated access.
+The aggregation tool ignores unrelated logs and never echoes their raw content. Docker logs are local operational storage; container recreation and rotation can lose history. Long-term operational reporting requires controlled export, retention, alerting, and authenticated access.
 
 Structured output uses [`include_raw=True`](https://reference.langchain.com/python/langchain-google-genai/chat_models/ChatGoogleGenerativeAI/with_structured_output) only to extract numeric `usage_metadata`; raw messages are not logged. Google documents [token usage](https://ai.google.dev/gemini-api/docs/tokens) and [account-dependent rate limits](https://ai.google.dev/gemini-api/docs/rate-limits).
 
@@ -75,4 +75,4 @@ Optional `.env` fields `LLM_INPUT_USD_PER_MILLION` and `LLM_OUTPUT_USD_PER_MILLI
 
 ## Scope
 
-This is a local prototype: no LangSmith account, external observability vendor, vector database, multi-agent system or production deployment is required or claimed. Evaluation adds no customer-data access and does not alter the Airflow schedule. Current service telemetry includes router calls and bounded route labels, while the historical planner benchmark excludes that routing stage.
+Evaluation runs against the application's analytical services without requiring a LangSmith account, external observability vendor, vector database, or multi-agent system. It adds no customer-data access and does not alter the Airflow schedule. Current service telemetry includes router calls and bounded route labels, while the historical planner benchmark excludes that routing stage.
