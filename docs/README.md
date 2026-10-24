@@ -23,6 +23,7 @@ Use this index to find application guides, architecture, operational procedures,
 - [Measured planner results](evidence/llm/results.md): strict development/held-out scores, failures, and raw reports.
 - [LLM hardening and current checks](evidence/llm/hardening-2026-10-24.md): semantic guards, provider cooldown, 60-turn regression and the quota-blocked live attempt.
 - [Groq integration](evidence/llm/groq-integration-2026-10-24.md): provider selection, JSON/Pydantic compatibility and bounded live smoke evidence.
+- [Full live Groq conversation regression](evidence/llm/groq-conversation-live-60-2026-10-24.md): 60/60 authored turns, 40/40 arithmetic checks, model usage, latency and retained router repairs.
 
 ## Application and query evidence
 

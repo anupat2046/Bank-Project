@@ -1,0 +1,1284 @@
+{
+  "measured_at": "2026-10-24T16:31:28.837517+00:00",
+  "mode": "live HTTP",
+  "dataset": "authored 60-turn regression; not held-out",
+  "as_of": "2026-07-01",
+  "planned": 60,
+  "attempted": 60,
+  "not_run": 0,
+  "passed": 60,
+  "delay_seconds": 10.0,
+  "blocked_reason": null,
+  "live_evaluation_complete": true,
+  "live_all_checks_passed": true,
+  "cases": [
+    {
+      "id": "C01-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 1448.64,
+      "telemetry": {
+        "latency_ms": 1373.26,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1002,
+        "output_tokens": 99,
+        "total_tokens": 1101,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C01-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 761.3,
+      "telemetry": {
+        "latency_ms": 712.3,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 695,
+        "output_tokens": 130,
+        "total_tokens": 825,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C01-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 682.45,
+      "telemetry": {
+        "latency_ms": 651.68,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 777,
+        "output_tokens": 25,
+        "total_tokens": 802,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C02-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 716.68,
+      "telemetry": {
+        "latency_ms": 670.45,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 491,
+        "output_tokens": 62,
+        "total_tokens": 553,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C02-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 873.95,
+      "telemetry": {
+        "latency_ms": 834.55,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 704,
+        "output_tokens": 202,
+        "total_tokens": 906,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C02-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 679.02,
+      "telemetry": {
+        "latency_ms": 645.53,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 783,
+        "output_tokens": 33,
+        "total_tokens": 816,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C03-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 957.3,
+      "telemetry": {
+        "latency_ms": 898.45,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 491,
+        "output_tokens": 70,
+        "total_tokens": 561,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C03-2",
+      "errors": [],
+      "route": "explanation",
+      "status": "ready",
+      "latency_ms": 1282.02,
+      "telemetry": {
+        "latency_ms": 1208.19,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1088,
+        "output_tokens": 90,
+        "total_tokens": 1178,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "explanation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C03-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 676.18,
+      "telemetry": {
+        "latency_ms": 626.87,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 1015,
+        "output_tokens": 47,
+        "total_tokens": 1062,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C04-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 673.08,
+      "telemetry": {
+        "latency_ms": 642.36,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 496,
+        "output_tokens": 39,
+        "total_tokens": 535,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C04-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 851.39,
+      "telemetry": {
+        "latency_ms": 810.42,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 720,
+        "output_tokens": 152,
+        "total_tokens": 872,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C04-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 769.89,
+      "telemetry": {
+        "latency_ms": 723.23,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 812,
+        "output_tokens": 53,
+        "total_tokens": 865,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C05-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 682.06,
+      "telemetry": {
+        "latency_ms": 642.27,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 487,
+        "output_tokens": 59,
+        "total_tokens": 546,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C05-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 520.72,
+      "telemetry": {
+        "latency_ms": 496.2,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 688,
+        "output_tokens": 129,
+        "total_tokens": 817,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C05-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 643.71,
+      "telemetry": {
+        "latency_ms": 593.26,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 767,
+        "output_tokens": 33,
+        "total_tokens": 800,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C06-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 423.2,
+      "telemetry": {
+        "latency_ms": 382.57,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 490,
+        "output_tokens": 68,
+        "total_tokens": 558,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C06-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 720.99,
+      "telemetry": {
+        "latency_ms": 699.08,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 679,
+        "output_tokens": 42,
+        "total_tokens": 721,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C06-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 964.33,
+      "telemetry": {
+        "latency_ms": 931.88,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 809,
+        "output_tokens": 57,
+        "total_tokens": 866,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C07-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 898.19,
+      "telemetry": {
+        "latency_ms": 861.2,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 495,
+        "output_tokens": 70,
+        "total_tokens": 565,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C07-2",
+      "errors": [],
+      "route": "explanation",
+      "status": "ready",
+      "latency_ms": 2051.74,
+      "telemetry": {
+        "latency_ms": 1960.21,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1083,
+        "output_tokens": 85,
+        "total_tokens": 1168,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "explanation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C07-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 1382.35,
+      "telemetry": {
+        "latency_ms": 1319.43,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 992,
+        "output_tokens": 60,
+        "total_tokens": 1052,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C08-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 790.71,
+      "telemetry": {
+        "latency_ms": 734.7,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 495,
+        "output_tokens": 68,
+        "total_tokens": 563,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C08-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 734.19,
+      "telemetry": {
+        "latency_ms": 680.68,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 692,
+        "output_tokens": 42,
+        "total_tokens": 734,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C08-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 588.63,
+      "telemetry": {
+        "latency_ms": 561.27,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 822,
+        "output_tokens": 57,
+        "total_tokens": 879,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C09-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 633.58,
+      "telemetry": {
+        "latency_ms": 605.86,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 497,
+        "output_tokens": 80,
+        "total_tokens": 577,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C09-2",
+      "errors": [],
+      "route": "explanation",
+      "status": "ready",
+      "latency_ms": 1269.73,
+      "telemetry": {
+        "latency_ms": 1219.12,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1085,
+        "output_tokens": 85,
+        "total_tokens": 1170,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "explanation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C09-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 640.2,
+      "telemetry": {
+        "latency_ms": 601.87,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 989,
+        "output_tokens": 47,
+        "total_tokens": 1036,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C10-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 662.58,
+      "telemetry": {
+        "latency_ms": 645.51,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 501,
+        "output_tokens": 78,
+        "total_tokens": 579,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C10-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 698.77,
+      "telemetry": {
+        "latency_ms": 664.03,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 748,
+        "output_tokens": 42,
+        "total_tokens": 790,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C10-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 699.68,
+      "telemetry": {
+        "latency_ms": 659.43,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 878,
+        "output_tokens": 56,
+        "total_tokens": 934,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C11-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 1577.82,
+      "telemetry": {
+        "latency_ms": 1569.77,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 990,
+        "output_tokens": 100,
+        "total_tokens": 1090,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C11-2",
+      "errors": [],
+      "route": "explanation",
+      "status": "ready",
+      "latency_ms": 2047.25,
+      "telemetry": {
+        "latency_ms": 1977.01,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1030,
+        "output_tokens": 81,
+        "total_tokens": 1111,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "explanation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C11-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 604.78,
+      "telemetry": {
+        "latency_ms": 555.07,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 980,
+        "output_tokens": 47,
+        "total_tokens": 1027,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C12-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 2412.75,
+      "telemetry": {
+        "latency_ms": 2364.41,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1006,
+        "output_tokens": 105,
+        "total_tokens": 1111,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C12-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 801.01,
+      "telemetry": {
+        "latency_ms": 754.49,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 684,
+        "output_tokens": 42,
+        "total_tokens": 726,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C12-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 677.1,
+      "telemetry": {
+        "latency_ms": 653.93,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 814,
+        "output_tokens": 52,
+        "total_tokens": 866,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C13-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 1025.68,
+      "telemetry": {
+        "latency_ms": 972.21,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 487,
+        "output_tokens": 57,
+        "total_tokens": 544,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C13-2",
+      "errors": [],
+      "route": "explanation",
+      "status": "ready",
+      "latency_ms": 1389.78,
+      "telemetry": {
+        "latency_ms": 1329.8,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1081,
+        "output_tokens": 82,
+        "total_tokens": 1163,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "explanation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C13-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 749.4,
+      "telemetry": {
+        "latency_ms": 730.2,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 1044,
+        "output_tokens": 44,
+        "total_tokens": 1088,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C14-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 769.41,
+      "telemetry": {
+        "latency_ms": 730.78,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 489,
+        "output_tokens": 54,
+        "total_tokens": 543,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C14-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 801.12,
+      "telemetry": {
+        "latency_ms": 772.64,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 696,
+        "output_tokens": 42,
+        "total_tokens": 738,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C14-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 434.88,
+      "telemetry": {
+        "latency_ms": 404.02,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 826,
+        "output_tokens": 57,
+        "total_tokens": 883,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C15-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 748.12,
+      "telemetry": {
+        "latency_ms": 706.16,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 489,
+        "output_tokens": 65,
+        "total_tokens": 554,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C15-2",
+      "errors": [],
+      "route": "explanation",
+      "status": "ready",
+      "latency_ms": 1438.45,
+      "telemetry": {
+        "latency_ms": 1400.43,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1069,
+        "output_tokens": 93,
+        "total_tokens": 1162,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "explanation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C15-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 920.99,
+      "telemetry": {
+        "latency_ms": 886.61,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 999,
+        "output_tokens": 47,
+        "total_tokens": 1046,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C16-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 1334.76,
+      "telemetry": {
+        "latency_ms": 1285.82,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1000,
+        "output_tokens": 81,
+        "total_tokens": 1081,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C16-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 1083.4,
+      "telemetry": {
+        "latency_ms": 1055.68,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 675,
+        "output_tokens": 42,
+        "total_tokens": 717,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C16-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 1063.4,
+      "telemetry": {
+        "latency_ms": 1029.47,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 805,
+        "output_tokens": 44,
+        "total_tokens": 849,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C17-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "clarification",
+      "latency_ms": 405.71,
+      "telemetry": {
+        "latency_ms": 387.15,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 484,
+        "output_tokens": 69,
+        "total_tokens": 553,
+        "estimated_cost_usd": null,
+        "clarification": true,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C17-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 497.64,
+      "telemetry": {
+        "latency_ms": 478.22,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 537,
+        "output_tokens": 56,
+        "total_tokens": 593,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C17-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 836.78,
+      "telemetry": {
+        "latency_ms": 793.2,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 726,
+        "output_tokens": 56,
+        "total_tokens": 782,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C18-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "clarification",
+      "latency_ms": 50.18,
+      "telemetry": {
+        "latency_ms": 16.18,
+        "llm_calls": 0,
+        "provider_errors": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": null,
+        "clarification": true,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C18-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 760.89,
+      "telemetry": {
+        "latency_ms": 739.88,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 659,
+        "output_tokens": 48,
+        "total_tokens": 707,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C18-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 573.53,
+      "telemetry": {
+        "latency_ms": 556.99,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 752,
+        "output_tokens": 44,
+        "total_tokens": 796,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C19-1",
+      "errors": [],
+      "route": "unsupported",
+      "status": "unsupported",
+      "latency_ms": 41.55,
+      "telemetry": {
+        "latency_ms": 11.58,
+        "llm_calls": 0,
+        "provider_errors": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "unsupported"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C19-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 1026.85,
+      "telemetry": {
+        "latency_ms": 1041.06,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 566,
+        "output_tokens": 45,
+        "total_tokens": 611,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C19-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "clarification",
+      "latency_ms": 562.0,
+      "telemetry": {
+        "latency_ms": 533.37,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 696,
+        "output_tokens": 44,
+        "total_tokens": 740,
+        "estimated_cost_usd": null,
+        "clarification": true,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C20-1",
+      "errors": [],
+      "route": "unsupported",
+      "status": "unsupported",
+      "latency_ms": 30.93,
+      "telemetry": {
+        "latency_ms": 10.61,
+        "llm_calls": 0,
+        "provider_errors": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "unsupported"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C20-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 684.76,
+      "telemetry": {
+        "latency_ms": 689.12,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 542,
+        "output_tokens": 41,
+        "total_tokens": 583,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C20-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "clarification",
+      "latency_ms": 1435.49,
+      "telemetry": {
+        "latency_ms": 1379.47,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 672,
+        "output_tokens": 44,
+        "total_tokens": 716,
+        "estimated_cost_usd": null,
+        "clarification": true,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    }
+  ]
+}

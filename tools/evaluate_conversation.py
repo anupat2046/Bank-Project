@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 import importlib.util
 import json
 import logging
-from time import perf_counter
+import sys
+from time import perf_counter, sleep
 from pathlib import Path
 from unittest.mock import patch
 from uuid import uuid4
@@ -56,9 +57,12 @@ def main():
     parser.add_argument('--live', action='store_true')
     parser.add_argument('--base-url', default='http://localhost:8000')
     parser.add_argument('--max-requests', type=int, default=6)
+    parser.add_argument('--delay', type=float, default=0, help='Seconds between HTTP turns (0..60); does not assert a provider quota')
+    parser.add_argument('--progress', action='store_true', help='Print case IDs and progress to stderr without questions or replies')
     parser.add_argument('--out', type=Path)
     args = parser.parse_args()
     if not 1 <= args.max_requests <= 60: parser.error('--max-requests must be 1..60')
+    if not 0 <= args.delay <= 60: parser.error('--delay must be 0..60 seconds')
     spec = importlib.util.spec_from_file_location('independent_arithmetic', ROOT/'tests/test_chat_analytics.py')
     arithmetic = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(arithmetic)
@@ -82,7 +86,11 @@ def main():
             stack.enter_context(patch('bank.operations.enabled', lambda:False))
             client = stack.enter_context(TestClient(api.app))
         blocked = None
-        for case in all_cases[:args.max_requests]:
+        for index, case in enumerate(all_cases[:args.max_requests]):
+            if index and args.delay:
+                sleep(args.delay)
+            if args.progress:
+                print(f"Running {index+1}/{args.max_requests}: {case['id']}", file=sys.stderr, flush=True)
             failures = []
             started = perf_counter()
             try:
@@ -140,6 +148,7 @@ def main():
     report = {'measured_at':datetime.now(timezone.utc).isoformat(),'mode':'live HTTP' if args.live else 'offline in-process HTTP',
         'dataset':'authored 60-turn regression; not held-out','as_of':as_of,'planned':60,
         'attempted':len(results),'not_run':60-len(results),'passed':sum(not row['errors'] for row in results),
+        'delay_seconds':args.delay,
         'blocked_reason':blocked,'live_evaluation_complete':args.live and blocked is None and len(results)==60,
         'live_all_checks_passed':args.live and blocked is None and len(results)==60 and all(not row['errors'] for row in results),
         'cases':results}

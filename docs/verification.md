@@ -14,8 +14,8 @@ Latest recorded LLM/application checks: **24 October 2026 (Asia/Bangkok)**; see 
 | Browser workflows | Dated desktop/mobile checks and screenshots | A permanent automated browser test suite |
 | Live planner comparison | 24 turns, dev 10 / held-out 14, three strategies, retained failures | New-router accuracy or representative population accuracy |
 | Conversation service | Seven-turn HTTP smoke check with live Gemini and persisted context | Exhaustive router evaluation |
-| Current conversation regression | October 24: 60/60 authored offline HTTP turns passed with real warehouse arithmetic | Live Gemini accuracy or held-out generalization; live requests were quota-blocked |
-| Groq integration | October 24: live router/planner development checks and 3/3 HTTP smoke turns passed | Full 60-turn live coverage, held-out accuracy, or verified account billing tier |
+| Current conversation regression | October 24: 60/60 authored offline HTTP turns passed with real warehouse arithmetic | Live Gemini accuracy or held-out generalization; the earlier Gemini live attempt was quota-blocked |
+| Groq live conversation | October 24: [60/60 authored HTTP turns passed](evidence/llm/groq-conversation-live-60-2026-10-24.md), 67 model calls, 40/40 arithmetic checks; four bounded router repairs retained | Held-out or LLM-only accuracy, repeated-run stability, load performance or verified account billing tier |
 | Warehouse coverage | 77 provinces, 25 months, 1,925 rows | A month of scheduled-run continuity or verified upstream freshness |
 | Airflow/Grafana | Historical successful task/panel checks | Current uptime or uninterrupted daily scheduling |
 

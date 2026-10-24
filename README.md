@@ -99,7 +99,7 @@ Latest recorded checks: **24 October 2026 (Asia/Bangkok)**.
 | Python regression | 212 passed | Database-backed analytics and deterministic/mocked provider checks |
 | Thai analytical corpus | 80 offline cases passed | Status, plan and independently calculated results |
 | Conversation regression | 60/60 offline turns passed | Routing, context, clarification, presentation and warehouse arithmetic |
-| Groq live integration | Router/planner checks and three-turn HTTP smoke passed | Integration evidence, not general model accuracy |
+| Groq live conversation | [60/60 authored HTTP turns passed](docs/evidence/llm/groq-conversation-live-60-2026-10-24.md); 67 model calls, 40/40 arithmetic checks | Hybrid-system regression, not held-out or LLM-only accuracy; four bounded router repairs retained |
 | Frontend | TypeScript and Docker production build passed | Build verification, not a load or accessibility certification |
 
 The historical **11 October Gemini planner comparison** is retained separately: 10 development and 14 held-out turns across three strategies. Hybrid passed 14/14 held-out turns with **zero model calls** on that split; LLM-only passed 6/14 under the strict rubric. Those scores do not measure the later conversational router or establish Groq accuracy. Account-specific provider failures remain in the dated evidence, not product capability claims.

@@ -1,0 +1,37 @@
+{
+  "captured_at": "2026-10-24T16:22:37.917613+00:00",
+  "provider": "groq",
+  "groq_model": "openai/gpt-oss-20b",
+  "deployed_sha256": {
+    "bank/chat.py": "bf0374cb1f2dc32c6c989c464baaea0be8a593b77325ff2cc2fc1b823a2d1409",
+    "bank/llm_runtime.py": "66f70d927d960b0526a52e07d19dbf54719f1e39cc684a7d12939133f0fff46c",
+    "bank/conversation.py": "41acb146dd0b16fb7edee28d5dc59887b6200ab267d6641c96c1e2255bef03f8",
+    "bank/intent.py": "c815b813d13696478d0a5820303811a18b905168e40ece91a82b541876549adb",
+    "bank/insights.py": "e0d253fb4e9f96986d540cab8d02a3740fc084444151bf1e794fea2bd25e1214",
+    "bank/semantic_validation.py": "edaffb8a710e99644d7395e5d8f0f6eeb98a482f3ca68ccaf5727cf1f384b66a",
+    "bank/api.py": "aebbd931900d31d7a252336f228e4b78aa76d115d3ce06570b4cbf84c57ed8f8",
+    "bank/query.py": "858646155d704e170e6621890f208df5a8b8c18223be7e2e3301de31b355dfa3"
+  },
+  "repository_reference": "3318449a295c32ffdc182dee614ef8c5c15cc49e",
+  "repository_sha256_lf": {
+    "bank/chat.py": "a1ff9b892e04748cc52425dcf8cc080dbd212d17007663a1e720a702804fcfc4",
+    "bank/llm_runtime.py": "66f70d927d960b0526a52e07d19dbf54719f1e39cc684a7d12939133f0fff46c",
+    "bank/conversation.py": "41acb146dd0b16fb7edee28d5dc59887b6200ab267d6641c96c1e2255bef03f8",
+    "bank/intent.py": "c815b813d13696478d0a5820303811a18b905168e40ece91a82b541876549adb",
+    "bank/insights.py": "e0d253fb4e9f96986d540cab8d02a3740fc084444151bf1e794fea2bd25e1214",
+    "bank/semantic_validation.py": "edaffb8a710e99644d7395e5d8f0f6eeb98a482f3ca68ccaf5727cf1f384b66a",
+    "bank/api.py": "aebbd931900d31d7a252336f228e4b78aa76d115d3ce06570b4cbf84c57ed8f8",
+    "bank/query.py": "858646155d704e170e6621890f208df5a8b8c18223be7e2e3301de31b355dfa3"
+  },
+  "deployment_difference": "The running bank/chat.py retains an unused timer and a redundant try/except re-raise removed in the repository cleanup. Its planner validation and provider calls are otherwise identical in the inspected diff. No deployment was changed during this run.",
+  "fixture_sha256": "5e8330e08a5e17843e2a8a5cdb68128ed175e3e052730d2ee760a5e772ef650d",
+  "evaluator_sha256_lf": "def7ecddb360862c00e9cb4c66bc6d86f6a54c58cff3d1c447b65937989f16b8",
+  "warehouse": {
+    "rows": 1925,
+    "first_period": "2024-07-01",
+    "last_period": "2026-07-01",
+    "sha256": "46ea2e5e97938ed933b47c879af022b2a13bc7aeeba83f1e7500066cc92b23a5",
+    "captured_at": "2026-10-24T16:24:43.719757+00:00"
+  },
+  "scope": "Deployed local hybrid HTTP service with a live Groq router and optional planner/evidence selection. This is not an LLM-only or held-out evaluation."
+}

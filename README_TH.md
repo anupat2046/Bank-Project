@@ -89,7 +89,7 @@ Grafana เปลี่ยนเป็น [Operational Monitoring](docs/operatio
 | Python regression | 212 tests ผ่าน | Analytics บนฐานข้อมูลจริง และ provider tests แบบ deterministic/mock |
 | คำถามวิเคราะห์ภาษาไทย | Offline 80 ข้อผ่าน | สถานะ แผน และผลคำนวณอิสระ |
 | บทสนทนาต่อเนื่อง | Offline 60/60 เทิร์นผ่าน | Routing, บริบท, ถามกลับ, การแสดงผลและตัวเลข |
-| Groq integration | Router/Planner และ Live HTTP smoke 3 เทิร์นผ่าน | ตรวจการเชื่อมต่อ ไม่ใช่ความแม่นทั่วไปของโมเดล |
+| Groq live conversation | [Live HTTP ผ่าน 60/60 เทิร์น](docs/evidence/llm/groq-conversation-live-60-2026-10-24.md), เรียกโมเดล 67 ครั้ง และตรวจตัวเลขผ่าน 40/40 | ทดสอบระบบ hybrid บนชุดที่เขียนไว้ ไม่ใช่ held-out หรือ LLM-only; เก็บเหตุการณ์แก้รูปแบบ Router 4 ครั้งไว้ในรายงาน |
 | Frontend | TypeScript และ Docker production build ผ่าน | ตรวจ build ไม่ใช่ผล load test หรือการรับรอง accessibility |
 
 ผลเปรียบเทียบ Gemini วันที่ **11 ตุลาคม** เก็บแยกเป็นหลักฐานย้อนหลัง: development 10 และ held-out 14 เทิร์น เทียบสามวิธี Hybrid ผ่าน 14/14 แต่ไม่ได้เรียก LLM ใน split นี้ ส่วน LLM-only ผ่าน 6/14 ตาม rubric แบบเข้มงวด ผลเหล่านี้ไม่ครอบคลุม router รุ่นใหม่และไม่ใช่ผลประเมิน Groq ปัญหาบัญชี provider เก็บไว้ในหลักฐานตามวันที่ ไม่ใช้เป็นคำอธิบายความสามารถถาวรของระบบ
