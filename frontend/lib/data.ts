@@ -19,11 +19,11 @@ export function useApi<T>(path: string | null) {
     fetch("/api/" + path, { signal: abort.signal, cache: "no-store" })
       .then(async response => {
         const data = await response.json();
-        if (!response.ok) throw new Error(typeof data.detail === "string" ? data.detail : "ไม่สามารถโหลดข้อมูลได้");
+        if (!response.ok) throw new Error(response.status === 404 ? "ไม่พบข้อมูลสำหรับงวดหรือจังหวัดที่เลือก กรุณาเลือกใหม่" : response.status === 422 ? "รูปแบบตัวกรองไม่ถูกต้อง กรุณาเลือกงวดหรือจังหวัดใหม่" : "บริการข้อมูลไม่พร้อมใช้งาน กรุณาลองใหม่อีกครั้ง");
         return data as T;
       })
       .then(data => setState({ path, data, error: null }))
-      .catch(error => { if (!abort.signal.aborted) setState({ path, data: null, error: error.message }); });
+      .catch(error => { if (!abort.signal.aborted) setState({ path, data: null, error: error instanceof Error && /^(ไม่พบข้อมูล|รูปแบบตัวกรอง|บริการข้อมูล)/.test(error.message) ? error.message : "เชื่อมต่อบริการข้อมูลไม่ได้ กรุณาตรวจการเชื่อมต่อแล้วลองใหม่" }); });
     return () => abort.abort();
   }, [path, attempt]);
   return { data: state.path === path ? state.data : null, error: state.path === path ? state.error : null, retry: () => setAttempt(n => n + 1) };
@@ -34,7 +34,25 @@ const shortMonths = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "
 export function month(value: unknown, short = false) {
   if (!value) return "ไม่มีงวดข้อมูล";
   const parts = String(value).slice(0, 10).split("-").map(Number);
+  if (!parts[0] || !parts[1] || parts[1] > 12) return "ไม่มีงวดข้อมูล";
   return `${short ? shortMonths[parts[1]] : months[parts[1]]} ${parts[0] + 543}`;
+}
+// Date-only values never pass through the browser's timezone conversion.
+export function calendarDate(value: unknown) {
+  const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return match ? `${Number(match[3])} ${shortMonths[Number(match[2])]} ${Number(match[1]) + 543}` : "ไม่มีข้อมูล";
+}
+export function timestamp(value: unknown) {
+  if (!value) return "ไม่มีข้อมูล";
+  return new Date(String(value)).toLocaleString("th-TH", { timeZone: "Asia/Bangkok", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+}
+export function referenceLabel(value: string) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return calendarDate(value);
+  if (/^\d{4}$/.test(value)) return `ค.ศ. ${value}`;
+  return value || "ไม่มีข้อมูลอ้างอิง";
+}
+export function readableText(value: string) {
+  return value.replace(/\b\d{4}-\d{2}-\d{2}\b/g, date => calendarDate(date));
 }
 export function number(value: unknown, decimals = 0) {
   if (value === null || value === undefined || value === "") return "ไม่มีข้อมูล";

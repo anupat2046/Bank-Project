@@ -27,6 +27,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
   useEffect(() => { setOpen(false); }, [pathname]);
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const elements = () => Array.from(document.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>(".sidebar button, .sidebar a"));
     elements()[0]?.focus();
     const keys = (e: KeyboardEvent) => {
@@ -37,7 +39,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
       }
     };
-    window.addEventListener("keydown", keys); return () => window.removeEventListener("keydown", keys);
+    window.addEventListener("keydown", keys); return () => { window.removeEventListener("keydown", keys); document.body.style.overflow = previousOverflow; requestAnimationFrame(() => menuButton.current?.focus()); };
   }, [open]);
   const setParams = (values: Record<string, string | null>) => {
     const next = new URLSearchParams(params.toString());
@@ -59,7 +61,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <nav aria-label="เมนูหลัก">{nav.map(({ path, title, icon: Icon }) => <Link key={path} href={href(path)} className={`nav-link ${pathname === path ? "active" : ""}`} aria-current={pathname === path ? "page" : undefined}><Icon size={19} strokeWidth={1.8} />{title}</Link>)}</nav>
       <div className="sidebar-bottom"><p>Thailand Regional<br />Banking Intelligence</p><Link href={href("/sources")}>ตรวจที่มาของข้อมูล <ArrowUpRight size={14} /></Link></div>
     </aside>
-    <div className="workspace">
+    <div className="workspace" inert={open}>
       <header className="topbar"><div className="topbar-left"><button ref={menuButton} className="mobile-only icon-button" aria-label="เปิดเมนู" aria-controls="app-navigation" aria-expanded={open} onClick={() => setOpen(true)}><Menu size={22} /></button><span>{nav.find(n => n.path === pathname)?.title || "Bank Intelligence"}</span></div>
         {pathname !== "/assistant" && pathname !== "/sources" ? <label className="period-select"><span>งวดข้อมูล</span><select aria-label="งวดข้อมูล" value={period} disabled={!meta?.periods.length} onChange={e => setParams({ period: e.target.value })}>{meta?.periods.map(p => <option key={p} value={p}>{month(p)}</option>)}</select></label> : <span className="header-note">ข้อมูลสาธารณะ · ไม่มีข้อมูลลูกค้า</span>}
       </header>
@@ -75,5 +77,5 @@ export function DataState({ error, retry }: { error: string | null; retry: () =>
   return <div className={`state ${error ? "error" : "loading"}`} role={error ? "alert" : "status"}>{error ? <><h2>โหลดข้อมูลไม่ได้</h2><p>{error}</p><button onClick={retry}>ลองใหม่</button></> : "กำลังโหลดข้อมูลจริงจากคลัง…"}</div>;
 }
 export function Footer({ period }: { period?: string }) {
-  return <footer className="data-footer"><span>ที่มา: ธปท. · DOPA · สศช. · World Bank</span><span>{period ? `${month(period)} · ` : ""}ยอดคงค้าง ไม่ใช่ยอดธุรกรรมรายเดือน</span></footer>;
+  return <footer className="data-footer"><span>ที่มา: ธปท. · กรมการปกครอง · สศช. · World Bank</span><span>{period ? `${month(period)} · สินเชื่อและเงินฝากเป็นยอดคงค้าง ณ สิ้นงวด` : "ข้อมูลสาธารณะ · ตรวจสอบช่วงเวลาและวิธีคำนวณก่อนใช้งาน"}</span></footer>;
 }
