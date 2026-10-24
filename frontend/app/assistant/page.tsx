@@ -13,11 +13,23 @@ function replyHeading(reply: ChatReply) {
   if (reply.mode === "clarification") return "ขอรายละเอียดเพิ่มเติม";
   if (reply.error) return "ยังไม่สามารถตอบคำถามนี้ได้";
   if (reply.mode === "capabilities" || reply.mode === "greeting") return "ผู้ช่วยทำอะไรได้บ้าง";
-  if (reply.mode === "explanation") return "คำอธิบายผลล่าสุด";
+  if (reply.conversation_route === "explanation" || reply.mode === "explanation") return "คำอธิบายผลล่าสุด";
   return "คำตอบจากผู้ช่วย";
 }
 function modeLabel(reply: ChatReply) {
-  return /fallback|offline/.test(reply.routing_mode || "") || /rules/i.test(reply.mode) ? "ใช้โหมดสำรองสำหรับวิเคราะห์ข้อมูล" : "ผู้ช่วยวิเคราะห์ข้อมูล";
+  if (reply.provider_status?.circuit_open) return "ผู้ให้บริการ AI ไม่พร้อม · ใช้โหมดสำรองเมื่อรองรับ";
+  return /fallback|offline/.test(reply.routing_mode || "") ? "ใช้โหมดสำรองสำหรับวิเคราะห์ข้อมูล" : /rules/i.test(reply.mode) ? "AI จัดเส้นทาง · คำนวณด้วยแผนที่ตรวจสอบได้" : "ผู้ช่วยวิเคราะห์ข้อมูล";
+}
+
+function ProviderNotice({ reply }: { reply: ChatReply }) {
+  const health = reply.provider_status;
+  if (!health?.circuit_open) return null;
+  const reason = health.last_failure === "quota_exhausted"
+    ? "ผู้ให้บริการ AI แจ้งว่าถึงข้อจำกัดทรัพยากรหรือ quota ผู้ดูแลควรตรวจ usage และข้อจำกัดในบัญชีผู้ให้บริการ"
+    : health.last_failure === "authentication_failed"
+      ? "การยืนยันตัวตนกับผู้ให้บริการ AI ไม่สำเร็จ ผู้ดูแลควรตรวจ API key และสิทธิ์การใช้งาน"
+      : "ผู้ให้บริการ AI ไม่พร้อมใช้งานชั่วคราว ระบบพักการเรียกซ้ำและจะลองใหม่เมื่อมีคำขอหลังพ้นช่วงพัก";
+  return <p className="notice warning" role="status">{reason} · คำถามที่รองรับยังคำนวณจากคลังข้อมูลด้วยโหมดสำรองได้ การได้คำตอบไม่ได้หมายความว่า AI ทำงานสำเร็จในรอบนี้</p>;
 }
 
 function Analysis({ reply, index }: { reply: ChatReply; index: number }) {
@@ -57,6 +69,7 @@ export default function AssistantPage() {
     <PageHeading title="ผู้ช่วยวิเคราะห์" description="ถามเพื่อจัดอันดับ เปรียบเทียบจังหวัด และดูแนวโน้ม พร้อมตรวจสอบข้อมูลประกอบ" />
     <p className="notice assistant-intro">ระบุเดือนในคำถามได้ คำถามใหม่ที่ไม่ระบุเดือนจะใช้ข้อมูลล่าสุดในคลัง ส่วนคำถามต่อเนื่องอาจใช้ช่วงเวลาเดิม · วิเคราะห์ได้เฉพาะข้อมูลตลาด ไม่มีข้อมูลลูกค้ารายบุคคล รายธนาคาร หรือสินเชื่อด้อยคุณภาพ (NPL)</p>
     <p className="muted session-hint">สลับหน้าแล้วกลับมาสนทนาต่อได้ · การรีโหลดหน้าเว็บจะเริ่มบทสนทนาใหม่ · YoY คือการเปลี่ยนแปลงเทียบเดือนเดียวกันปีก่อน</p>
+    {active && <ProviderNotice reply={active.reply} />}
     <div className="tabs chat-mobile-tabs"><button className={mobileView === "conversation" ? "active" : ""} onClick={() => setMobileView("conversation")}>บทสนทนา</button><button className={mobileView === "result" ? "active" : ""} onClick={() => setMobileView("result")}>ผลวิเคราะห์</button></div>
     <div className="chat-layout"><section className={`chat-thread ${mobileView !== "conversation" ? "chat-hidden-mobile" : ""}`} aria-label="บทสนทนา"><div className="chat-toolbar"><span>{active ? modeLabel(active.reply) : "พร้อมรับคำถาม"}</span><button className="text-button" disabled={pending} onClick={reset}><Plus size={16} /> เริ่มบทสนทนาใหม่</button></div>
       <div className="chat-messages" ref={messageList}>{messages.length === 0 && <><h3>ต้องการวิเคราะห์เรื่องใด?</h3><p className="muted">เลือกคำถามแนะนำหรือพิมพ์ประเด็นที่ต้องการวิเคราะห์</p><div className="chat-examples">{examples.map(example => <button key={example} disabled={pending} onClick={() => { setQuestion(example); form.current?.querySelector("textarea")?.focus(); }}>{example}</button>)}</div></>}
