@@ -10,13 +10,15 @@ The API writes best-effort metrics using the owner role. See [operational monito
 
 ### High-level view
 
-![Current architecture: datasets, Airflow, PostgreSQL, FastAPI, bounded LLM providers, Next.js and Grafana](design/system-architecture-current.svg)
+![High-level architecture: tiers, data pipeline (A–D) and user request path (1–6)](design/system-architecture.drawio.svg)
+
+The original draw.io layout is retained. Lettered steps (A–D) show the data pipeline; numbered steps (1–6) follow a user request. Provider labels, planner version and LLM timeouts in these diagrams reflect the earlier implementation; see the [current provider and runtime contract](conversation-routing.md) for configurable Groq/Gemini/OpenAI support and current limits.
 
 ### Low-level view
 
 ![Low-level architecture: containers and ports, API routes, ETL functions, LangGraph nodes, tables, and database roles](design/system-architecture-low-level.drawio.svg)
 
-The low-level view is a historical integration diagram: its Gemini-specific label predates configurable Groq/Gemini/OpenAI routing. Use the high-level view and the provider contract below for the current boundary. Open the [low-level image](design/system-architecture-low-level.drawio.svg) to inspect file, route, and table relationships. Orange database connections use the owner role `bank` (ETL writes, mart rebuild, chat checkpoints); blue connections use the SELECT-only role `bank_reader` (API reads, chat SQL, Grafana).
+The low-level view names files, functions, routes and tables; open the [image](design/system-architecture-low-level.drawio.svg) to zoom. Orange database connections use the owner role `bank` (ETL writes, mart rebuild, chat checkpoints); blue connections use the SELECT-only role `bank_reader` (API reads, chat SQL, Grafana).
 
 Diagrams in `docs/design/*.drawio.svg` are editable draw.io files that also render as images. Open them in [draw.io](https://app.diagrams.net/) or the VS Code Draw.io Integration extension and save in place; there is no separate source file.
 

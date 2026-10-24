@@ -61,9 +61,9 @@ The BOT adapters use published tables/workbooks, **not authenticated BOT REST AP
 
 ## Architecture
 
-![High-level architecture: public datasets, Airflow, PostgreSQL, FastAPI, bounded LLM providers, Next.js and Grafana](docs/design/system-architecture-current.svg)
+![High-level architecture: tiers, data pipeline (A–D) and user request path (1–6)](docs/design/system-architecture.drawio.svg)
 
-Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. Provider responses cannot execute arbitrary SQL: the application validates bounded plans and compiles parameterized, read-only queries. See [architecture and data model](docs/architecture.md) for routes, modules, tables, and database roles.
+Lettered steps (A–D) are the data pipeline; numbered steps (1–6) follow a user request. This is the original editable draw.io diagram. Its Gemini label predates configurable Groq/Gemini/OpenAI support; see the [current provider contract](docs/conversation-routing.md). Source snapshots are hashed with SHA-256, geographic mapping is explicit, and unavailable values remain `NULL`. Provider responses cannot execute arbitrary SQL: the application validates bounded plans and compiles parameterized, read-only queries. See [architecture and data model](docs/architecture.md) for routes, modules, tables, and database roles.
 
 ## Run locally
 
