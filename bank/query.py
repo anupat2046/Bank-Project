@@ -19,7 +19,7 @@ BASE = {
  'credit_deposit_ratio': ('100.0*SUM(credits_million_baht)/NULLIF(SUM(deposits_million_baht),0)','สินเชื่อต่อเงินฝาก','%'),
  'branches_per_100k': ('100000.0*SUM(branches)/NULLIF(SUM(population),0)','สาขาต่อประชากร 100,000 คน','แห่ง/แสนคน'),
  'deposits_per_person': ('1000000.0*SUM(deposits_million_baht)/NULLIF(SUM(population),0)','เงินฝากต่อผู้มีชื่อในทะเบียน','บาท/คน'),
- 'credits_per_person': ('1000000.0*SUM(credits_million_baht)/NULLIF(SUM(population),0)','สินเชื่อต่อประชากรทะเบียน','บาท/คน'),
+ 'credits_per_person': ('1000000.0*SUM(credits_million_baht)/NULLIF(SUM(population),0)','สินเชื่อต่อประชากรตามทะเบียน','บาท/คน'),
  'credits_per_branch': ('SUM(credits_million_baht)/NULLIF(SUM(branches),0)','สินเชื่อต่อสาขา','ล้านบาท/สาขา'),
  'gpp': ('SUM(gpp_million_baht)','GPP','ล้านบาท'),
  'policy_rate': ('MAX(policy_rate_pct)','อัตราดอกเบี้ยนโยบาย ณ สิ้นเดือน','%'),
@@ -173,4 +173,4 @@ def execute_plan(plan: QueryPlan) -> dict:
       'eligible_count':int(rows[0].get('eligible_count',0)) if rows else 0,
       'sql':sql,'parameters':{k:str(v) for k,v in params.items()},'rows':rows,'sources':sources,
       'caveat':('อัตราดอกเบี้ยนโยบายเป็นบริบทระดับประเทศ ณ สิ้นเดือน ไม่พิสูจน์ผลเชิงสาเหตุ' if plan.metric == 'policy_rate' else
-        'ยอดคงค้างไม่ใช่ยอดปล่อยใหม่; กรุงเทพฯ อาจรวมการบันทึกสำนักงานใหญ่; ประชากรเป็นทะเบียนบ้าน อัตราต่อคนไม่ใช่หนี้เฉลี่ยรายบุคคล และต่อสาขาไม่ใช่ผลงานของสาขา; ปีอ้างอิงต่างจากงวดธนาคาร; YoY ที่ไม่มีฐานปีก่อนเป็น NULL ไม่ใช่ศูนย์')}
+        'ยอดคงค้างไม่ใช่ยอดปล่อยใหม่; กรุงเทพฯ อาจรวมการบันทึกสำนักงานใหญ่; ประชากรเป็นจำนวนตามทะเบียนบ้าน อัตราต่อคนไม่ใช่หนี้เฉลี่ยรายบุคคล และต่อสาขาไม่ใช่ผลงานของสาขา; ปีอ้างอิงต่างจากงวดธนาคาร; หากไม่มีฐานเปรียบเทียบปีก่อน จะไม่แสดงค่า YoY แทนการแสดงเป็นศูนย์')}

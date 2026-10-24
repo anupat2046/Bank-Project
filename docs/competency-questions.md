@@ -10,22 +10,22 @@ All questions read `mart_province_month`, integrating dim_province/dim_month and
 
 | ID | Competency question | Sources | Application view | Returned rows |
 |---|---|---|---|---|
-| CQ01 | จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 10 |
+| CQ01 | จังหวัดใดมีจำนวนเดือนที่สินเชื่อเติบโต YoY มากที่สุดใน 12 เดือนล่าสุด? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 10 |
 | CQ02 | จังหวัดใดเงินฝากโตเร็วกว่าสินเชื่อ YoY มากที่สุด? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 10 |
 | CQ03 | จังหวัดใดมีความหนาแน่นสาขาต่อประชากรแสนคนสูงที่สุด? | BOT + DOPA | Business questions; เปรียบเทียบจังหวัด | 10 |
 | CQ04 | จังหวัดที่ GPP ต่างกันไม่เกิน 15% มีขนาดสินเชื่อต่างกันเท่าไร? | BOT + NESDC | Business questions; GPP เทียบตลาด / หน้า 10 คำถามธุรกิจ | 10 |
 | CQ05 | สินเชื่อและเงินฝากรวมเคลื่อนไหวอย่างไรในช่วงที่ดอกเบี้ยนโยบายเปลี่ยน? | BOT + BOT MPC workbook | Business questions; ภาพรวมตลาด | 25 |
 | CQ06 | จังหวัดใดจำนวนสาขาลดลงแต่สินเชื่อเพิ่มขึ้นเมื่อเทียบปีก่อน? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 6 |
-| CQ07 | จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.? | BOT + DOPA + NESDC | Business questions; คัดพื้นที่ศึกษา | 22 |
+| CQ07 | จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ล้านบาท สาขาต่อแสนคน ≤15 และสินเชื่อ ≥50,000 ล้านบาท? | BOT + DOPA + NESDC | Business questions; คัดพื้นที่ศึกษา | 22 |
 | CQ08 | จังหวัดใดมีอัตราสินเชื่อต่อเงินฝากสูงที่สุด? | BOT | Business questions; จัดอันดับ | 10 |
 | CQ09 | จังหวัดใดมีเงินฝากต่อผู้มีชื่อในทะเบียนสูงที่สุด? | BOT + DOPA | Business questions; จัดอันดับ | 10 |
 | CQ10 | สินเชื่อรวมกระจุกตัวในกรุงเทพฯ และ 5 จังหวัดอันดับแรกเท่าไร? | BOT | Business questions; หน้า 10 คำถามธุรกิจ | 1 |
 
-## CQ01 — จังหวัดใดมีสินเชื่อเติบโต YoY ต่อเนื่องใน 12 เดือนล่าสุด?
+## CQ01 — จังหวัดใดมีจำนวนเดือนที่สินเชื่อเติบโต YoY มากที่สุดใน 12 เดือนล่าสุด?
 
 **Fields:** province_code, period, credits_million_baht
 
-**Interpretation:** เปรียบเทียบเดือนเดียวกันปีก่อน และต้องมีคู่ข้อมูลครบ 12 งวด
+**Interpretation:** นับเดือนที่เติบโตเทียบเดือนเดียวกันปีก่อน โดยต้องมีคู่ข้อมูลครบ 12 งวด จำนวนเดือนเป็นบวกไม่ได้หมายถึงเติบโตติดต่อกัน Wording clarified on 2026-10-24; the recorded query and result rows are unchanged.
 
 ```sql
 WITH yoy AS (
@@ -211,11 +211,11 @@ ORDER BY n.credits_million_baht-p.credits_million_baht DESC, n.province_code LIM
 | นครนายก | -1 | 0.60 |
 | อ่างทอง | -1 | 0.05 |
 
-## CQ07 — จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ลบ., สาขาต่อแสน ≤15 และสินเชื่อ ≥50,000 ลบ.?
+## CQ07 — จังหวัดใดผ่านเกณฑ์ GPP ≥100,000 ล้านบาท สาขาต่อแสนคน ≤15 และสินเชื่อ ≥50,000 ล้านบาท?
 
 **Fields:** gpp_million_baht, branches_per_100k, credits_million_baht
 
-**Interpretation:** ไม่รวมกรุงเทพฯ; เกณฑ์ตัวอย่างเพื่อ shortlist และทำ due diligence เพิ่ม
+**Interpretation:** ไม่รวมกรุงเทพมหานคร เกณฑ์นี้ใช้คัดเลือกพื้นที่เบื้องต้น ต้องศึกษารายละเอียดเพิ่มเติมก่อนตัดสินใจ
 
 ```sql
 SELECT name_th, gpp_million_baht, credits_million_baht,
