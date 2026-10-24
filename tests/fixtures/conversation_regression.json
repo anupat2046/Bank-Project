@@ -1,0 +1,22 @@
+[
+  {"question":"ขอ 7 จังหวัดที่สินเชื่อต่อประชากรสูงสุด", "plan":{"metric":"credits_per_person","limit":7}},
+  {"question":"เงินฝากต่อคนสูงสุด 4 จังหวัด ไม่รวมกรุงเทพ", "plan":{"metric":"deposits_per_person","limit":4,"exclude_bangkok":true}},
+  {"question":"สินเชื่อต่อสาขาต่ำสุด 6 จังหวัด", "plan":{"metric":"credits_per_branch","limit":6,"ascending":true}},
+  {"question":"เปรียบเทียบสินเชื่อต่อประชากรเชียงใหม่และชลบุรี", "plan":{"metric":"credits_per_person","provinces":["เชียงใหม่","ชลบุรี"],"intent":"comparison"}},
+  {"question":"เงินฝากนครราชสีมา กรกฎาคม 2568", "plan":{"metric":"deposits","province":"นครราชสีมา","end_period":"2025-07-01","intent":"lookup"}},
+  {"question":"สินเชื่อสูงสุด 8 จังหวัด 2568-07", "plan":{"metric":"credits","limit":8,"end_period":"2025-07-01"}},
+  {"question":"สินเชื่อสูงสุด 4 จังหวัด ประชากรมากกว่า 1 ล้านคน", "plan":{"metric":"credits","limit":4,"min_population":1000000,"strict_filters":["min_population"]}},
+  {"question":"เงินฝากสูงสุด 6 จังหวัด ประชากรอย่างน้อย 1 ล้านคน", "plan":{"metric":"deposits","limit":6,"min_population":1000000}},
+  {"question":"สินเชื่อสูงสุด 7 จังหวัด สินเชื่อมากกว่า 2 พันล้านบาท", "plan":{"metric":"credits","limit":7,"min_credits":2000,"strict_filters":["min_credits"]}},
+  {"question":"สินเชื่อต่อประชากรสูงสุด 4 พร้อมสินเชื่อต่อสาขาและ YoY", "plan":{"metric":"credits_per_person","limit":4,"metrics":["credits_per_person","credits_per_branch"],"include_yoy":true}},
+  {"question":"แนวโน้มเงินฝากย้อนหลัง 4 เดือน", "plan":{"metric":"deposits","group_by":"period","intent":"trend","limit":4}},
+  {"question":"แนวโน้มสินเชื่อต่อประชากรเชียงใหม่ย้อนหลัง 5 เดือน", "plan":{"metric":"credits_per_person","province":"เชียงใหม่","group_by":"period","intent":"trend","limit":5}},
+  {"question":"เงินฝากเติบโตสูงสุด 6 จังหวัด", "plan":{"metric":"deposits_yoy_pct","metrics":["deposits_yoy_pct","deposits"],"limit":6,"include_yoy":true}},
+  {"question":"สาขาต่อประชากรสูงสุด 4 จังหวัด", "plan":{"metric":"branches_per_100k","limit":4}},
+  {"question":"สินเชื่อต่อเงินฝากสูงสุด 7 จังหวัด", "plan":{"metric":"credit_deposit_ratio","limit":7}},
+  {"question":"แนวโน้มดอกเบี้ยนโยบายย้อนหลัง 6 เดือน", "plan":{"metric":"policy_rate","group_by":"period","intent":"trend","limit":6}},
+  {"question":"สินเชื่อปี 2568", "status":"clarification"},
+  {"question":"สินเชื่อเทียบกับสาขาและประชากรมากที่สุด", "status":"clarification"},
+  {"question":"ขอ NPL รายจังหวัด", "status":"unsupported","route":"unsupported"},
+  {"question":"ทำนายสินเชื่อเดือนหน้า", "status":"unsupported","route":"unsupported"}
+]

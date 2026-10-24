@@ -7,17 +7,24 @@ import re
 from copy import deepcopy
 from time import perf_counter
 from functools import lru_cache
+from hashlib import sha256
+from threading import Lock
+from uuid import uuid4
 from typing import Any, Literal, TypedDict
 from pydantic import BaseModel, Field
 from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph import END, START, StateGraph
 from .db import engine
 from .query import Clarification, QueryPlan, METRICS, execute_plan, rules_plan
-from .intent import safety_check, normalize, extract_metrics
-from .observability import capture, record, token_usage, summarize, emit
+from .intent import safety_check, normalize, extract_metrics, explicit_dates
+from .observability import capture, record, summarize, emit
 from .conversation import route_conversation, fallback_route, RoutingOutputError, CAPABILITIES, EXAMPLES
+from .llm_runtime import build_model, invoke_structured, request_budget, provider_health
+from .semantic_validation import validate_semantics
+from .insights import explain_result
 
-ACTIVE_PLANNER_VERSION = 'v3'
+ACTIVE_PLANNER_VERSION = 'v4'
+_session_locks = [Lock() for _ in range(64)]
 
 class ChatState(TypedDict, total=False):
     question: str
@@ -39,6 +46,7 @@ class ChatState(TypedDict, total=False):
     last_result: dict | None
     error_code: str | None
     routing_mode: str
+    provider_status: dict
 
 class PlanningOutputError(RuntimeError):
     pass
@@ -50,6 +58,16 @@ class PlannerDecision(BaseModel):
     choices: list[str] = Field(default_factory=list, max_length=3)
 
 def _provider() -> str | None:
+    selected = os.getenv('LLM_PROVIDER', 'auto').strip().lower()
+    if selected == 'none':
+        return None
+    if selected != 'auto':
+        if selected not in {'groq','gemini','openai'}:
+            raise ValueError('Unsupported LLM_PROVIDER')
+        # Never silently switch to another provider (possibly paid).
+        return selected if os.getenv(selected.upper()+'_API_KEY','').strip() else None
+    if os.getenv('GROQ_API_KEY','').strip():
+        return 'groq'
     if os.getenv('GEMINI_API_KEY','').strip():
         return 'gemini'
     if os.getenv('OPENAI_API_KEY','').strip():
@@ -58,12 +76,7 @@ def _provider() -> str | None:
 
 def _llm_decision(question, context, history, prompt_version=ACTIVE_PLANNER_VERSION):
     provider = _provider()
-    if provider == 'gemini':
-        from langchain_google_genai import ChatGoogleGenerativeAI
-        model = ChatGoogleGenerativeAI(model=os.getenv('GEMINI_MODEL','gemini-2.5-flash'),api_key=os.environ['GEMINI_API_KEY'],temperature=0,timeout=20,max_retries=min(1,max(0,int(os.getenv('LLM_MAX_RETRIES','0')))))
-    else:
-        from langchain_openai import ChatOpenAI
-        model = ChatOpenAI(model=os.getenv('OPENAI_MODEL','gpt-4.1-mini'),temperature=0,timeout=20,max_retries=0)
+    model = build_model(provider)
     catalog = {k:{'definition':v[0] or 'YoY vs same month prior year','label':v[1],'unit':v[2]} for k,v in METRICS.items()}
     prompt = ('Map a Thai/English analytical question to a decision, not SQL. Never substitute an unsupported metric with credits. '
       'Ambiguous denominator or ranking across multiple metrics requires clarification. No private customers, individual banks, NPL, forecasts or causal claims. '
@@ -75,25 +88,18 @@ def _llm_decision(question, context, history, prompt_version=ACTIVE_PLANNER_VERS
       'Explicit chart preference bar/line/table; auto otherwise. If data or definitions are absent, choose unsupported, do not guess. '
       f'Catalog: {json.dumps(catalog,ensure_ascii=False)}\nConfirmed context: {json.dumps(context,ensure_ascii=False)}\n'
       f'Recent conversation: {json.dumps(history[-8:],ensure_ascii=False)}\nQuestion: {question}')
-    if prompt_version in ['v2','v3']:
+    if prompt_version in ['v2','v3','v4']:
         prompt += '\n'+IMPROVED_PLANNER_INSTRUCTIONS
-    started = perf_counter()
-    try:
-        output = model.with_structured_output(PlannerDecision,include_raw=True).invoke(prompt)
-        raw = output.get('raw')
-        record('llm',provider=provider,latency_ms=(perf_counter()-started)*1000,**token_usage(raw))
-        if output.get('parsing_error') or output.get('parsed') is None:
-            record('failure',failure_type='StructuredOutputError',phase='planner')
-            raise PlanningOutputError('Invalid structured planner output')
-        decision = output['parsed']
-        if prompt_version == 'v3':
-            decision = validate_decision(decision)
-        return decision
-
-    except Exception as exc:
-        if 'output' not in locals():
-            record('llm',provider=provider,latency_ms=(perf_counter()-started)*1000,failure_type=type(exc).__name__)
-        raise
+    output = invoke_structured(model, PlannerDecision, prompt, provider, 'planner')
+    if output.get('parsing_error') or output.get('parsed') is None:
+        record('failure',failure_type='StructuredOutputError',phase='planner')
+        raise PlanningOutputError('Invalid structured planner output')
+    decision = output['parsed']
+    if prompt_version in ['v3','v4']:
+        decision = validate_decision(decision)
+    if prompt_version == 'v4' and decision.status == 'ready':
+        validate_semantics(question, decision.plan, context)
+    return decision
 
 # Revisions are frozen and compared on a development split before held-out testing.
 IMPROVED_PLANNER_INSTRUCTIONS = '''
@@ -146,11 +152,14 @@ def _plan(state: ChatState) -> ChatState:
             question = 'เปลี่ยนเป็นสินเชื่อต่อสาขามากที่สุด'
         elif question in (state.get('pending_choices') or state.get('choices') or []):
             question = 'เปลี่ยนเป็น'+question
+        elif explicit_dates(q) and not extract_metrics(q):
+            question = state['pending_question']+' '+question
         elif q in ['ทั้งสอง','ทั้งคู่']:
             return {**empty,'error':'ต้องการจัดอันดับด้วยสินเชื่อต่อประชากรหรือสินเชื่อต่อสาขาครับ?','mode':'clarification',
               'choices':['สินเชื่อต่อประชากรสูงสุด พร้อมสินเชื่อต่อสาขา','สินเชื่อต่อสาขาสูงสุด พร้อมสินเชื่อต่อประชากร'],'pending_question':state['pending_question'],'pending_context':context}
     try:
         strategy = state.get('planner_strategy','hybrid')
+        safety_check(question)
         if strategy == 'llm-only':
             if not _provider():
                 raise RuntimeError('No model provider configured')
@@ -164,7 +173,7 @@ def _plan(state: ChatState) -> ChatState:
             mode = 'LangGraph semantic rules · วางแผนด้วยกฎที่ตรวจสอบได้'
         except Clarification as exc:
             # Known unsupported/ambiguous semantics never reach a forced metric enum.
-            if exc.unsupported or exc.choices or extract_metrics(normalize(question)) or strategy == 'rules-only' or not _provider():
+            if exc.unsupported or exc.choices or exc.reason != 'unrecognized_language' or strategy == 'rules-only' or not _provider():
                 raise
             if state.get('prompt_version'):
                 decision = _llm_decision(question,context,state.get('history',[]),state['prompt_version'])
@@ -174,6 +183,8 @@ def _plan(state: ChatState) -> ChatState:
                 raise Clarification(decision.message or 'กรุณาระบุคำถามให้ชัดขึ้น',decision.choices,decision.status=='unsupported')
             plan = decision.plan
             mode = f'LangGraph + LangChain structured LLM ({_provider()})'
+        if state.get('prompt_version', ACTIVE_PLANNER_VERSION) == 'v4':
+            validate_semantics(question, plan, context)
         return {**empty,'plan':plan.model_dump(mode='json'),'mode':mode}
     except Clarification as exc:
         pending_context = context
@@ -217,6 +228,9 @@ def _conversation(state):
         decision = fallback_route(state['question'])
         # Known analytics retain the safe rules path even when the router/provider is unavailable.
         if decision.route == 'analytics':
+            if state.get('pending_question'):
+                # Short month/denominator replies need the pending question merged by _plan.
+                return reset
             try:
                 rules_plan(state['question'],state.get('last_plan'))
             except Clarification as error:
@@ -242,11 +256,8 @@ def _conversation(state):
     if not previous:
         return {**out,'mode':'clarification','error':'ยังไม่มีผลวิเคราะห์ให้อธิบายหรือเปลี่ยนกราฟ กรุณาถามข้อมูลก่อนครับ','choices':EXAMPLES}
     if route == 'explanation':
-        metrics = previous['metrics']
-        text = 'ผลล่าสุดเป็น '+previous['metric_label']+' · งวด '+previous['period']+' · ขอบเขต '+previous['scope']+'\n'
-        text += '\n'.join(m['label']+' ('+m['unit']+'): '+m['formula'] for m in metrics)
-        text += '\nข้อจำกัด: '+previous['caveat']+'\nนี่เป็นการอธิบายผลเดิม ไม่ได้ค้นข้อมูลใหม่หรือยืนยันเหตุและผล'
-        return {**out,'direct_answer':text}
+        text, insight_mode = explain_result(previous, state['question'], _provider())
+        return {**out,'direct_answer':text,'mode':insight_mode}
     result = deepcopy(previous)
     kind = decision.chart
     if kind == 'auto':
@@ -303,8 +314,7 @@ def _answer(state):
     history = [*state.get('history',[]),{'role':'user','content':state['question']},{'role':'assistant','content':answer}][-20:]
     return {'answer':answer,'history':history}
 
-@lru_cache(maxsize=1)
-def graph():
+def build_graph(checkpointer):
     builder=StateGraph(ChatState)
     builder.add_node('conversation',_conversation)
     builder.add_node('plan',_plan); builder.add_node('execute',_execute); builder.add_node('answer',_answer)
@@ -312,20 +322,32 @@ def graph():
     builder.add_conditional_edges('conversation',_conversation_edge,{'plan':'plan','answer':'answer'})
     builder.add_conditional_edges('plan',_route,{'error':'answer','execute':'execute'})
     builder.add_edge('execute','answer'); builder.add_edge('answer',END)
+    return builder.compile(checkpointer=checkpointer)
+
+
+@lru_cache(maxsize=1)
+def graph():
     dsn=engine().url.render_as_string(hide_password=False).replace('postgresql+psycopg://','postgresql://')
     manager=PostgresSaver.from_conn_string(dsn)
     saver=manager.__enter__(); saver.setup()
     atexit.register(lambda: manager.__exit__(None,None,None))
-    return builder.compile(checkpointer=saver)
+    return build_graph(saver)
 
-def ask(question: str,session_id: str='default') -> dict[str,Any]:
+def ask(question: str,session_id: str | None=None) -> dict[str,Any]:
+    session_id = session_id or str(uuid4())
     started = perf_counter()
-    with capture() as events:
+    session_lock = _session_locks[int.from_bytes(sha256(session_id.encode()).digest()[:2]) % len(_session_locks)]
+    with session_lock, capture() as events, request_budget():
         try:
             state=graph().invoke({'question':question},config={'configurable':{'thread_id':session_id}})
-            reply = {k:state.get(k) for k in ('answer','result','error','mode','choices','error_code','routing_mode')}
+            reply = {k:state.get(k) for k in ('answer','result','error','mode','choices','error_code','routing_mode','conversation_route')}
+            reply['provider_status'] = provider_health(_provider()) if _provider() else {'provider':None,'circuit_open':False,'last_failure':None}
             status = state['mode'] if state['mode'] in ['clarification','unsupported','error'] else 'ready'
-            emit(summarize(events,(perf_counter()-started)*1000,status))
+            summary = summarize(events,(perf_counter()-started)*1000,status)
+            reply['telemetry'] = {k:summary[k] for k in (
+                'latency_ms','llm_calls','provider_errors','input_tokens','output_tokens',
+                'total_tokens','estimated_cost_usd','clarification','routes','failure_types')}
+            emit(summary)
             return reply
         except Exception:
             record('failure',failure_type='GraphUnavailable',phase='graph')

@@ -38,6 +38,9 @@ services:
       DATABASE_URL: postgresql+psycopg://bank:bank_dev_password@postgres:5432/bank
       READ_DATABASE_URL: postgresql+psycopg://bank_reader:bank_reader_dev_password@postgres:5432/bank
       ETL_API_TOKEN: bank_dev_etl_token
+      LLM_PROVIDER: ${LLM_PROVIDER:-auto}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-openai/gpt-oss-20b}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}

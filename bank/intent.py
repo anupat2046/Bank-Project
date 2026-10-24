@@ -24,6 +24,14 @@ def normalize(question):
 
 def safety_check(question):
     q = normalize(question)
+    if any(word in q for word in ['รายอำเภอ','รายตำบล','รายวัน','รายสัปดาห์','เดือนหน้า','ปีหน้า']):
+        raise Clarification('ข้อมูลรองรับระดับจังหวัดและงวดรายเดือนที่มีในคลัง ไม่รองรับขอบเขตหรือช่วงอนาคตที่ถาม', unsupported=True)
+    if any(word in q for word in ['เดือนที่แล้ว','เดือนก่อน','ปีที่แล้ว'] ) and not any(word in q for word in ['yoy','เทียบ','ปีก่อน']):
+        raise Clarification('กรุณาระบุเดือนและปีที่ต้องการ เพื่อไม่สับสนระหว่างวันที่ปัจจุบันกับงวดล่าสุดในคลัง', reason='ambiguous_period')
+    if re.search(r'(?:ประชากร|สินเชื่อ|เงินกู้|เครดิต|gpp)\s*(?:น้อยกว่า|ต่ำกว่า|ไม่เกิน|<|≤|=(?!=))',q):
+        raise Clarification('ยังไม่รองรับตัวกรองค่าสูงสุดนี้ ระบบจะไม่ละเงื่อนไขแล้วตอบยอดอื่นแทน', unsupported=True)
+    if re.search(r'(?:เงินฝาก|สาขา)\s*(?:มากกว่า|เกิน|อย่างน้อย|>=|>|≥)\s*\d',q):
+        raise Clarification('ยังไม่รองรับตัวกรองขั้นต่ำของเงินฝากหรือจำนวนสาขา กรุณาเลือกตัวกรองที่ระบบรองรับ', unsupported=True)
     if any(word in q for word in ['npl','หนี้เสีย','เลขบัญชี','ข้อมูลลูกค้า','รายชื่อลูกค้า','รายธนาคาร','ธนาคาร a','ธนาคารกสิกร','ธนาคารกรุงไทย','ธนาคารไทยพาณิชย์','ธนาคารกรุงเทพ','กำไร','รายได้สาขา','อนุมัติสินเชื่อ','พยากรณ์','คาดการณ์','ทำนาย','ราคาหุ้น','อากาศ','delete ','drop ','api key','รหัสผ่าน','ignore previous']):
         raise Clarification('ไม่มีข้อมูลหรือไม่รองรับคำถามนี้: ใช้ได้เฉพาะข้อมูลสาธารณะระดับจังหวัดและบริบทดอกเบี้ย ไม่ตอบข้อมูลลูกค้า รายธนาคาร NPL การพยากรณ์หรือคำสั่งแก้ฐานข้อมูล',unsupported=True)
     if re.search(r'(สินเชื่อ|เงินฝาก)\s*(ต่อ|เทียบกับ|หารด้วย)\s*(gpp|รายได้|พื้นที่|ลูกค้า)',q):
@@ -42,8 +50,20 @@ def extract_metrics(q):
             remaining = re.sub(pattern,lambda m: ' '*len(m.group()),remaining)
     return [metric for _,metric in sorted(found)]
 
+
+def explicit_dates(q):
+    dates = []
+    for value in re.findall(r'\b\d{4}-\d{2}(?:-\d{2})?\b', q):
+        year, month = map(int, value[:7].split('-'))
+        dates.append(date(year-543 if year > 2400 else year, month, 1))
+    for i, (full, short) in enumerate(zip(MONTHS, SHORT), 1):
+        for match in re.finditer(r'(?:'+re.escape(full)+'|'+re.escape(short)+r')\s*(\d{4})', q):
+            year = int(match.group(1))
+            dates.append(date(year-543 if year > 2400 else year, i, 1))
+    return sorted(set(dates))
+
 def parse_question(question: str, context: dict | None = None, version: str = 'v1') -> QueryPlan:
-    if version in ['v2','v3']:
+    if version in ['v2','v3','v4']:
         # Development-driven lexical normalization; preserve denominator guards.
         question = re.sub(r'ยอดออม|เงินออม','เงินฝาก',question)
         question = re.sub(r'เงินกู้','สินเชื่อ',question)
@@ -52,7 +72,7 @@ def parse_question(question: str, context: dict | None = None, version: str = 'v
     q = normalize(question)
     if not q:
         raise Clarification('กรุณาพิมพ์คำถาม')
-    metric_text = re.sub(r'(?:gpp|สินเชื่อ|ประชากร)\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|≥)\s*[\d,.]+\s*(?:ล้านบาท|ล้านคน|ล้าน|บาท|คน)?','',q)
+    metric_text = re.sub(r'(?:gpp|สินเชื่อ|ประชากร)\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|>|≥)\s*[\d,.]+\s*(?:ล้านล้านบาท|พันล้านบาท|ล้านบาท|แสนบาท|พันบาท|ล้านคน|แสนคน|พันคน|ล้าน|พัน|แสน|บาท|คน)?','',q)
     keys = extract_metrics(metric_text)
     ratio_remainder = q
     for _,pattern in PATTERNS[:5]:
@@ -103,9 +123,13 @@ def parse_question(question: str, context: dict | None = None, version: str = 'v
         data.update(group_by='period',intent='trend',limit=25)
     elif ranking:
         data.update(group_by='province',intent='comparison' if len(named)>1 else 'lookup' if named else 'ranking')
-    match = re.search(r'(?:top|อันดับ|สูงสุด|ต่ำสุด|เอา|ย้อนหลัง'+ ('|มากที่สุด|น้อยที่สุด' if version in ['v2','v3'] else '') +r')\s*(\d{1,2})(?!\d)',q)
+    match = re.search(r'(?:top|อันดับ|สูงสุด|ต่ำสุด|เอา|ย้อนหลัง'+ ('|มากที่สุด|น้อยที่สุด' if version in ['v2','v3','v4'] else '') +r')\s*(\d{1,2})(?!\d)',q)
     if match:
         data['limit']=max(1,min(int(match.group(1)),77))
+    if version == 'v4' and not match:
+        count = re.search(r'(?:ขอ|แสดง)\s*(\d{1,2})(?!\d)\s*จังหวัด', q)
+        if count:
+            data['limit'] = max(1, min(int(count.group(1)), 77))
     data['ascending']=any(w in q for w in ['ต่ำสุด','น้อยสุด','น้อยที่สุด','bottom']) if ranking else data.get('ascending',False)
     yoy = any(w in q for w in ['yoy','ปีก่อน','เทียบปี','เติบโต','โตเร็ว'])
     if yoy:
@@ -113,28 +137,25 @@ def parse_question(question: str, context: dict | None = None, version: str = 'v
         if ranking and keys and not any(w in q for w in ['พร้อม','ประกอบ','แสดงเพิ่ม']) and data['metric'] in ['credits','deposits','branches','credits_per_person','credits_per_branch']:
             data['metric'] += '_yoy_pct'
             data['metrics']=[data['metric'],*keys]
-    dates = [date.fromisoformat(s[:7]+'-01') for s in re.findall(r'\b\d{4}-\d{2}(?:-\d{2})?\b',q)]
-    for i,(full,short) in enumerate(zip(MONTHS,SHORT),1):
-        for m in re.finditer(r'(?:'+re.escape(full)+'|'+re.escape(short)+r')\s*(\d{4})',q):
-            year=int(m.group(1)); dates.append(date(year-543 if year>2400 else year,i,1))
+    dates = explicit_dates(q)
     if dates:
         dates=sorted(dates)
         data['end_period']=dates[-1]
         if len(dates)>1:
             data.update(start_period=dates[0],group_by='period',intent='trend')
     elif re.search(r'(?:ปี|งวด)\s*(?:25|20)\d{2}',q):
-        raise Clarification('กรุณาระบุเดือนด้วย ข้อมูลสินเชื่อเป็นยอดคงค้างรายเดือน ไม่รวมยอดทั้งปี')
+        raise Clarification('กรุณาระบุเดือนด้วย ข้อมูลสินเชื่อเป็นยอดคงค้างรายเดือน ไม่รวมยอดทั้งปี', reason='ambiguous_period')
     filter_patterns = [
-      ('min_population',r'ประชากร\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|≥)\s*([\d,]+(?:\.\d+)?)\s*(ล้าน)?'),
-      ('min_credits',r'สินเชื่อ\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|≥)\s*([\d,]+(?:\.\d+)?)'),
-      ('min_gpp',r'gpp\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|≥)\s*([\d,]+(?:\.\d+)?)'),
+      ('min_population',r'ประชากร\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|>|≥)\s*([\d,]+(?:\.\d+)?)\s*(พัน|แสน|ล้าน)?'),
+      ('min_credits',r'สินเชื่อ\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|>|≥)\s*([\d,]+(?:\.\d+)?)'),
+      ('min_gpp',r'gpp\s*(?:เกิน|มากกว่า|อย่างน้อย|>=|>|≥)\s*([\d,]+(?:\.\d+)?)'),
       ('max_branch_density',r'สาขาต่อ(?:ประชากร)?แสน\s*(?:ไม่เกิน|<=|≤)\s*([\d,]+(?:\.\d+)?)'),
     ]
     for field,pattern in filter_patterns:
         m=re.search(pattern,q)
         if m:
-            data[field]=float(m.group(1).replace(',',''))*(1000000 if field=='min_population' and m.group(2) else 1)
-            if field.startswith('min_') and re.search(r'(?:เกิน|มากกว่า)',m.group()):
+            data[field]=float(m.group(1).replace(',',''))*({'พัน':1000,'แสน':100000,'ล้าน':1000000}.get(m.group(2),1) if field=='min_population' else 1)
+            if field.startswith('min_') and re.search(r'(?:เกิน|มากกว่า|>(?!=))',m.group()):
                 data['strict_filters']=list(dict.fromkeys([*data.get('strict_filters',[]),field]))
             elif field in data.get('strict_filters',[]):
                 data['strict_filters'].remove(field)
@@ -142,6 +163,14 @@ def parse_question(question: str, context: dict | None = None, version: str = 'v
                 suffix=q[m.end():].lstrip()
                 if suffix.startswith('บาท'):
                     data[field]/=1000000
+                elif suffix.startswith('พันล้าน'):
+                    data[field]*=1000
+                elif suffix.startswith('ล้านล้าน'):
+                    data[field]*=1000000
+                elif suffix.startswith('พันบาท'):
+                    data[field]/=1000
+                elif suffix.startswith('แสนบาท'):
+                    data[field]/=10
     if 'ตาราง' in q:
         data['chart']='table'
     elif 'กราฟแท่ง' in q:

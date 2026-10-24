@@ -28,9 +28,10 @@ YOY = {k+'_yoy_pct': k for k in ['credits','deposits','branches','credits_per_pe
 METRICS = {**BASE, **{k: ('',BASE[b][1]+' YoY','%') for k,b in YOY.items()}}
 
 class Clarification(ValueError):
-    def __init__(self, message, choices=None, unsupported=False):
+    def __init__(self, message, choices=None, unsupported=False, reason='unrecognized_language'):
         super().__init__(message)
         self.choices, self.unsupported = choices or [], unsupported
+        self.reason = reason
 
 class QueryPlan(BaseModel):
     model_config = ConfigDict(extra='forbid')

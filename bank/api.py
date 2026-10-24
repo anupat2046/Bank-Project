@@ -4,6 +4,7 @@ import os
 from contextlib import asynccontextmanager
 from time import perf_counter
 from datetime import date
+from uuid import uuid4
 
 from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.responses import JSONResponse
@@ -12,6 +13,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 
 from .chat import ask
+from .chat import _provider
+from .llm_runtime import provider_health
 from .db import read_engine
 from . import operations
 from starlette.concurrency import run_in_threadpool
@@ -51,7 +54,7 @@ async def measure_request(request, call_next):
 
 class ChatRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
-    session_id: str = Field(default="demo", min_length=1, max_length=100)
+    session_id: str = Field(default_factory=lambda: str(uuid4()), min_length=1, max_length=100)
 
 
 @app.exception_handler(SQLAlchemyError)
@@ -119,6 +122,14 @@ def health():
 @app.get("/overview")
 def overview(period: date | None = None):
     return overview_data(period)
+
+
+@app.get('/ai/health')
+def ai_health():
+    provider = _provider()
+    return provider_health(provider) if provider else {
+        'provider': None, 'circuit_open': False, 'last_failure': None,
+        'scope': 'rules-only; no provider configured'}
 
 
 @app.post("/chat")

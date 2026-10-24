@@ -140,7 +140,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--live',action='store_true')
     parser.add_argument('--split',choices=['dev','heldout'],default='dev')
-    parser.add_argument('--version',choices=['v1','v2','v3'],default='v1')
+    parser.add_argument('--version',choices=['v1','v2','v3','v4'],default='v1')
     parser.add_argument('--output',required=True,help='JSON artifact path relative to project root')
     parser.add_argument('--delay',type=float,default=6,help='Seconds between turns (0..60); does not assert a provider quota')
     parser.add_argument('--max-live-calls',type=int,default=40)
@@ -153,10 +153,10 @@ def main():
         parser.error('Reports must be under docs/evidence or private data')
     if output.exists() and not args.resume: parser.error('Output exists: choose another path or --resume')
     load_dotenv(ROOT/'.env',override=False)
-    if args.live and chat._provider()!='gemini': parser.error('Live comparison requires configured Gemini; never pass a key on CLI')
-    if args.live:
+    provider = chat._provider() if args.live else None
+    if args.live and provider not in {'gemini','groq','openai'}: parser.error('Live comparison requires a configured provider; never pass a key on CLI')
+    if args.live and provider == 'gemini':
         import langchain_google_genai # Fail preflight before producing measured model trials.
-    os.environ['LLM_MAX_RETRIES']='0' # No hidden request amplification in a measured trial.
     if not args.live: chat._provider=lambda:None
     fixture=ROOT/'tests/fixtures/llm_eval_cases.json'
     corpus=json.loads(fixture.read_text(encoding='utf-8'))
@@ -168,8 +168,9 @@ def main():
         raw=[dict(r) for r in conn.execute(text('SELECT * FROM mart_province_month ORDER BY period,province_code')).mappings()]
     as_of=max(r['period'] for r in raw).isoformat()
     fingerprint=hashlib.sha256(json.dumps(raw,default=str,sort_keys=True).encode()).hexdigest()
-    report={'started_utc':datetime.now(timezone.utc).isoformat(),'live':args.live,'provider':'gemini' if args.live else None,
-            'model':os.getenv('GEMINI_MODEL','gemini-2.5-flash') if args.live else None,'prompt_version':args.version,
+    defaults = {'groq':'openai/gpt-oss-20b','gemini':'gemini-2.5-flash','openai':'gpt-4.1-mini'}
+    report={'started_utc':datetime.now(timezone.utc).isoformat(),'live':args.live,'provider':provider,
+            'model':os.getenv(provider.upper()+'_MODEL',defaults[provider]) if provider else None,'prompt_version':args.version,
             'split':args.split,'fixture_sha256':hashlib.sha256(fixture.read_bytes()).hexdigest(),
             'warehouse_sha256':fingerprint,'as_of':as_of,'warehouse_rows':len(raw),
             'request_budget':args.max_live_calls,'delay_seconds':args.delay,'rows':[],
