@@ -39,7 +39,20 @@ The plan rubric is deliberately strict about fields. An unused/redundant `start_
 - **v2:** normalize `ยอดออม/เงินออม` to deposits and `เงินกู้` to loans while preserving ratio guards; recognize numbered “มากที่สุด” requests. The prompt explicitly forbids guessed calendar ranges, explains same-metric supplemental YoY, requires Thai clarification and preserves confirmed follow-up scope.
 - **v3:** retain v2 and enforce a shape invariant: `group_by=period` has `intent=trend`. Reject ready decisions without a plan and non-ready decisions with an executable plan. These checks do not use expected labels to rewrite a metric/date or fabricate a result.
 
-The intermediate development report is retained. The final application uses v3. Before/after comparisons are measured on both splits, with no tuning after held-out outcomes. A single pass and temperature zero do not establish reproducible accuracy or eliminate model variability. Larger paraphrase sets, user testing and repeated trials remain future work.
+The intermediate development report is retained. The historical benchmark's final version is v3; the current application uses v4. Before/after comparisons in that historical report were measured on both splits, with no tuning after held-out outcomes. A single pass and temperature zero do not establish reproducible accuracy or eliminate model variability. Larger paraphrase sets, user testing and repeated trials remain future work.
+
+## Current conversation regression (24 October 2026)
+
+See [hardening evidence](evidence/llm/hardening-2026-10-24.md) for current limits, the 60-turn HTTP regression and the quota-blocked live attempt. This is separate from the historical planner-only comparison. Do not merge their scores or describe offline fallback as successful Gemini evaluation.
+
+```powershell
+# No provider calls; real local warehouse, in-process HTTP and isolated checkpoints.
+.\.venv\Scripts\python.exe -m tools.evaluate_conversation --max-requests 60 --out data/eval/conversation-offline.json
+# Explicit live API calls; stop on provider failure. Start small before a full 60-turn run.
+.\.venv\Scripts\python.exe -m tools.evaluate_conversation --live --max-requests 6 --out data/eval/conversation-live.json
+```
+
+The live driver stops if the configured provider is unavailable/unconfigured, even when rules return an answer. Limits count HTTP turns; each turn can make up to three model calls. Independent arithmetic is checked against warehouse records; plans, routes, statuses and presentation/context behavior have separate failures. The authored regression is not held-out evidence. Run a newly frozen, separately reviewed held-out corpus after quota recovery before claiming generalization or a current rules/LLM/hybrid advantage.
 
 ## Reproduce a live comparison
 

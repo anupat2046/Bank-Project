@@ -1,6 +1,6 @@
 # Conversational banking analytics
 
-Implemented and verified locally on 11 October 2026 (Asia/Bangkok). This is a constrained analytical assistant over real public data, not an unrestricted SQL agent or a banking adviser.
+Implemented and verified locally, with the latest regression checks on 24 October 2026 (Asia/Bangkok). This is a constrained analytical assistant over real public data, not an unrestricted SQL agent or a banking adviser.
 
 ## Business purpose
 
@@ -54,7 +54,7 @@ Question + confirmed session context
   → deterministic answer + result rows + units + SQL + provenance
 ```
 
-The conversational router selects guidance, clarification, explanation, presentation, refusal, or analytics. Non-analytical actions skip SQL. See [routing behavior and service checks](conversation-routing.md). Router provider and analytical planner mode are labelled separately: a rules-generated plan can still follow a Gemini routing call. Unresolved analytical paraphrases can use LangChain structured output with Gemini (preferred) or the optional OpenAI provider. The model emits a validated decision and `QueryPlan`, **not arbitrary SQL**. Provider failures are redacted; a failed or ambiguous turn does not replace the last confirmed context or show old results as its new answer.
+The conversational router selects guidance, clarification, explanation, presentation, refusal, or analytics. Non-analytical actions skip SQL. See [routing behavior and service checks](conversation-routing.md). Router provider and analytical planner mode are labelled separately: a rules-generated plan can still follow an LLM routing call. Unresolved analytical paraphrases can use LangChain structured output with the selected Groq, Gemini or OpenAI provider. Explicit provider selection never silently switches to another provider; `auto` prefers Groq, then Gemini, then OpenAI based on configured keys. The model emits a validated decision and `QueryPlan`, **not arbitrary SQL**. Provider failures are redacted; a failed or ambiguous turn does not replace the last confirmed context or show old results as its new answer.
 
 LangGraph checkpoints are persisted in PostgreSQL by session ID. Follow-ups inherit the confirmed metric, filters and resolved banking period; standalone questions can start a new analytical scope. Pending clarification preserves its own explicit scope. The graph retains the last 20 history messages, and the provider prompt receives at most the last eight. These bounds limit conversational context, not database retention. Starting a new conversation generates a new session ID; it does not delete old checkpoints. Authenticated session ownership and retention administration are not implemented in the supplied configuration.
 
@@ -76,9 +76,11 @@ The assistant shows actual period, scope, units, formulas, ranking universe, SQL
 
 The versioned [80 Thai golden questions](../tests/fixtures/chat_cases.json) contain 70 executable cases, five clarification cases and five unsupported cases. Each records expected plan fields or expected refusal/clarification. [Database-backed tests](../tests/test_chat_analytics.py) additionally calculate expected results independently from raw mart rows: Python arithmetic checks ratios, prior-year alignment, weighted national results, filters, ranking universe and order. The oracle does not reuse the SQL compiler or its metric formulas. Conversation tests cover clarification resolution, context preservation, isolation, reset and stale-result prevention; mock-provider tests cover structured decisions.
 
-Local verification on 11 October 2026:
+Latest local regression verification on 24 October 2026:
 
-- Current full suite: **170 passed**, including conversation routing. The earlier analytics-only and planner-evaluation snapshots recorded 131 and 143 tests respectively.
+- Current full suite: **212 passed**, including conversation routing, LLM hardening and Groq selection. The earlier analytics-only and planner-evaluation snapshots recorded 131 and 143 tests respectively. See [October 24 checks](evidence/llm/hardening-2026-10-24.md) and [Groq integration](evidence/llm/groq-integration-2026-10-24.md) for separate offline/live evidence and limitations.
+
+Earlier local verification on 11 October 2026:
 - Offline golden evaluator: **80/80 status, plan and result checks passed**. This tests the deterministic path on this fixed corpus, **not 100% natural-language or LLM accuracy**.
 - TypeScript check and Docker Next.js production build passed; rebuilt `api` and `web` were running against healthy PostgreSQL.
 - One **live Gemini fallback** request (`ช่วยดูยอดออมตามเดือนหน่อย`) succeeded in structured LLM mode, returning a national deposit trend over 25 months. This is a smoke test only; OpenAI was not tested live.

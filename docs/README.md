@@ -7,6 +7,7 @@ Use this index to find application guides, architecture, operational procedures,
 | Document | Purpose |
 | --- | --- |
 | [Project overview](../README.md) / [Thai overview](../README_TH.md) | Business purpose, capabilities, screenshots, and scope |
+| [Feature walkthrough](demo.md) | Actual browser recordings, feature coverage, desktop/mobile screenshots, and capture limitations |
 | [Setup and troubleshooting](getting-started.md) | First import, optional services, development, and verification commands |
 | [Business findings](business-report.md) | Ten business questions, observed findings, and appropriate next investigations |
 | [Sources and temporal joins](data-sources.md) | Actual ingestion methods, grains, units, mapping, and missing data |
@@ -20,6 +21,8 @@ Use this index to find application guides, architecture, operational procedures,
 - [Conversation routing](conversation-routing.md): action selection, bounded fallback, explanation/presentation behavior, and service smoke checks.
 - [LLM evaluation](llm-evaluation.md): corpora, rubric, strategy comparison, telemetry, and reproduction.
 - [Measured planner results](evidence/llm/results.md): strict development/held-out scores, failures, and raw reports.
+- [LLM hardening and current checks](evidence/llm/hardening-2026-10-24.md): semantic guards, provider cooldown, 60-turn regression and the quota-blocked live attempt.
+- [Groq integration](evidence/llm/groq-integration-2026-10-24.md): provider selection, JSON/Pydantic compatibility and bounded live smoke evidence.
 
 ## Application and query evidence
 
@@ -28,6 +31,7 @@ Use this index to find application guides, architecture, operational procedures,
 - [Frontend guide](../frontend/README.md): routes, development, and interaction contracts.
 - [Design specification](design/nextjs/design-spec.md): visual references and intentional implementation differences. Concept images are not working-product evidence.
 - [Next.js verification](evidence/nextjs-qa.md): dated October checks and screenshots; not a live status page.
+- [Narrated walkthrough verification](evidence/narrated-video-qa-2026-10-24.md): HyperFrames composition, corrected visual evidence, subtitle checks, and encoded-media verification scope.
 - [September verification snapshot](evidence/run-status.md): historical ingestion/Grafana/Airflow checks. Source vintages and test counts have since changed.
 - [Planner service smoke](evidence/llm/service-smoke.md): one pre-router HTTP integration request, distinct from benchmark results.
 

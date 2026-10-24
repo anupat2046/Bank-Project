@@ -40,7 +40,7 @@ tmp/
 *.db
 *.log
 
-# Keep only screenshots used by the public README.
+# Keep only screenshots used by public documentation.
 /output/playwright/*
 !/output/playwright/overview.png
 !/output/playwright/province-comparison.png
@@ -64,8 +64,8 @@ tmp/
 !/output/playwright/chatbot-analytics.png
 !/output/playwright/chatbot-clarification.png
 !/output/playwright/chatbot-comparison.png
-
-# Compressed walkthrough images referenced by public documentation.
+!/output/playwright/assistant-provider-quota-desktop.png
+!/output/playwright/assistant-provider-quota-mobile.png
 !/output/playwright/demo-*.webp
 
 # Operating-system/editor leftovers.

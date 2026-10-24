@@ -1,18 +1,18 @@
 # Thailand Regional Banking Intelligence
 
-A public-data analytics platform for comparing Thailand's provincial banking markets. It combines a PostgreSQL warehouse, daily ETL orchestration, a Next.js dashboard, Grafana operational monitoring, and a bounded Gemini-powered analytical assistant.
+A public-data analytics platform for comparing Thailand's provincial banking markets. It combines a PostgreSQL warehouse, daily ETL orchestration, a Next.js dashboard, Grafana operational monitoring, and a provider-configurable analytical assistant.
 
 Supports regional strategy and channel planning through traceable public-data analysis.
 
-[ภาษาไทย](README_TH.md) · [Quick start](docs/getting-started.md) · [Documentation](docs/README.md) · [Business findings](docs/business-report.md)
+[ภาษาไทย](README_TH.md) · [Feature walkthrough](docs/demo.md) · [Quick start](docs/getting-started.md) · [Documentation](docs/README.md)
 
-![Market overview with loan and deposit balances, branch counts, and monthly trends](output/playwright/nextjs-overview.png)
+![Market overview with loan and deposit balances, branch counts, and monthly trends](output/playwright/demo-overview.webp)
 
 ## Business problem
 
 Provincial loan balances alone are a poor basis for comparing markets: Bangkok dominates recorded balances, while provinces differ in population, economic scale, and branch coverage. The relevant publications also use different geographic names, reporting grains, units, and release dates.
 
-The platform integrates five public sources into a province–month mart so analysts can compare market size, growth, and scale-adjusted measures with visible calculation rules and provenance. Screening results identify areas for further investigation; assessing unmet demand or profitability requires additional evidence.
+The platform integrates five public datasets from four institutions into a province–month mart so analysts can compare market size, growth, and scale-adjusted measures with visible calculation rules and provenance. Screening results identify areas for further investigation; assessing unmet demand or profitability requires additional evidence.
 
 ## What the application supports
 
@@ -22,7 +22,7 @@ The platform integrates five public sources into a province–month mart so anal
 - **Business questions:** ten predefined analyses with actual results, SQL, parameters, and interpretation.
 - **Source quality:** coverage, reference periods, retrieval metadata, availability rules, and redacted ETL status.
 
-The assistant uses Gemini to select a bounded conversational action when a key is configured. Analytical requests use a hybrid planner: known wording is resolved with semantic rules, unresolved paraphrases can use structured LLM output, and only validated plans reach read-only SQL. No-key mode remains usable with narrower offline routing and deterministic analytical coverage.
+The assistant supports Groq, Gemini and OpenAI adapters. Explicit provider selection never silently switches to another provider; the latest live integration checks used Groq with `openai/gpt-oss-20b`. Analytical requests use a hybrid planner: known wording is resolved with semantic rules, unresolved paraphrases can use LLM-generated plans, and only validated plans reach read-only SQL. Groq uses JSON Object Mode with Pydantic and semantic validation, not a strict-decoding guarantee. No-key mode remains usable with narrower offline routing and deterministic analytical coverage.
 
 ## Feature walkthrough
 
@@ -45,7 +45,7 @@ Verified snapshot: **77 provinces × 25 months = 1,925 analytical rows**, coveri
 | Bank of Thailand, FI_CB_011_S5 | Public web table over HTTP GET/form POST | Monthly loans, deposits, and branches |
 | Department of Provincial Administration | Official TXT downloads | Annual registered population |
 | NESDC | Official GPP workbook | Annual provincial economic context |
-| World Bank Indicators | Public JSON REST API | National annual inflation context |
+| World Bank Indicators | Public JSON REST API | Inflation source is loaded; historical mart values are unavailable in the recorded snapshot under availability rules |
 | Bank of Thailand MPC decisions | Official workbook | National policy-rate history |
 
 The BOT adapters use published tables/workbooks, **not authenticated BOT REST APIs**. See [sources, units, mapping, and temporal joins](docs/data-sources.md).
@@ -56,14 +56,14 @@ The BOT adapters use published tables/workbooks, **not authenticated BOT REST AP
 | API and ingestion | Python, FastAPI, pandas, SQLAlchemy, psycopg |
 | Warehouse | PostgreSQL; dimensions, source-grain facts, province–month mart |
 | Orchestration and monitoring | Apache Airflow; Grafana dashboards for pipeline health, data quality, and AI/API operations |
-| Assistant | Gemini via LangChain, LangGraph checkpoints, Pydantic plans, SQLGlot validation |
+| Assistant | Configurable Groq/Gemini/OpenAI adapters, LangChain, LangGraph checkpoints, Pydantic plans, SQLGlot validation |
 | Verification | pytest, independent arithmetic checks, authored LLM evaluation, timing/token telemetry |
 
 ## Architecture
 
-![High-level architecture: public sources, Airflow-triggered ingestion, PostgreSQL warehouse, FastAPI analytics and chat workflow, Next.js and Grafana](docs/design/system-architecture.drawio.svg)
+![High-level architecture: public datasets, Airflow, PostgreSQL, FastAPI, bounded LLM providers, Next.js and Grafana](docs/design/system-architecture-current.svg)
 
-Lettered steps (A–D) are the daily data pipeline; numbered steps (1–6) follow a user request. Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. See [architecture and data model](docs/architecture.md) for the low-level view with routes, modules, tables, and database roles.
+Source snapshots are hashed with SHA-256. Geographic mapping is explicit, annual data follows conservative availability rules, and unavailable values remain `NULL`. Provider responses cannot execute arbitrary SQL: the application validates bounded plans and compiles parameterized, read-only queries. See [architecture and data model](docs/architecture.md) for routes, modules, tables, and database roles.
 
 ## Run locally
 
@@ -78,30 +78,31 @@ docker compose exec api python -m bank.etl all
 
 The import uses live public sources, requires internet access, and may take several minutes. Check its final status before using the dashboard. Open [the application](http://127.0.0.1:3000) or [API documentation](http://127.0.0.1:8000/docs).
 
-For optional Gemini configuration, Grafana/Airflow setup, development, verification, and troubleshooting, follow the [setup guide](docs/getting-started.md). No LLM key is required to load data or explore the dashboards.
+For optional LLM provider configuration, Grafana/Airflow setup, development, verification, and troubleshooting, follow the [setup guide](docs/getting-started.md). No LLM key is required to load data or explore the dashboards. Keep keys in a private `.env`, never in browser-visible `NEXT_PUBLIC_*` variables.
 
 ## Product views
 
 | Provincial comparison and screening | Analytical assistant |
 | --- | --- |
-| ![Adjustable screening criteria, result table, and GPP scatter](output/playwright/nextjs-screening.png) | ![Ratio-aware assistant with multiple metrics, YoY, and inspectable SQL](output/playwright/chatbot-analytics.png) |
+| ![Selected-province comparison and normalized measures](output/playwright/demo-comparison.webp) | ![Actual assistant result with units, scope and inspectable query details](output/playwright/demo-assistant.webp) |
 
 Additional captures: [province detail](output/playwright/nextjs-provinces.png), [business question](output/playwright/nextjs-questions.png), [source quality](output/playwright/nextjs-sources.png), and [mobile overview](output/playwright/nextjs-mobile.png). Grafana now provides [operational monitoring](docs/operations.md); previous Grafana captures show the retired business-reporting view.
 
-The screenshots above were refreshed on 24 October 2026. See the [UI verification record](docs/evidence/ux-qa-2026-10-24.md) for tested workflows and limitations.
-
-These captures document dated local builds. The latest conversational router was verified through HTTP integration checks; older assistant images do not demonstrate its newer behavior. Design concepts are labelled separately from working-product evidence.
+The walkthrough captures document the local application on 24 October 2026. See the [feature catalogue](docs/demo.md) for coverage and recording details, and the [UI verification record](docs/evidence/ux-qa-2026-10-24.md) for earlier checks. Screenshots and recordings are not an LLM accuracy benchmark or proof of continuous scheduled operation.
 
 ## Verification
 
-Local verification on **11 October 2026 (Asia/Bangkok)**:
+Latest recorded checks: **24 October 2026 (Asia/Bangkok)**.
 
-- **170 Python tests passed**; TypeScript checks and the Next.js production build passed.
-- An **80-question Thai regression corpus** passed offline status, plan, and independently calculated result checks.
-- A separate **24-turn live Gemini planner comparison** evaluated rules-only, LLM-only, and hybrid planning on development/held-out splits.
-- A **seven-turn service smoke test** exercised capability guidance, analysis, explanation, presentation changes, refusal, and context preservation.
+| Check | Recorded result | What it establishes |
+| --- | --- | --- |
+| Python regression | 212 passed | Database-backed analytics and deterministic/mocked provider checks |
+| Thai analytical corpus | 80 offline cases passed | Status, plan and independently calculated results |
+| Conversation regression | 60/60 offline turns passed | Routing, context, clarification, presentation and warehouse arithmetic |
+| Groq live integration | Router/planner checks and three-turn HTTP smoke passed | Integration evidence, not general model accuracy |
+| Frontend | TypeScript and Docker production build passed | Build verification, not a load or accessibility certification |
 
-The final hybrid planner passed 14/14 held-out turns, but used **zero LLM calls on that split**. That result measures deterministic coverage on a small authored corpus—not general Gemini accuracy. The LLM-only planner passed 6/14 held-out turns under the strict all-checks rubric. The newer conversation router is **not included** in those planner scores.
+The historical **11 October Gemini planner comparison** is retained separately: 10 development and 14 held-out turns across three strategies. Hybrid passed 14/14 held-out turns with **zero model calls** on that split; LLM-only passed 6/14 under the strict rubric. Those scores do not measure the later conversational router or establish Groq accuracy. Account-specific provider failures remain in the dated evidence, not product capability claims.
 
 See [verification status](docs/verification.md), [evaluation methodology](docs/llm-evaluation.md), and [full results with retained failures](docs/evidence/llm/results.md).
 
@@ -133,7 +134,7 @@ Start with the [documentation index](docs/README.md). Future work is separated i
 
 ## Author
 
-**Anupat Suttilert** - Fourth-year Data Science student at Thammasat University and aspiring Data Engineer.
+**Anupat Suttilert** — Fourth-year Data Science student at Thammasat University, focused on data engineering and verifiable analytics.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/anupat-suttilert-888a73348)
 [![GitHub](https://img.shields.io/badge/GitHub-anupat2046-black?logo=github)](https://github.com/anupat2046)
@@ -143,7 +144,7 @@ Interested in reliable data pipelines, analytical data modeling, and AI-assisted
 
 - **Project focus:** Integrating Thai public data into a province-month warehouse for banking-market analysis, with interactive dashboards and a validated analytical assistant.
 - **Core stack in this project:** Python, SQL, PostgreSQL, Apache Airflow, FastAPI, Next.js, and Docker.
-- **AI and reporting:** Gemini, LangChain, LangGraph, and Grafana.
+- **AI and reporting:** Configurable LLM providers, LangChain, LangGraph, and Grafana.
 
 ## License
 

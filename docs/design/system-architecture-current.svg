@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="720" viewBox="0 0 1440 720" role="img" aria-labelledby="title desc">
+  <title id="title">Thailand Regional Banking Intelligence — system architecture</title>
+  <desc id="desc">Five official datasets feed Airflow-orchestrated Python ingestion and a PostgreSQL warehouse. FastAPI supplies Next.js analytics and a bounded conversational workflow with configurable providers. Grafana reads operational metrics. LLMs do not execute arbitrary SQL.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#60718a"/></marker>
+    <style>text{font-family:Arial,sans-serif;fill:#13294b}.title{font-size:30px;font-weight:700}.heading{font-size:20px;font-weight:700}.body{font-size:16px}.small{font-size:16px;fill:#526780}.box{fill:#fff;stroke:#d3dfe8;stroke-width:2}.path{fill:none;stroke:#60718a;stroke-width:2.5;marker-end:url(#arrow)}.tag{fill:#008571;font-size:16px;font-weight:700}</style>
+  </defs>
+  <rect width="1440" height="720" fill="#f4f8fa"/>
+  <text x="48" y="57" class="title">One warehouse. Traceable analysis. Bounded AI.</text>
+  <text x="48" y="89" class="small">Source ingestion and business queries are separate from model reasoning and operational monitoring.</text>
+  <rect x="48" y="140" width="260" height="280" rx="16" class="box"/>
+  <text x="70" y="175" class="heading">Official datasets</text>
+  <text x="70" y="216" class="body">BOT loans / deposits / branches</text>
+  <text x="70" y="252" class="body">DOPA population</text>
+  <text x="70" y="288" class="body">NESDC provincial GPP</text>
+  <text x="70" y="324" class="body">World Bank inflation</text>
+  <text x="70" y="360" class="body">BOT policy decisions</text>
+  <text x="70" y="394" class="small">HTTP tables, TXT, XLSX, REST</text>
+  <rect x="368" y="140" width="260" height="125" rx="16" class="box"/>
+  <text x="390" y="177" class="heading">Airflow + Python ETL</text>
+  <text x="390" y="214" class="body">Fetch → validate → load</text>
+  <text x="390" y="243" class="small">Source snapshots + SHA-256</text>
+  <path d="M308 203H356" class="path"/>
+  <rect x="368" y="310" width="260" height="150" rx="16" class="box"/>
+  <text x="390" y="347" class="heading">PostgreSQL warehouse</text>
+  <text x="390" y="383" class="body">Dimensions + source facts</text>
+  <text x="390" y="413" class="body">Province–month analytical mart</text>
+  <text x="390" y="442" class="small">Explicit geographic / as-of joins</text>
+  <path d="M498 265V298" class="path"/>
+  <rect x="688" y="310" width="275" height="150" rx="16" class="box"/>
+  <text x="710" y="347" class="heading">FastAPI analytics</text>
+  <text x="710" y="383" class="body">Metrics + competency questions</text>
+  <text x="710" y="413" class="body">Parameterized SELECT queries</text>
+  <text x="710" y="442" class="small">Read-only role + timeout</text>
+  <path d="M628 385H676" class="path"/>
+  <rect x="1024" y="310" width="365" height="150" rx="16" class="box"/>
+  <text x="1046" y="347" class="heading">Next.js application</text>
+  <text x="1046" y="383" class="body">Overview · Provinces · AI Assistant</text>
+  <text x="1046" y="413" class="body">Business questions · Source quality</text>
+  <text x="1046" y="442" class="small">Charts, tables, CSV and query evidence</text>
+  <path d="M963 385H1012" class="path"/>
+  <rect x="688" y="140" width="701" height="125" rx="16" fill="#e2f2ee" stroke="#91c7b9" stroke-width="2"/>
+  <text x="710" y="177" class="heading">Bounded conversational workflow</text>
+  <text x="710" y="214" class="body">Router → hybrid planner → Pydantic / semantic checks → SQL compiler</text>
+  <text x="710" y="243" class="small">LangGraph checkpoints · Groq / Gemini / OpenAI adapters · no cross-provider fallback</text>
+  <path d="M826 265V298" class="path"/>
+  <path d="M1206 310V277" class="path"/>
+  <rect x="368" y="520" width="595" height="115" rx="16" class="box"/>
+  <text x="390" y="557" class="heading">Operational evidence → Grafana</text>
+  <text x="390" y="593" class="body">ETL health · warehouse coverage · API/LLM timing and failures</text>
+  <text x="390" y="619" class="small">Telemetry omits keys, raw questions and raw provider errors</text>
+  <path d="M498 460V508" class="path"/>
+  <path d="M826 460V508" class="path"/>
+  <text x="1024" y="548" class="tag">LLMs choose bounded actions/plans.</text>
+  <text x="1024" y="580" class="small">The application owns permissions,</text>
+  <text x="1024" y="606" class="small">metric definitions and final numbers.</text>
+  <text x="48" y="683" class="small">Architecture snapshot · 24 October 2026 · Source/availability limitations and deployment controls are documented separately.</text>
+</svg>

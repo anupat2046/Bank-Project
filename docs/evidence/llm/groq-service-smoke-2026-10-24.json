@@ -1,0 +1,80 @@
+{
+  "measured_at": "2026-10-24T09:27:15.897009+00:00",
+  "mode": "live HTTP",
+  "dataset": "authored 60-turn regression; not held-out",
+  "as_of": "2026-07-01",
+  "planned": 60,
+  "attempted": 3,
+  "not_run": 57,
+  "passed": 3,
+  "blocked_reason": null,
+  "live_evaluation_complete": false,
+  "live_all_checks_passed": false,
+  "cases": [
+    {
+      "id": "C01-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 4050.82,
+      "telemetry": {
+        "latency_ms": 2010.71,
+        "llm_calls": 2,
+        "provider_errors": 0,
+        "input_tokens": 1002,
+        "output_tokens": 99,
+        "total_tokens": 1101,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C01-2",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 651.22,
+      "telemetry": {
+        "latency_ms": 644.46,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 695,
+        "output_tokens": 130,
+        "total_tokens": 825,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C01-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 609.46,
+      "telemetry": {
+        "latency_ms": 603.05,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 777,
+        "output_tokens": 25,
+        "total_tokens": 802,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    }
+  ]
+}

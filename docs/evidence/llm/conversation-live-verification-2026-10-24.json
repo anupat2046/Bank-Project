@@ -1,0 +1,40 @@
+{
+  "measured_at": "2026-10-24T08:44:07.221161+00:00",
+  "mode": "live HTTP",
+  "dataset": "authored 60-turn regression; not held-out",
+  "as_of": "2026-07-01",
+  "planned": 60,
+  "attempted": 1,
+  "not_run": 59,
+  "passed": 0,
+  "blocked_reason": "quota_exhausted",
+  "live_evaluation_complete": false,
+  "live_all_checks_passed": false,
+  "cases": [
+    {
+      "id": "C01-1",
+      "errors": [
+        "provider"
+      ],
+      "provider_failure": "quota_exhausted",
+      "latency_ms": 3188.42,
+      "telemetry": {
+        "latency_ms": 1103.64,
+        "llm_calls": 1,
+        "provider_errors": 1,
+        "input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": [
+          "quota_exhausted",
+          "ProviderUnavailable"
+        ]
+      }
+    }
+  ]
+}

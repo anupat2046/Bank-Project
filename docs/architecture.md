@@ -10,13 +10,13 @@ The API writes best-effort metrics using the owner role. See [operational monito
 
 ### High-level view
 
-![High-level architecture: tiers, data pipeline (A–D) and user request path (1–6)](design/system-architecture.drawio.svg)
+![Current architecture: datasets, Airflow, PostgreSQL, FastAPI, bounded LLM providers, Next.js and Grafana](design/system-architecture-current.svg)
 
 ### Low-level view
 
 ![Low-level architecture: containers and ports, API routes, ETL functions, LangGraph nodes, tables, and database roles](design/system-architecture-low-level.drawio.svg)
 
-The low-level view names real files, functions, routes, and tables; open the [image](design/system-architecture-low-level.drawio.svg) to zoom. Orange database connections use the owner role `bank` (ETL writes, mart rebuild, chat checkpoints); blue connections use the SELECT-only role `bank_reader` (API reads, chat SQL, Grafana).
+The low-level view is a historical integration diagram: its Gemini-specific label predates configurable Groq/Gemini/OpenAI routing. Use the high-level view and the provider contract below for the current boundary. Open the [low-level image](design/system-architecture-low-level.drawio.svg) to inspect file, route, and table relationships. Orange database connections use the owner role `bank` (ETL writes, mart rebuild, chat checkpoints); blue connections use the SELECT-only role `bank_reader` (API reads, chat SQL, Grafana).
 
 Diagrams in `docs/design/*.drawio.svg` are editable draw.io files that also render as images. Open them in [draw.io](https://app.diagrams.net/) or the VS Code Draw.io Integration extension and save in place; there is no separate source file.
 
@@ -138,11 +138,11 @@ START → conversation
                               grounded answer → END
 ```
 
-Safety checks precede model routing. Gemini chooses a bounded action when configured; narrow offline routing remains available. The hybrid analytical planner resolves known wording through semantic rules, with structured-LLM fallback for unresolved paraphrases. Only a valid ready plan reaches execution.
+Safety checks precede model routing. The explicitly selected provider (Groq, Gemini or OpenAI) chooses a bounded action when configured; narrow offline routing remains available. Groq uses JSON Object Mode with local Pydantic/semantic validation, not a constrained-decoding guarantee. The hybrid analytical planner resolves known wording through semantic rules, with LLM fallback for unresolved paraphrases. Only a valid ready plan reaches execution.
 
 LangGraph persists confirmed plans, last successful results, pending clarification scope/choices, and bounded conversational history. Checkpoint session IDs are not authenticated ownership controls. Presentation requests explicitly reuse old data; ordinary failed turns do not display old results as newly queried answers.
 
-The active analytical contract is v3. Request-local telemetry records numeric timing/usage, bounded routes, statuses, and failure classes without questions, keys, session IDs, or raw errors. Checkpoints still store conversation content separately. See [conversation routing](conversation-routing.md) and [evaluation/observability](llm-evaluation.md).
+The active analytical contract is v4, with explicit semantic conflict checks, bounded provider calls and process-local circuit breakers. Request-local telemetry records numeric timing/usage, bounded routes, statuses, and failure classes without questions, keys, session IDs, or raw errors. Checkpoints still store conversation content separately. See [conversation routing](conversation-routing.md) and [evaluation/observability](llm-evaluation.md).
 
 ## Temporal rules and deployment configuration
 

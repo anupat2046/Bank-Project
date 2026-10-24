@@ -40,17 +40,20 @@ Invoke-RestMethod http://127.0.0.1:8000/health
 
 All published service ports bind to `127.0.0.1`. This is not an internet-facing deployment configuration.
 
-## 4. Enable Gemini (optional)
+## 4. Enable an LLM provider (optional)
 
 No key is needed for ingestion, dashboards, or supported rules-based analysis. To enable the LLM conversation router and analytical fallback:
 
 ```powershell
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
-# Edit .env privately and set GEMINI_API_KEY.
+# Edit .env privately: set LLM_PROVIDER=groq and GROQ_API_KEY,
+# or select gemini / openai with the matching provider key.
 docker compose up -d --build api web
 ```
 
-The configured default is `gemini-2.5-flash`. Gemini takes precedence when both provider keys are present. The optional OpenAI path exists but has not been verified live. Model availability, quotas, and charges depend on the provider/account.
+Groq uses `openai/gpt-oss-20b` through its OpenAI-compatible endpoint; Gemini defaults to `gemini-2.5-flash`. Explicit `LLM_PROVIDER=groq|gemini|openai` never silently switches to a different provider. A missing selected key enables offline behavior, not another paid provider. `LLM_PROVIDER=none` disables provider calls; `auto` prefers Groq, then Gemini, then OpenAI when matching keys exist. The optional OpenAI path has not been verified live. Model availability, free-plan limits and charges depend on the provider/account; the application cannot verify your billing tier.
+
+The Groq adapter uses JSON Object Mode with an explicit schema in the prompt and local Pydantic parsing. Live checks of the nested optional plan encountered server-side `json_validate_failed` in JSON Schema mode, so this compatibility mode is intentional; it is not constrained/strict-schema decoding. Pydantic and semantic checks remain mandatory and invalid plans never execute. Existing Gemini configuration may remain in `.env` without being called when Groq is explicitly selected. Revoke any API key exposed in a chat or screenshot and replace it privately in `.env`.
 
 Do not paste keys into issues, screenshots, or prompts. Do not use browser-visible `NEXT_PUBLIC_*` variables for secrets. Questions and recent conversation context may be sent to the configured provider; use only public-data examples. Offline routing is narrower than LLM routing.
 

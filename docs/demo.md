@@ -6,7 +6,7 @@ Actual application captures from **24 October 2026**, covering the public-data a
 
 [![English narration with Thai subtitles](../output/playwright/demo-narrated-walkthrough.webp)](media/bank-intelligence-walkthrough-en-th.mp4)
 
-The current **4 minute 40 second walkthrough** uses English narration and burned-in Thai subtitles, edited and rendered with HyperFrames from actual application recordings and verified captures. It includes 30 narration scenes in 12 chapters and 69 distinct captured interface states, including recording inserts from seven source files. Close views and reading holds support inspection; this is an edited walkthrough rather than one continuous session. The film records the local build on its capture date; provider changes in that build are maintained separately from this media-only commit.
+The current **4 minute 40 second walkthrough** uses English narration and burned-in Thai subtitles, edited and rendered with HyperFrames from actual application recordings and verified captures. It includes 30 narration scenes in 12 chapters and 69 distinct captured interface states, including recording inserts from seven source files. Close views and reading holds support inspection; this is an edited walkthrough rather than one continuous session. The film records the local build on its capture date; see the [provider and routing contract](conversation-routing.md) for the current assistant behavior.
 
 **Repository video:** [open or download the MP4](media/bank-intelligence-walkthrough-en-th.mp4). The final video is stored directly in Git alongside this guide; no separate video-hosting account is required. GitHub/browser behavior determines whether the file previews or downloads.
 

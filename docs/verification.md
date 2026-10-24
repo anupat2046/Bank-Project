@@ -2,18 +2,20 @@
 
 [Documentation index](README.md) · [Setup commands](getting-started.md)
 
-Latest recorded application verification: **11 October 2026 (Asia/Bangkok)**. This page distinguishes what was tested from what remains unverified; it is not a live service-health page.
+Latest recorded LLM/application checks: **24 October 2026 (Asia/Bangkok)**; see [the dated hardening record](evidence/llm/hardening-2026-10-24.md). Other rows retain their historical evidence scope. This page distinguishes what was tested from what remains unverified; it is not a live service-health page.
 
 ## Evidence map
 
 | Check | Observed evidence | What it does not establish |
 | --- | --- | --- |
-| Python regression | 170 tests passed on the populated local database | General natural-language accuracy or production readiness |
+| Python regression | 212 tests passed on the populated local database | General natural-language accuracy or production readiness |
 | Deterministic analytics | 80 authored Thai cases: status, plan, and independent numerical checks passed | Live LLM accuracy on those 80 cases |
 | Frontend build | TypeScript checks and Next.js Docker production build passed | Load performance, accessibility certification, or user acceptance |
 | Browser workflows | Dated desktop/mobile checks and screenshots | A permanent automated browser test suite |
 | Live planner comparison | 24 turns, dev 10 / held-out 14, three strategies, retained failures | New-router accuracy or representative population accuracy |
 | Conversation service | Seven-turn HTTP smoke check with live Gemini and persisted context | Exhaustive router evaluation |
+| Current conversation regression | October 24: 60/60 authored offline HTTP turns passed with real warehouse arithmetic | Live Gemini accuracy or held-out generalization; live requests were quota-blocked |
+| Groq integration | October 24: live router/planner development checks and 3/3 HTTP smoke turns passed | Full 60-turn live coverage, held-out accuracy, or verified account billing tier |
 | Warehouse coverage | 77 provinces, 25 months, 1,925 rows | A month of scheduled-run continuity or verified upstream freshness |
 | Airflow/Grafana | Historical successful task/panel checks | Current uptime or uninterrupted daily scheduling |
 
