@@ -65,6 +65,9 @@ tmp/
 !/output/playwright/chatbot-clarification.png
 !/output/playwright/chatbot-comparison.png
 
+# Compressed walkthrough images referenced by public documentation.
+!/output/playwright/demo-*.webp
+
 # Operating-system/editor leftovers.
 .DS_Store
 Thumbs.db

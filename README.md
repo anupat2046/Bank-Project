@@ -24,6 +24,18 @@ The platform integrates five public sources into a province–month mart so anal
 
 The assistant uses Gemini to select a bounded conversational action when a key is configured. Analytical requests use a hybrid planner: known wording is resolved with semantic rules, unresolved paraphrases can use structured LLM output, and only validated plans reach read-only SQL. No-key mode remains usable with narrower offline routing and deterministic analytical coverage.
 
+## Feature walkthrough
+
+[![Open the narrated walkthrough: English voice and Thai subtitles](output/playwright/demo-narrated-walkthrough.webp)](docs/media/bank-intelligence-walkthrough-en-th.mp4)
+
+**[Open or download the 4:40 MP4](docs/media/bank-intelligence-walkthrough-en-th.mp4)** — English narration and Thai subtitles, edited and rendered with HyperFrames from actual application recordings and verified captures.
+
+Follow market overview, province comparison and screening, AI analysis and follow-ups, all ten business questions, sources, Grafana, Airflow, and mobile views. The film includes close views and reading holds. Captures are dated **24 October 2026**, with banking data through **July 2026**.
+
+[Chapter guide and screenshots](docs/demo.md) · [Thai subtitles](docs/media/bank-intelligence.th.srt) · [English transcript](docs/media/bank-intelligence.en.srt) · [Video verification](docs/evidence/narrated-video-qa-2026-10-24.md)
+
+The final MP4, compressed documentation images and subtitle text are versioned in this repository. Full-resolution masters and the editable HyperFrames project are maintained separately.
+
 ## Data and technology
 
 Verified snapshot: **77 provinces × 25 months = 1,925 analytical rows**, covering **July 2024–July 2026**. These are dated observations, not a guarantee of current upstream freshness.

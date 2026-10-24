@@ -1,0 +1,91 @@
+WEBVTT
+
+00:00:00.200 --> 00:00:05.650
+Which provinces should a banking team study next, and what evidence supports that choice?
+
+00:00:06.000 --> 00:00:13.450
+Thailand Regional Banking Intelligence compares market size, growth, and local context using public data.
+
+00:00:13.800 --> 00:00:19.450
+Start with a reporting month to review loans, deposits, branches, and annual growth.
+
+00:00:19.800 --> 00:00:26.650
+Explore monthly trends, search provinces, and inspect how lending concentrates across the country.
+
+00:00:27.000 --> 00:00:33.450
+Download results as CSV, and open the methodology to understand each calculation.
+
+00:00:33.800 --> 00:00:40.750
+Open a province for its history, selected metrics, population, and available economic context.
+
+00:00:41.100 --> 00:00:49.750
+Compare up to four provinces using absolute values, normalized measures, and indexed trends.
+
+00:00:50.100 --> 00:00:56.950
+Switch scatter plots between selected provinces and the national view, with Bangkok exclusion available.
+
+00:00:57.300 --> 00:01:08.950
+Adjust screening thresholds, inspect matching provinces, export candidates, and move them into comparison.
+
+00:01:09.300 --> 00:01:16.750
+Empty results stay visible, and a shortlist supports investigation rather than automatic expansion decisions.
+
+00:01:17.100 --> 00:01:25.150
+Ask the assistant in Thai for rankings, multiple metrics, comparisons, or monthly trends.
+
+00:01:25.500 --> 00:01:31.750
+This session uses Groq, while validated query plans retrieve the actual warehouse results.
+
+00:01:32.100 --> 00:01:39.350
+Inspect units, periods, SQL, and parameters; switch chart metrics or export the complete table.
+
+00:01:39.700 --> 00:01:51.350
+Follow up with new limits or explicit filters, then request an explanation or table.
+
+00:01:51.700 --> 00:02:00.350
+Ambiguous questions prompt clarification, while unavailable data, including nonperforming loans, receives a clear boundary.
+
+00:02:00.700 --> 00:02:09.350
+Context survives navigation; reset starts fresh, although some terse follow-ups still need clearer wording.
+
+00:02:09.700 --> 00:02:18.250
+Ten guided business questions provide computed summaries, visualizations, and inspectable SQL for each result.
+
+00:02:18.600 --> 00:02:28.450
+The first three examine positive growth months, deposit versus lending growth, and branch density.
+
+00:02:28.800 --> 00:02:38.650
+Next, compare similarly sized economies, policy-rate periods, and places where branches fall while loans rise.
+
+00:02:39.000 --> 00:02:52.250
+The remaining questions cover screening, loan-to-deposit ratios, deposits per resident, and national lending concentration.
+
+00:02:52.600 --> 00:02:59.550
+Historical periods without enough observations show an empty state instead of fabricated numbers.
+
+00:02:59.900 --> 00:03:19.950
+The sources page connects five datasets across four institutions, with coverage and traceable provenance.
+
+00:03:20.300 --> 00:03:28.950
+Inspect reference years, retrieval dates, raw-file hashes, timing rules, and recorded ingestion outcomes.
+
+00:03:29.300 --> 00:03:37.750
+Unavailable historical inflation remains missing because its observed publication vintage follows the banking periods.
+
+00:03:38.100 --> 00:03:49.150
+Grafana separates operations into pipeline health, data quality, and AI and API performance dashboards.
+
+00:03:49.500 --> 00:03:58.150
+Review failures, timing, coverage, and observed usage separately from the business analysis.
+
+00:03:58.500 --> 00:04:09.550
+Airflow shows actual run history, task dependencies, and the details of a successful scheduled run.
+
+00:04:09.900 --> 00:04:16.650
+A successful run demonstrates execution, but does not establish uninterrupted daily scheduling.
+
+00:04:17.000 --> 00:04:31.050
+On mobile, navigate between overview, comparisons, conversation, results, business questions, and source information.
+
+00:04:31.400 --> 00:04:39.950
+The recorded snapshot covers seventy-seven provinces and twenty-five months, with transparent calculations and limitations.
