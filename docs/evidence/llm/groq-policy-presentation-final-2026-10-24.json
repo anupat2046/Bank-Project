@@ -1,0 +1,80 @@
+{
+  "measured_at": "2026-10-24T17:33:44.208253+00:00",
+  "mode": "live HTTP",
+  "dataset": "authored conversation regression; not held-out",
+  "scenario": 16,
+  "as_of": "2026-07-01",
+  "planned": 3,
+  "attempted": 3,
+  "not_run": 0,
+  "passed": 3,
+  "delay_seconds": 10.0,
+  "blocked_reason": null,
+  "live_evaluation_complete": true,
+  "live_all_checks_passed": true,
+  "cases": [
+    {
+      "id": "C16-1",
+      "errors": [],
+      "route": "analytics",
+      "status": "ready",
+      "latency_ms": 1974.24,
+      "telemetry": {
+        "latency_ms": 1932.25,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 685,
+        "output_tokens": 36,
+        "total_tokens": 721,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "analytics"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C16-2",
+      "errors": [],
+      "route": "capabilities",
+      "status": "ready",
+      "latency_ms": 400.82,
+      "telemetry": {
+        "latency_ms": 366.56,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 868,
+        "output_tokens": 50,
+        "total_tokens": 918,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "capabilities"
+        ],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "C16-3",
+      "errors": [],
+      "route": "presentation",
+      "status": "ready",
+      "latency_ms": 695.55,
+      "telemetry": {
+        "latency_ms": 658.62,
+        "llm_calls": 1,
+        "provider_errors": 0,
+        "input_tokens": 998,
+        "output_tokens": 50,
+        "total_tokens": 1048,
+        "estimated_cost_usd": null,
+        "clarification": false,
+        "routes": [
+          "presentation"
+        ],
+        "failure_types": []
+      }
+    }
+  ]
+}

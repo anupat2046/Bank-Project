@@ -1,0 +1,166 @@
+{
+  "measured_at": "2026-10-24T16:41:35.882462+00:00",
+  "scope": "four prior repaired router inputs; diagnostic development reproduction, not a benchmark",
+  "cases": [
+    {
+      "id": "C01-1",
+      "final_route": "analytics",
+      "provider_failure": null,
+      "attempts": [
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "bar"
+        },
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "auto"
+        }
+      ],
+      "telemetry": {
+        "llm_calls": 2,
+        "llm_latency_ms": 1083.18,
+        "provider_errors": 0,
+        "input_tokens": 1002,
+        "output_tokens": 99,
+        "total_tokens": 1101,
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C11-1",
+      "final_route": "analytics",
+      "provider_failure": null,
+      "attempts": [
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "line"
+        },
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "auto"
+        }
+      ],
+      "telemetry": {
+        "llm_calls": 2,
+        "llm_latency_ms": 1122.67,
+        "provider_errors": 0,
+        "input_tokens": 990,
+        "output_tokens": 94,
+        "total_tokens": 1084,
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C12-1",
+      "final_route": "analytics",
+      "provider_failure": null,
+      "attempts": [
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "line"
+        },
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "auto"
+        }
+      ],
+      "telemetry": {
+        "llm_calls": 2,
+        "llm_latency_ms": 937.15,
+        "provider_errors": 0,
+        "input_tokens": 1006,
+        "output_tokens": 106,
+        "total_tokens": 1112,
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    },
+    {
+      "id": "C16-1",
+      "final_route": "analytics",
+      "provider_failure": null,
+      "attempts": [
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "line"
+        },
+        {
+          "parsed": true,
+          "parsing_error_type": null,
+          "has_route": true,
+          "has_chart": true,
+          "unexpected_field_count": 0,
+          "has_planner_status": false,
+          "has_planner_plan": false,
+          "route": "analytics",
+          "chart": "auto"
+        }
+      ],
+      "telemetry": {
+        "llm_calls": 2,
+        "llm_latency_ms": 608.07,
+        "provider_errors": 0,
+        "input_tokens": 1000,
+        "output_tokens": 80,
+        "total_tokens": 1080,
+        "failure_types": [
+          "RoutingOutputError"
+        ]
+      }
+    }
+  ]
+}

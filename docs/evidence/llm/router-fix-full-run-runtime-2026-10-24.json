@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-10-24T17:18:57.974485+00:00",
+  "provider": "groq",
+  "groq_model": "openai/gpt-oss-20b",
+  "deployed_sha256_lf": {
+    "bank/chat.py": "9400d4571caf53afbddede475d7f0c491a0ccd5916de57f886c2b28bf8bb1ed2",
+    "bank/llm_runtime.py": "f34c32b560ab358efcc3f1356b58dfd7c0bd9342cc7170a613b5ba6253133c50",
+    "bank/conversation.py": "a1f0e7dda5a1a5469b06022ab187e0b3a52b1a1a10ee59670467a16930612fce",
+    "bank/intent.py": "33d698a5a350698325f3550fc4ae992a1e9bdc548ea938a361d3d1079a68ccd0",
+    "bank/insights.py": "e0d253fb4e9f96986d540cab8d02a3740fc084444151bf1e794fea2bd25e1214",
+    "bank/semantic_validation.py": "edaffb8a710e99644d7395e5d8f0f6eeb98a482f3ca68ccaf5727cf1f384b66a",
+    "bank/api.py": "aebbd931900d31d7a252336f228e4b78aa76d115d3ce06570b4cbf84c57ed8f8",
+    "bank/query.py": "858646155d704e170e6621890f208df5a8b8c18223be7e2e3301de31b355dfa3"
+  },
+  "repository_before_fix": "e74a47f0237f54b281bfc30ece2ef48199330351",
+  "local_sha256_lf": {
+    "bank/chat.py": "9400d4571caf53afbddede475d7f0c491a0ccd5916de57f886c2b28bf8bb1ed2",
+    "bank/llm_runtime.py": "f34c32b560ab358efcc3f1356b58dfd7c0bd9342cc7170a613b5ba6253133c50",
+    "bank/conversation.py": "a1f0e7dda5a1a5469b06022ab187e0b3a52b1a1a10ee59670467a16930612fce",
+    "bank/intent.py": "33d698a5a350698325f3550fc4ae992a1e9bdc548ea938a361d3d1079a68ccd0",
+    "bank/insights.py": "e0d253fb4e9f96986d540cab8d02a3740fc084444151bf1e794fea2bd25e1214",
+    "bank/semantic_validation.py": "edaffb8a710e99644d7395e5d8f0f6eeb98a482f3ca68ccaf5727cf1f384b66a",
+    "bank/api.py": "aebbd931900d31d7a252336f228e4b78aa76d115d3ce06570b4cbf84c57ed8f8",
+    "bank/query.py": "858646155d704e170e6621890f208df5a8b8c18223be7e2e3301de31b355dfa3"
+  },
+  "fixture_sha256": {
+    "tests/fixtures/router_validation.json": "ae82305203d25c19ca147270a0a42ae594cd1215e52484804a5d72d8e213a58d",
+    "tests/fixtures/router_followup_validation.json": "924b14c204dd3b0258da7c7fb665961b89139fc91896fc4d21e5ee7959036381",
+    "tests/fixtures/router_ranking_validation.json": "a4bafdf05dec1fd1e862766df3f379633c4b72804b17c4c2700aa24dddfa6b86",
+    "tests/fixtures/conversation_regression.json": "5e8330e08a5e17843e2a8a5cdb68128ed175e3e052730d2ee760a5e772ef650d"
+  },
+  "evaluator_sha256_lf": {
+    "tools/evaluate_router.py": "5324da846fcbca47b0cc47242b550a06fcc1075321200cf13c1c39a719d6f678",
+    "tools/evaluate_conversation.py": "def7ecddb360862c00e9cb4c66bc6d86f6a54c58cff3d1c447b65937989f16b8"
+  },
+  "warehouse": {
+    "rows": 1925,
+    "latest_period": "2026-07-01",
+    "sha256": "46ea2e5e97938ed933b47c879af022b2a13bc7aeeba83f1e7500066cc92b23a5"
+  },
+  "deployment": "Final local source layer on the existing bank-api dependency image. All inspected deployed application files match local files. Earlier development reports retain their own source fingerprints; the final 60-turn report exercises this implementation."
+}

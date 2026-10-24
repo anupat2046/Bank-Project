@@ -82,14 +82,14 @@ Grafana เปลี่ยนเป็น [Operational Monitoring](docs/operatio
 
 ## ผลตรวจ
 
-ผลตรวจล่าสุดที่บันทึก: **24 ตุลาคม 2569 (Asia/Bangkok)**
+ผลตรวจผู้ช่วยล่าสุดที่บันทึก: **25 ตุลาคม 2569 (Asia/Bangkok)** ส่วนการตรวจอื่นคงขอบเขตตามหลักฐานเดิม
 
 | การตรวจ | ผล | ขอบเขตหลักฐาน |
 | --- | --- | --- |
-| Python regression | 212 tests ผ่าน | Analytics บนฐานข้อมูลจริง และ provider tests แบบ deterministic/mock |
+| Python regression | 235 tests ผ่าน | Analytics บนฐานข้อมูลจริง และ provider tests แบบ deterministic/mock |
 | คำถามวิเคราะห์ภาษาไทย | Offline 80 ข้อผ่าน | สถานะ แผน และผลคำนวณอิสระ |
 | บทสนทนาต่อเนื่อง | Offline 60/60 เทิร์นผ่าน | Routing, บริบท, ถามกลับ, การแสดงผลและตัวเลข |
-| Groq live conversation | [Live HTTP ผ่าน 60/60 เทิร์น](docs/evidence/llm/groq-conversation-live-60-2026-10-24.md), เรียกโมเดล 67 ครั้ง และตรวจตัวเลขผ่าน 40/40 | ทดสอบระบบ hybrid บนชุดที่เขียนไว้ ไม่ใช่ held-out หรือ LLM-only; เก็บเหตุการณ์แก้รูปแบบ Router 4 ครั้งไว้ในรายงาน |
+| Groq live conversation | [ตรวจแยกรอบ](docs/evidence/llm/router-contract-fix-2026-10-24.md): ชุดเต็ม 60/60 เทิร์น ตัวเลข 40/40; ยืนยันเคสดอกเบี้ยหลังแก้สุดท้าย 3/3 | ชุดเต็มกับการยืนยันเฉพาะจุดใช้คนละ revision ที่ระบุไว้ ไม่ใช่ held-out หรือ LLM-only accuracy |
 | Frontend | TypeScript และ Docker production build ผ่าน | ตรวจ build ไม่ใช่ผล load test หรือการรับรอง accessibility |
 
 ผลเปรียบเทียบ Gemini วันที่ **11 ตุลาคม** เก็บแยกเป็นหลักฐานย้อนหลัง: development 10 และ held-out 14 เทิร์น เทียบสามวิธี Hybrid ผ่าน 14/14 แต่ไม่ได้เรียก LLM ใน split นี้ ส่วน LLM-only ผ่าน 6/14 ตาม rubric แบบเข้มงวด ผลเหล่านี้ไม่ครอบคลุม router รุ่นใหม่และไม่ใช่ผลประเมิน Groq ปัญหาบัญชี provider เก็บไว้ในหลักฐานตามวันที่ ไม่ใช้เป็นคำอธิบายความสามารถถาวรของระบบ

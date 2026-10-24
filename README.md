@@ -92,14 +92,14 @@ The walkthrough captures document the local application on 24 October 2026. See 
 
 ## Verification
 
-Latest recorded checks: **24 October 2026 (Asia/Bangkok)**.
+Latest recorded assistant checks: **25 October 2026 (Asia/Bangkok)**; other checks retain their dated evidence scope.
 
 | Check | Recorded result | What it establishes |
 | --- | --- | --- |
-| Python regression | 212 passed | Database-backed analytics and deterministic/mocked provider checks |
+| Python regression | 235 passed | Database-backed analytics and deterministic/mocked provider checks |
 | Thai analytical corpus | 80 offline cases passed | Status, plan and independently calculated results |
 | Conversation regression | 60/60 offline turns passed | Routing, context, clarification, presentation and warehouse arithmetic |
-| Groq live conversation | [60/60 authored HTTP turns passed](docs/evidence/llm/groq-conversation-live-60-2026-10-24.md); 67 model calls, 40/40 arithmetic checks | Hybrid-system regression, not held-out or LLM-only accuracy; four bounded router repairs retained |
+| Groq live conversation | [Staged verification](docs/evidence/llm/router-contract-fix-2026-10-24.md): full HTTP 60/60, arithmetic 40/40; final policy correction 3/3 | Authored hybrid regression; full run and targeted correction have separate source fingerprints, not held-out or LLM-only accuracy |
 | Frontend | TypeScript and Docker production build passed | Build verification, not a load or accessibility certification |
 
 The historical **11 October Gemini planner comparison** is retained separately: 10 development and 14 held-out turns across three strategies. Hybrid passed 14/14 held-out turns with **zero model calls** on that split; LLM-only passed 6/14 under the strict rubric. Those scores do not measure the later conversational router or establish Groq accuracy. Account-specific provider failures remain in the dated evidence, not product capability claims.

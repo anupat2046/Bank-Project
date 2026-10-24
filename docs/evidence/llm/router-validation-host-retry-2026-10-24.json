@@ -1,0 +1,159 @@
+{
+  "measured_at": "2026-10-24T16:50:45.574475+00:00",
+  "mode": "live direct router; no SQL",
+  "dataset": "authored routing validation; not representative or untouched held-out evidence",
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "delay_seconds": 10.0,
+  "planned": 18,
+  "attempted": 5,
+  "passed": 4,
+  "not_run": 13,
+  "blocked_reason": "provider_timeout",
+  "fixture_sha256": "ae82305203d25c19ca147270a0a42ae594cd1215e52484804a5d72d8e213a58d",
+  "source_sha256_lf": {
+    "bank/conversation.py": "b82af1b33996abc1d785e615546b64244ef45f4fb3628734f052740d2f1d5ba7",
+    "bank/llm_runtime.py": "f34c32b560ab358efcc3f1356b58dfd7c0bd9342cc7170a613b5ba6253133c50"
+  },
+  "cases": [
+    {
+      "id": "R01",
+      "errors": [],
+      "route": "analytics",
+      "chart": "auto",
+      "latency_ms": 2005.83,
+      "telemetry": {
+        "request_id": "da352118-42a7-4b2b-bb0c-ef728cbbde2b",
+        "timestamp_utc": "2026-10-24T16:49:51.786417+00:00",
+        "strategy": "hybrid",
+        "status": "ready",
+        "latency_ms": 2005.83,
+        "llm_calls": 1,
+        "llm_latency_ms": 801.33,
+        "provider_errors": 0,
+        "input_tokens": 664,
+        "output_tokens": 41,
+        "total_tokens": 705,
+        "reasoning_tokens": 23,
+        "estimated_cost_usd": null,
+        "cost_basis": "not configured / usage unavailable",
+        "clarification": false,
+        "error": false,
+        "routes": [],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "R02",
+      "errors": [],
+      "route": "analytics",
+      "chart": "auto",
+      "latency_ms": 674.8,
+      "telemetry": {
+        "request_id": "3434cdb2-8a93-4938-9864-472992a03afe",
+        "timestamp_utc": "2026-10-24T16:50:02.462723+00:00",
+        "strategy": "hybrid",
+        "status": "ready",
+        "latency_ms": 674.8,
+        "llm_calls": 1,
+        "llm_latency_ms": 673.82,
+        "provider_errors": 0,
+        "input_tokens": 657,
+        "output_tokens": 39,
+        "total_tokens": 696,
+        "reasoning_tokens": 21,
+        "estimated_cost_usd": null,
+        "cost_basis": "not configured / usage unavailable",
+        "clarification": false,
+        "error": false,
+        "routes": [],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "R03",
+      "errors": [],
+      "route": "analytics",
+      "chart": "auto",
+      "latency_ms": 594.25,
+      "telemetry": {
+        "request_id": "e9f7e8cb-6c5f-4871-9a1e-f8a6a4e538da",
+        "timestamp_utc": "2026-10-24T16:50:13.058117+00:00",
+        "strategy": "hybrid",
+        "status": "ready",
+        "latency_ms": 594.25,
+        "llm_calls": 1,
+        "llm_latency_ms": 593.53,
+        "provider_errors": 0,
+        "input_tokens": 669,
+        "output_tokens": 48,
+        "total_tokens": 717,
+        "reasoning_tokens": 34,
+        "estimated_cost_usd": null,
+        "cost_basis": "not configured / usage unavailable",
+        "clarification": false,
+        "error": false,
+        "routes": [],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "R04",
+      "errors": [],
+      "route": "analytics",
+      "chart": "auto",
+      "latency_ms": 443.24,
+      "telemetry": {
+        "request_id": "6c90ecff-9eef-4a29-bde8-532eb483c7e8",
+        "timestamp_utc": "2026-10-24T16:50:23.502641+00:00",
+        "strategy": "hybrid",
+        "status": "ready",
+        "latency_ms": 443.24,
+        "llm_calls": 1,
+        "llm_latency_ms": 442.47,
+        "provider_errors": 0,
+        "input_tokens": 660,
+        "output_tokens": 18,
+        "total_tokens": 678,
+        "reasoning_tokens": 4,
+        "estimated_cost_usd": null,
+        "cost_basis": "not configured / usage unavailable",
+        "clarification": false,
+        "error": false,
+        "routes": [],
+        "failure_types": []
+      }
+    },
+    {
+      "id": "R05",
+      "errors": [
+        "provider"
+      ],
+      "route": null,
+      "chart": null,
+      "latency_ms": 12069.64,
+      "telemetry": {
+        "request_id": "cc3f3933-88d2-4771-9b17-b776a5b4ae07",
+        "timestamp_utc": "2026-10-24T16:50:45.574457+00:00",
+        "strategy": "hybrid",
+        "status": "error",
+        "latency_ms": 12069.64,
+        "llm_calls": 1,
+        "llm_latency_ms": 12068.88,
+        "provider_errors": 1,
+        "input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null,
+        "reasoning_tokens": null,
+        "estimated_cost_usd": null,
+        "cost_basis": "not configured / usage unavailable",
+        "clarification": false,
+        "error": true,
+        "routes": [],
+        "failure_types": [
+          "provider_timeout"
+        ]
+      }
+    }
+  ]
+}

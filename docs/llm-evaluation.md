@@ -41,15 +41,19 @@ The plan rubric is deliberately strict about fields. An unused/redundant `start_
 
 The intermediate development report is retained. The historical benchmark's final version is v3; the current application uses v4. Before/after comparisons in that historical report were measured on both splits, with no tuning after held-out outcomes. A single pass and temperature zero do not establish reproducible accuracy or eliminate model variability. Larger paraphrase sets, user testing and repeated trials remain future work.
 
-## Current conversation regression (24 October 2026)
+## Current conversation regression (24–25 October 2026)
 
 See [hardening evidence](evidence/llm/hardening-2026-10-24.md) for current limits, the offline 60-turn HTTP regression and the earlier quota-blocked Gemini live attempt. A later [live Groq run](evidence/llm/groq-conversation-live-60-2026-10-24.md) passed 60/60 authored turns and 40/40 independent arithmetic checks, with 67 model calls, no provider errors and four bounded router structured-output repairs. These runs are separate from the historical planner-only comparison. Do not merge their scores or describe offline fallback as successful Gemini evaluation. The Groq result evaluates the hybrid service, not held-out or LLM-only accuracy.
+
+The subsequent [router contract correction](evidence/llm/router-contract-fix-2026-10-24.md) records 235 tests, staged routing validation and a complete 60/60 HTTP run with 40/40 arithmetic checks and one policy-chart guard fallback. The last narrow default-limit correction was then confirmed through scenario C16, **3/3 live turns with no repair/fallback**. That targeted confirmation is not a new full-corpus rerun; fingerprints, interrupted host runs and the intermediate 58/60 result are retained. Added routing phrases were authored validation/development cases, not representative held-out evidence.
 
 ```powershell
 # No provider calls; real local warehouse, in-process HTTP and isolated checkpoints.
 .\.venv\Scripts\python.exe -m tools.evaluate_conversation --max-requests 60 --out data/eval/conversation-offline.json
 # Explicit live API calls; stop on provider failure. Start small before a full 60-turn run.
 .\.venv\Scripts\python.exe -m tools.evaluate_conversation --live --max-requests 6 --delay 10 --progress --out data/eval/conversation-live.json
+# Targeted policy-rate trend → capabilities → table; reports planned=3, scenario=16.
+.\.venv\Scripts\python.exe -m tools.evaluate_conversation --live --scenario 16 --max-requests 3 --delay 10 --progress --out data/eval/policy-live.json
 ```
 
 The live driver stops if the configured provider is unavailable/unconfigured, even when rules return an answer. Limits count HTTP turns; each turn can make up to three model calls. `--delay` spaces turns by 0–60 seconds; a chosen delay does not establish account-specific quota compliance. `--progress` prints only case IDs and progress to stderr, keeping the JSON report separate. Independent arithmetic is checked against warehouse records; plans, routes, statuses and presentation/context behavior have separate failures. The authored regression is not held-out evidence. Run a newly frozen, separately reviewed held-out corpus after quota recovery before claiming generalization or a current rules/LLM/hybrid advantage.

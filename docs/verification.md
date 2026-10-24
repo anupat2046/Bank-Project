@@ -2,20 +2,21 @@
 
 [Documentation index](README.md) · [Setup commands](getting-started.md)
 
-Latest recorded LLM/application checks: **24 October 2026 (Asia/Bangkok)**; see [the dated hardening record](evidence/llm/hardening-2026-10-24.md). Other rows retain their historical evidence scope. This page distinguishes what was tested from what remains unverified; it is not a live service-health page.
+Latest recorded assistant checks: **25 October 2026 (Asia/Bangkok)**; see [the router contract correction](evidence/llm/router-contract-fix-2026-10-24.md) and [earlier hardening record](evidence/llm/hardening-2026-10-24.md). New raw artifact filenames use the UTC date, 24 October. Other rows retain their historical evidence scope. This page distinguishes what was tested from what remains unverified; it is not a live service-health page.
 
 ## Evidence map
 
 | Check | Observed evidence | What it does not establish |
 | --- | --- | --- |
-| Python regression | 212 tests passed on the populated local database | General natural-language accuracy or production readiness |
+| Python regression | 235 tests passed on the populated local database | General natural-language accuracy or production readiness |
 | Deterministic analytics | 80 authored Thai cases: status, plan, and independent numerical checks passed | Live LLM accuracy on those 80 cases |
 | Frontend build | TypeScript checks and Next.js Docker production build passed | Load performance, accessibility certification, or user acceptance |
 | Browser workflows | Dated desktop/mobile checks and screenshots | A permanent automated browser test suite |
 | Live planner comparison | 24 turns, dev 10 / held-out 14, three strategies, retained failures | New-router accuracy or representative population accuracy |
 | Conversation service | Seven-turn HTTP smoke check with live Gemini and persisted context | Exhaustive router evaluation |
 | Current conversation regression | October 24: 60/60 authored offline HTTP turns passed with real warehouse arithmetic | Live Gemini accuracy or held-out generalization; the earlier Gemini live attempt was quota-blocked |
-| Groq live conversation | October 24: [60/60 authored HTTP turns passed](evidence/llm/groq-conversation-live-60-2026-10-24.md), 67 model calls, 40/40 arithmetic checks; four bounded router repairs retained | Held-out or LLM-only accuracy, repeated-run stability, load performance or verified account billing tier |
+| Groq full live conversation | [60/60 authored HTTP turns, 40/40 arithmetic checks](evidence/llm/router-contract-fix-2026-10-24.md), 64 model calls; one policy-chart guard fallback retained | Held-out or LLM-only accuracy, repeated-run stability, load performance or verified account billing tier |
+| Final policy-chart correction | Same record: targeted C16 passed 3/3, two arithmetic checks, three calls, no repair/fallback after the narrow guard correction | A new full-corpus live rerun on that last revision; source fingerprints distinguish the stages |
 | Warehouse coverage | 77 provinces, 25 months, 1,925 rows | A month of scheduled-run continuity or verified upstream freshness |
 | Airflow/Grafana | Historical successful task/panel checks | Current uptime or uninterrupted daily scheduling |
 

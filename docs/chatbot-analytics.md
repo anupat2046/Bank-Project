@@ -1,6 +1,6 @@
 # Conversational banking analytics
 
-Implemented and verified locally, with the latest regression checks on 24 October 2026 (Asia/Bangkok). This is a constrained analytical assistant over real public data, not an unrestricted SQL agent or a banking adviser.
+Implemented and verified locally, with the latest assistant checks on 25 October 2026 (Asia/Bangkok). This is a constrained analytical assistant over real public data, not an unrestricted SQL agent or a banking adviser.
 
 ## Business purpose
 
@@ -76,9 +76,9 @@ The assistant shows actual period, scope, units, formulas, ranking universe, SQL
 
 The versioned [80 Thai golden questions](../tests/fixtures/chat_cases.json) contain 70 executable cases, five clarification cases and five unsupported cases. Each records expected plan fields or expected refusal/clarification. [Database-backed tests](../tests/test_chat_analytics.py) additionally calculate expected results independently from raw mart rows: Python arithmetic checks ratios, prior-year alignment, weighted national results, filters, ranking universe and order. The oracle does not reuse the SQL compiler or its metric formulas. Conversation tests cover clarification resolution, context preservation, isolation, reset and stale-result prevention; mock-provider tests cover structured decisions.
 
-Latest local regression verification on 24 October 2026:
+Latest local assistant verification on 25 October 2026:
 
-- Current full suite: **212 passed**, including conversation routing, LLM hardening and Groq selection. The earlier analytics-only and planner-evaluation snapshots recorded 131 and 143 tests respectively. See [October 24 checks](evidence/llm/hardening-2026-10-24.md) and [Groq integration](evidence/llm/groq-integration-2026-10-24.md) for separate offline/live evidence and limitations.
+- Current full suite: **235 passed**, including routing/row-change guard regressions, LLM hardening and provider selection. The [router correction record](evidence/llm/router-contract-fix-2026-10-24.md) distinguishes the complete 60/60 live HTTP run from the final targeted 3/3 policy-chart check on the last narrow correction. Earlier snapshots recorded 131, 143 and 212 tests. See [earlier hardening checks](evidence/llm/hardening-2026-10-24.md) and [Groq integration](evidence/llm/groq-integration-2026-10-24.md) for their separate historical scope.
 
 Earlier local verification on 11 October 2026:
 - Offline golden evaluator: **80/80 status, plan and result checks passed**. This tests the deterministic path on this fixed corpus, **not 100% natural-language or LLM accuracy**.

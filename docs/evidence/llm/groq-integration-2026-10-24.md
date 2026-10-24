@@ -4,7 +4,7 @@ Groq is supported through the existing OpenAI-compatible LangChain client at the
 
 Explicit `LLM_PROVIDER=groq` never falls back to Gemini/OpenAI when the key is missing or the provider fails. Existing keys may remain privately configured without being used. Billing tier is controlled by the provider account, not verified or changed by this application. Free-tier limits are not unlimited-use guarantees.
 
-## Recorded checks
+## Initial integration checks
 
 - 212 Python tests passed, including explicit-provider selection, no cross-provider fallback, fixed Groq endpoint, bounded settings and structured-output adapter configuration.
 - A direct live router check returned `greeting`, one model call, no provider error and 438 total tokens.
@@ -16,5 +16,7 @@ Explicit `LLM_PROVIDER=groq` never falls back to Gemini/OpenAI when the key is m
 - `.env` is ignored by Git, not tracked, and excluded from Docker build context. No key value is included in this evidence. A key exposed in chat must be revoked and replaced privately before continued/shared use.
 
 The initial smoke attempted only **3/60** conversation-regression turns. A later [full live Groq run](groq-conversation-live-60-2026-10-24.md) completed **60/60**, with **40/40 arithmetic checks**, **67 model calls** and no provider errors. Four router structured-output repairs were retained in the evidence. This is authored hybrid-system regression, not held-out or LLM-only accuracy. The offline regression and historical Gemini planner scores remain separate evidence. Costs remain unknown when rates/usage are unavailable, not automatically zero because a free plan exists.
+
+The later [router contract correction](router-contract-fix-2026-10-24.md), completed on 25 October in Asia/Bangkok, records 235 tests and staged live checks: a full 60/60 HTTP run with 40/40 arithmetic checks, followed by a final targeted 3/3 policy-chart confirmation without repair/fallback. Earlier four repairs, host timeouts, the intermediate 58/60 run and the policy guard fallback remain documented with their source fingerprints. The final targeted check is kept separate from the preceding full-corpus run.
 
 The API was updated using the existing dependency image plus changed application files; a clean dependency installation was not performed. The frontend was not changed by this provider integration. Full held-out Thai-language evaluation, repeated trials and account-specific quota/load checks remain outstanding.
