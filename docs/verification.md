@@ -49,6 +49,7 @@ To claim uninterrupted operation, inspect actual scheduled runs for the entire c
 
 ## Dated artifacts
 
+- [UI wording, responsive layout, and conversation navigation checks — 24 October](evidence/ux-qa-2026-10-24.md)
 - [Competency query SQL/results](competency-questions.md)
 - [Next.js browser verification](evidence/nextjs-qa.md)
 - [Analytical assistant checks](chatbot-analytics.md)

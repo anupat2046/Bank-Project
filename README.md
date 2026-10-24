@@ -76,6 +76,8 @@ For optional Gemini configuration, Grafana/Airflow setup, development, verificat
 
 Additional captures: [province detail](output/playwright/nextjs-provinces.png), [business question](output/playwright/nextjs-questions.png), [source quality](output/playwright/nextjs-sources.png), and [mobile overview](output/playwright/nextjs-mobile.png). Grafana now provides [operational monitoring](docs/operations.md); previous Grafana captures show the retired business-reporting view.
 
+The screenshots above were refreshed on 24 October 2026. See the [UI verification record](docs/evidence/ux-qa-2026-10-24.md) for tested workflows and limitations.
+
 These captures document dated local builds. The latest conversational router was verified through HTTP integration checks; older assistant images do not demonstrate its newer behavior. Design concepts are labelled separately from working-product evidence.
 
 ## Verification

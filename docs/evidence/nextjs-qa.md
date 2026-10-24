@@ -1,5 +1,7 @@
 # Next.js application verification — 10–11 October 2026
 
+The shared overview, province detail, screening, question, sources, and mobile screenshots were refreshed on 24 October. See the [later UI verification](ux-qa-2026-10-24.md) for their current scope. The observations and Gemini check below retain their original dates.
+
 Historical evidence for the five-page Next.js application and its allowlisted Python API proxy. The 43-test count below belongs to this verification stage; the current suite and subsequent assistant work are documented in [verification status](../verification.md). This is not a live runtime-status page.
 
 Follow-up on **11 October 2026**: 43 local Python tests passed; `pip check` found no broken requirements; API and web images rebuilt successfully. Next.js returned HTTP 200; warehouse health remained OK with 25 months. All ten competency-question endpoints returned results through the Next.js proxy. Database volumes were not changed.
