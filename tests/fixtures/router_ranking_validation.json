@@ -1,0 +1,10 @@
+[
+  {"id":"K01","question":"เอา 4 อันดับ","route":"analytics","chart":"auto","has_result":true},
+  {"id":"K02","question":"เอา 2 อันดับแล้วใช้ตาราง","route":"analytics","chart":"auto","has_result":true},
+  {"id":"K03","question":"เปลี่ยนเป็นอันดับต่ำสุดแทน","route":"analytics","chart":"auto","has_result":true},
+  {"id":"K04","question":"ขอ Top 9 เป็นกราฟแท่ง","route":"analytics","chart":"auto","has_result":true},
+  {"id":"K05","question":"ใช้จำนวนอันดับเท่าเดิม เปลี่ยนเป็นตาราง","route":"presentation","chart":"table","has_result":true},
+  {"id":"K06","question":"Keep the ranking and rows unchanged; show a bar chart","route":"presentation","chart":"bar","has_result":true},
+  {"id":"K07","question":"เปลี่ยนเป็นกราฟเส้นอย่างเดียว","route":"presentation","chart":"line","has_result":true},
+  {"id":"K08","question":"เทียบดอกเบี้ยนโยบายย้อนหลัง 7 เดือน","route":"analytics","chart":"auto"}
+]

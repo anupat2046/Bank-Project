@@ -62,7 +62,7 @@ def explicit_dates(q):
             dates.append(date(year-543 if year > 2400 else year, i, 1))
     return sorted(set(dates))
 
-def parse_question(question: str, context: dict | None = None, version: str = 'v1') -> QueryPlan:
+def parse_question(question: str, context: dict | None = None, version: str = 'v1', *, province_catalog=None) -> QueryPlan:
     if version in ['v2','v3','v4']:
         # Development-driven lexical normalization; preserve denominator guards.
         question = re.sub(r'ยอดออม|เงินออม','เงินฝาก',question)
@@ -101,7 +101,7 @@ def parse_question(question: str, context: dict | None = None, version: str = 'v
     aliases = {'กรุงเทพ':'กรุงเทพมหานคร','กทม.':'กรุงเทพมหานคร','กทม':'กรุงเทพมหานคร'}
     named = []
     excluded = any(w in q for w in ['ไม่รวมกรุงเทพ','ไม่เอากรุงเทพ','ไม่รวม กทม','ไม่เอา กทม','exclude bangkok'])
-    for p in _provinces():
+    for p in (_provinces() if province_catalog is None else province_catalog):
         names = [str(p['name_th']),str(p['name_en']).lower()]
         if p['province_code']==10:
             names += list(aliases)

@@ -96,9 +96,9 @@ def invoke_structured(model, schema, prompt, provider, phase):
         # of local Pydantic/semantic validation or permission to execute raw SQL.
         options = {'method':'json_mode'} if provider == 'groq' else {}
         if provider == 'groq':
-            prompt += ('\nReturn one JSON object matching this schema. Omit unused optional fields '
-                       'rather than filling them with null. Array fields must be arrays, never null. '
-                       'For non-ready decisions plan=null; for ready decisions return a plan object.\n'
+            prompt += ('\nReturn one JSON object matching this schema using only its declared properties '
+                       'and literal enum values. Omit unused optional fields rather than filling them '
+                       'with null. Array fields must be arrays, never null.\n'
                        +json.dumps(schema.model_json_schema(), ensure_ascii=False))
         output = model.with_structured_output(schema, include_raw=True, **options).invoke(prompt)
     except Exception as exc:

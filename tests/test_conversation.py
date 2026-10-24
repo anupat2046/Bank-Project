@@ -105,6 +105,118 @@ def test_llm_router_invalid_chart_bounded_failure(monkeypatch):
     with pytest.raises(RoutingOutputError): route_conversation('help',None,[],False,'gemini')
     assert len(calls)==2
 
+
+@pytest.mark.parametrize('invalid',[
+    {'route':'analytics','chart':'bar'},
+    {'route':'analytics','chart':'line'},
+    {'route':'analytics','chart':'table'},
+    {'route':'unknown','chart':'auto'},
+    {'route':'analytics','chart':None},
+    {'chart':'auto'},
+    {'route':'analytics','chart':'auto','plan':{'sql':'private injected value'}},
+])
+def test_router_rejects_invalid_contract_then_repairs_once(monkeypatch,invalid):
+    from pydantic import ValidationError
+    from bank import conversation
+    calls=[]
+    def invoke(model,schema,prompt,provider,phase):
+        calls.append(prompt)
+        try:
+            parsed=schema.model_validate(invalid if len(calls)==1 else {'route':'analytics','chart':'auto'})
+            return {'parsed':parsed,'parsing_error':None}
+        except ValidationError as exc:
+            return {'parsed':None,'parsing_error':exc}
+    monkeypatch.setattr(conversation,'build_model',lambda provider:object())
+    monkeypatch.setattr(conversation,'invoke_structured',invoke)
+    with capture() as events:
+        decision=route_conversation('new data as a graph',None,[],False,'groq')
+    assert decision.route=='analytics' and decision.chart=='auto' and len(calls)==2
+    assert [event['failure_type'] for event in events if event['event']=='failure']==['RoutingOutputError']
+    assert 'private injected value' not in str(events)
+
+
+@pytest.mark.parametrize('route,chart',[
+    ('analytics','auto'),('presentation','line'),('presentation','bar'),('presentation','table'),
+])
+def test_valid_router_decision_needs_one_call(monkeypatch,route,chart):
+    from bank import conversation
+    calls=[]
+    def invoke(model,schema,prompt,provider,phase):
+        calls.append(prompt)
+        return {'parsed':schema.model_validate({'route':route,'chart':chart}),'parsing_error':None}
+    monkeypatch.setattr(conversation,'build_model',lambda provider:object())
+    monkeypatch.setattr(conversation,'invoke_structured',invoke)
+    decision=route_conversation('public question',None,[],True,'groq')
+    assert decision.route==route and decision.chart==chart and len(calls)==1
+
+
+@pytest.mark.parametrize('question',[
+    'เอา 3 อันดับ',
+    'สินเชื่อต่อประชากรต่ำสุด 7 จังหวัด',
+    'ไม่เอากรุงเทพฯ',
+    'เปลี่ยนเป็นเงินฝากต่อประชากรแทน',
+    'เอาเดือน กรกฎาคม 2568',
+])
+def test_data_changes_cannot_pass_as_presentation(monkeypatch,question):
+    from bank import conversation
+    context=QueryPlan(metric='credits_per_person',metrics=['credits_per_person'],group_by='province',limit=7,end_period='2026-07-01').model_dump(mode='json')
+    calls=[]
+    def invoke(*args):
+        calls.append(1)
+        return {'parsed':ConversationDecision(route='presentation',chart='table') if len(calls)==1
+                else ConversationDecision(route='analytics',chart='auto'),'parsing_error':None}
+    monkeypatch.setattr(conversation,'build_model',lambda provider:object())
+    monkeypatch.setattr(conversation,'invoke_structured',invoke)
+    decision=route_conversation(question,context,[],True,'groq')
+    assert decision.route=='analytics' and len(calls)==2
+    assert context['limit']==7 and context['end_period']=='2026-07-01'
+
+
+@pytest.mark.parametrize('question,chart',[
+    ('เปลี่ยนเป็นตาราง','table'),('เปลี่ยนเป็นกราฟแท่ง','bar'),('เปลี่ยนเป็นกราฟเส้น','line'),
+])
+def test_unchanged_presentation_is_allowed_with_confirmed_context(monkeypatch,question,chart):
+    from bank import conversation
+    from bank import query
+    monkeypatch.setattr(query,'read_engine',lambda:pytest.fail('presentation validation must not query the warehouse'))
+    context=QueryPlan(metric='credits_per_person',metrics=['credits_per_person'],group_by='province',limit=7,end_period='2026-07-01').model_dump(mode='json')
+    calls=[]
+    def invoke(*args):
+        calls.append(1)
+        return {'parsed':ConversationDecision(route='presentation',chart=chart),'parsing_error':None}
+    monkeypatch.setattr(conversation,'build_model',lambda provider:object())
+    monkeypatch.setattr(conversation,'invoke_structured',invoke)
+    assert route_conversation(question,context,[],True,'groq').chart==chart
+    assert len(calls)==1
+
+
+def test_presentation_keeps_existing_ascending_ranking_without_query(monkeypatch):
+    from bank import conversation, query
+    monkeypatch.setattr(query,'read_engine',lambda:pytest.fail('must not query'))
+    context=QueryPlan(metric='credits_per_branch',metrics=['credits_per_branch'],group_by='province',limit=6,ascending=True,end_period='2026-07-01').model_dump(mode='json')
+    monkeypatch.setattr(conversation,'build_model',lambda provider:object())
+    calls=[]
+    def invoke(*args):
+        calls.append(1)
+        return {'parsed':ConversationDecision(route='presentation',chart='table'),'parsing_error':None}
+    monkeypatch.setattr(conversation,'invoke_structured',invoke)
+    assert route_conversation('ใช้จำนวนอันดับเท่าเดิม เปลี่ยนเป็นตาราง',context,[],True,'groq').route=='presentation'
+    assert len(calls)==1 and context['ascending'] is True
+
+
+def test_policy_presentation_does_not_inherit_parser_default_limit(monkeypatch):
+    from bank import conversation, query
+    monkeypatch.setattr(query,'read_engine',lambda:pytest.fail('must not query'))
+    context=QueryPlan(metric='policy_rate',metrics=['policy_rate'],group_by='period',intent='trend',limit=6).model_dump(mode='json')
+    monkeypatch.setattr(conversation,'build_model',lambda provider:object())
+    calls=[]
+    def invoke(*args):
+        calls.append(1)
+        return {'parsed':ConversationDecision(route='presentation',chart='table'),'parsing_error':None}
+    monkeypatch.setattr(conversation,'invoke_structured',invoke)
+    assert route_conversation('เปลี่ยนเป็นตาราง',context,[],True,'groq').route=='presentation'
+    assert len(calls)==1 and context['limit']==6
+
 def test_multiturn_graph_help_then_presentation_keeps_data(monkeypatch,previous):
     monkeypatch.setattr(chat,'_provider',lambda:None)
     monkeypatch.setattr(chat,'execute_plan',lambda plan:previous)

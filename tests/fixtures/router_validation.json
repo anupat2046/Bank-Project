@@ -1,0 +1,20 @@
+[
+  {"id":"R01","question":"อยากดูยอดเงินฝากของเชียงรายเป็นเส้นย้อนหลังหกเดือน","route":"analytics","chart":"auto"},
+  {"id":"R02","question":"Show a bar chart of deposits in Lampang","route":"analytics","chart":"auto"},
+  {"id":"R03","question":"ขอจังหวัดที่สินเชื่อต่อสาขามากที่สุดเจ็ดแห่งในรูปตาราง","route":"analytics","chart":"auto"},
+  {"id":"R04","question":"Compare the loan-to-deposit ratio of Phuket and Krabi","route":"analytics","chart":"auto"},
+  {"id":"R05","question":"ขอดูดอกเบี้ยนโยบายที่ผ่านมาเป็นกราฟเส้น","route":"analytics","chart":"auto"},
+  {"id":"R06","question":"เพิ่มสุราษฎร์ธานีเข้าไปเทียบในกราฟด้วย","route":"analytics","chart":"auto","has_result":true},
+  {"id":"R07","question":"ตัดกรุงเทพออกแล้วแสดงเป็นกราฟแท่ง","route":"analytics","chart":"auto","has_result":true},
+  {"id":"R08","question":"ใช้เดือนกันยายน 2568 แทนแล้วทำตาราง","route":"analytics","chart":"auto","has_result":true},
+  {"id":"R09","question":"Switch the existing result to a line chart","route":"presentation","chart":"line","has_result":true},
+  {"id":"R10","question":"แปลงผลเดิมเป็นตารางให้ดูหน่อย","route":"presentation","chart":"table","has_result":true},
+  {"id":"R11","question":"วาดผลชุดเดิมเป็นกราฟแท่ง","route":"presentation","chart":"bar","has_result":true},
+  {"id":"R12","question":"ปรับรูปแบบการแสดงผลหน่อย","route":"presentation","chart":"auto","has_result":true},
+  {"id":"R13","question":"Can you explain the last comparison?","route":"explanation","chart":"auto","has_result":true},
+  {"id":"R14","question":"สรุปสิ่งที่แอปนี้ช่วยวิเคราะห์ได้ให้ที","route":"capabilities","chart":"auto"},
+  {"id":"R15","question":"ขอบคุณมาก","route":"greeting","chart":"auto"},
+  {"id":"R16","question":"ขอข้อมูลหนี้เสียรายลูกค้า","route":"unsupported","chart":"auto"},
+  {"id":"R17","question":"Predict next month's lending in Chiang Mai","route":"unsupported","chart":"auto"},
+  {"id":"R18","question":"เอายังไงดี","route":"clarification","chart":"auto"}
+]

@@ -78,7 +78,9 @@ def _llm_decision(question, context, history, prompt_version=ACTIVE_PLANNER_VERS
     provider = _provider()
     model = build_model(provider)
     catalog = {k:{'definition':v[0] or 'YoY vs same month prior year','label':v[1],'unit':v[2]} for k,v in METRICS.items()}
-    prompt = ('Map a Thai/English analytical question to a decision, not SQL. Never substitute an unsupported metric with credits. '
+    prompt = ('Map a Thai/English analytical question to a decision, not SQL. '
+      'For status=ready return a plan object; for clarification/unsupported use plan=null. '
+      'Never substitute an unsupported metric with credits. '
       'Ambiguous denominator or ranking across multiple metrics requires clarification. No private customers, individual banks, NPL, forecasts or causal claims. '
       'Loans per registered resident is credits_per_person, not credits. It is NOT personal debt. '
       'Comparison: select up to four exact province names. monthly trends group_by=period, intent=trend, limit=25. '

@@ -1,0 +1,10 @@
+[
+  {"id":"V01","question":"เอาอุดรธานีออกจากชุดที่เทียบอยู่","route":"analytics","chart":"auto","has_result":true},
+  {"id":"V02","question":"Please add Ubon Ratchathani to this comparison","route":"analytics","chart":"auto","has_result":true},
+  {"id":"V03","question":"ใช้ข้อมูลชุดเดิม แต่เปลี่ยนเฉพาะหน้าตาเป็นเส้น","route":"presentation","chart":"line","has_result":true},
+  {"id":"V04","question":"Keep exactly the same rows and display them as a table","route":"presentation","chart":"table","has_result":true},
+  {"id":"V05","question":"แสดงผลเดือนก่อนหน้าของนครปฐมเป็นกราฟแท่ง","route":"analytics","chart":"auto"},
+  {"id":"V06","question":"Can you show the same result as bars?","route":"presentation","chart":"bar","has_result":true},
+  {"id":"V07","question":"Explain this loan-to-deposit ratio without fetching new numbers","route":"explanation","chart":"auto","has_result":true},
+  {"id":"V08","question":"จังหวัดไหนมีจำนวนสาขาสูงที่สุด ช่วยจัดเป็นตาราง","route":"analytics","chart":"auto"}
+]

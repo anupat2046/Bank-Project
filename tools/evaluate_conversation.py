@@ -57,6 +57,7 @@ def main():
     parser.add_argument('--live', action='store_true')
     parser.add_argument('--base-url', default='http://localhost:8000')
     parser.add_argument('--max-requests', type=int, default=6)
+    parser.add_argument('--scenario', type=int, choices=range(1,21), help='Run one authored three-turn scenario; omitted means the full corpus')
     parser.add_argument('--delay', type=float, default=0, help='Seconds between HTTP turns (0..60); does not assert a provider quota')
     parser.add_argument('--progress', action='store_true', help='Print case IDs and progress to stderr without questions or replies')
     parser.add_argument('--out', type=Path)
@@ -72,6 +73,8 @@ def main():
     results = []
     prefix = 'eval-'+str(uuid4())
     all_cases = cases()
+    if args.scenario:
+        all_cases = [case for case in all_cases if case['id'].startswith(f'C{args.scenario:02d}-')]
     logging.getLogger('bank.telemetry').disabled = True
     with ExitStack() as stack:
         if args.live:
@@ -146,11 +149,11 @@ def main():
             results.append({'id':case['id'],'errors':failures,'route':reply.get('conversation_route'),'status':status,
                             'latency_ms':elapsed,'telemetry':reply.get('telemetry')})
     report = {'measured_at':datetime.now(timezone.utc).isoformat(),'mode':'live HTTP' if args.live else 'offline in-process HTTP',
-        'dataset':'authored 60-turn regression; not held-out','as_of':as_of,'planned':60,
-        'attempted':len(results),'not_run':60-len(results),'passed':sum(not row['errors'] for row in results),
+        'dataset':'authored conversation regression; not held-out','scenario':args.scenario,'as_of':as_of,'planned':len(all_cases),
+        'attempted':len(results),'not_run':len(all_cases)-len(results),'passed':sum(not row['errors'] for row in results),
         'delay_seconds':args.delay,
-        'blocked_reason':blocked,'live_evaluation_complete':args.live and blocked is None and len(results)==60,
-        'live_all_checks_passed':args.live and blocked is None and len(results)==60 and all(not row['errors'] for row in results),
+        'blocked_reason':blocked,'live_evaluation_complete':args.live and blocked is None and len(results)==len(all_cases),
+        'live_all_checks_passed':args.live and blocked is None and len(results)==len(all_cases) and all(not row['errors'] for row in results),
         'cases':results}
     rendered = json.dumps(report,ensure_ascii=False,indent=2)
     if args.out:

@@ -56,6 +56,36 @@ def test_groq_structured_output_keeps_local_validation(monkeypatch):
     assert calls == {'include_raw':True,'method':'json_mode'}
 
 
+def test_groq_router_schema_is_not_contaminated_by_planner_contract(monkeypatch):
+    from bank import conversation
+    from bank.llm_runtime import invoke_structured, _circuits
+    prompts=[]
+    class Model:
+        def with_structured_output(self,schema,**kwargs):
+            def invoke(prompt):
+                prompts.append(prompt)
+                return {'parsed':schema(route='analytics'),'raw':None}
+            return SimpleNamespace(invoke=invoke)
+    _circuits.clear()
+    invoke_structured(Model(),conversation.ConversationDecision,'route only','groq','router')
+    assert 'plan=null' not in prompts[0] and 'ready decisions' not in prompts[0]
+    assert 'MUST be auto' in prompts[0] and 'additionalProperties' in prompts[0]
+
+
+def test_planner_still_receives_ready_plan_contract(monkeypatch):
+    from bank import chat
+    prompts=[]
+    monkeypatch.setattr(chat,'_provider',lambda:'groq')
+    monkeypatch.setattr(chat,'build_model',lambda provider:object())
+    def invoke(model,schema,prompt,provider,phase):
+        prompts.append(prompt)
+        return {'parsed':schema(status='clarification'),'parsing_error':None}
+    monkeypatch.setattr(chat,'invoke_structured',invoke)
+    assert chat._llm_decision('public question',None,[]).status=='clarification'
+    assert 'status=ready return a plan object' in prompts[0]
+    assert 'clarification/unsupported use plan=null' in prompts[0]
+
+
 def test_rules_mode_when_no_key(monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
